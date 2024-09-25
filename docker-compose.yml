@@ -1,0 +1,42 @@
+version: '3.8'
+
+volumes:
+  grafana_data: {}
+  mqtt_log: {}
+  mqtt_data: {}
+  redis_log: {}
+  
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:latest-ffmpeg
+    container_name: mediamtx
+    hostname: mediamtx
+    volumes:
+    - ./mediamtx/mediamtx.yml:/etc/mediamtx/mediamtx.yml
+    environment:
+      - MTX_PROTOCOLS=tcp
+      #- MTX_WEBRTCADDITIONALHOSTS=192.168.x.x
+    command: /etc/mediamtx/mediamtx.yml
+    ports:
+      - 8554:8554
+      # rtmp - 1935:1935
+      - 8888:8888
+      - 9997:9997
+      # webrtc - 8889:8889
+      # SRT - 8890:8890/udp
+      # webrtcLocalUDPAddress - 8189:8189/udp
+    
+  streamer:
+    image: streamer:0.0.1
+    build:
+      context: ./streamer
+      dockerfile: Dockerfile
+    container_name: streamer
+    hostname: streamer
+    restart: always
+    ports:
+      - 3010:3010
+      - 9274:8010
+   
+
+  
