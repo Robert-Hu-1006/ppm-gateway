@@ -1,13 +1,14 @@
 FROM python:3.13-rc-alpine3.20
-#FROM python:3.11-rc-alpine3.16
 
 USER root
 RUN pip install FFmpeg
-
-RUN pip install ffmpeg-python
-#RUN pip install python-ffmpeg
+#RUN pip install ffmpeg-python
+RUN pip install asyncio
+RUN pip install aiomqtt
 RUN pip install pygsheets
-    
+RUN pip install psutil
+RUN pip install python-dotenv
+RUN pip install aiohttp
 RUN mkdir /app
 WORKDIR /app
 COPY ./ /app/
