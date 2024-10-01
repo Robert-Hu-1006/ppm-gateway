@@ -1,31 +1,100 @@
-version: '3.8'
+version: '3'
 
 volumes:
   grafana_data: {}
-  mqtt_log: {}
   mqtt_data: {}
-  redis_log: {}
+  mqtt_log: {}
   
+  ppm_tag:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/robert/data/ppm/tag
+      o: bind
+
 services:
-  mediamtx:
-    image: bluenviron/mediamtx:latest-ffmpeg
-    container_name: mediamtx
-    hostname: mediamtx
-    volumes:
-    - ./mediamtx/mediamtx.yml:/etc/mediamtx/mediamtx.yml
-    environment:
-      - MTX_PROTOCOLS=tcp
-      #- MTX_WEBRTCADDITIONALHOSTS=192.168.x.x
-    command: /etc/mediamtx/mediamtx.yml
+  mosquitto:
+    image: eclipse-mosquitto:2.0.18
+    restart: unless-stopped
+    container_name: mosquitto
+    hostname: mosquitto
     ports:
-      - 8554:8554
-      # rtmp - 1935:1935
-      - 8888:8888
-      - 9997:9997
-      # webrtc - 8889:8889
-      # SRT - 8890:8890/udp
-      # webrtcLocalUDPAddress - 8189:8189/udp
+      - 1880:1880
+    env_file: 
+      - .env
+    environment:
+      - TZ=Asia/Taipei
+    volumes:
+      - mqtt_log:/mosquitto/log:rw
+      - mqtt_data:/mosquitto/data:rw
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/mqtt.pwd:/mosquitto/config/mqtt.pwd
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+    #networks:
+    #  - iot_net
+  
+  nginx:
+    image: nginx:0.0.1
+    container_name: nginx
+    hostname: nginx
+    build: ./nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+      - 1883:1883
+      - 8883:8883
+    #env_file: 
+    #  - .env
+    #networks:
+    #  - front_net
+    #  - back_net
+    #  - iot_net
+    #depends_on:
+    #  - mosquitto
+
+  grafana:
+    image: grafana:0.0.1
+    build:
+      context: ./grafana
+      dockerfile: Dockerfile
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/icon:/usr/share/grafana/public/img/icon
+      #- ppm_data:/usr/share/grafana/public/ppm/
+    env_file: 
+      - .env
+    environment:
+      - TZ=Asia/Taipei  
     
+  telegraf:
+    image: telegraf:1.32.0
+    restart: always
+    container_name: telegraf
+    hostname: telegraf
+    ports:
+      - 9273:9273
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+      #- ./telegraf/conf/:/etc/telegraf/conf/
+      - ppm_tag:/etc/telegraf/tag
+    #depends_on:
+    #  - mosquitto
+    command: telegraf --config /etc/telegraf/telegraf.conf --config-directory /etc/telegraf/tag/
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Taipei
+    #networks:
+    #  - iot_net
+    #  - back_net
+
   streamer:
     image: streamer:0.0.1
     build:
@@ -34,6 +103,11 @@ services:
     container_name: streamer
     hostname: streamer
     restart: always
+    # 每棟樓或一個subnet 一台gateway及一個代碼
+    environment:
+      - TZ=Asia/Taipei
+    env_file: 
+      - .env
     ports:
       - 3010:3010
       - 9274:8010
