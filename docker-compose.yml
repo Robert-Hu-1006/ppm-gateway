@@ -82,11 +82,11 @@ services:
       - 9273:9273
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
-      #- ./telegraf/conf/:/etc/telegraf/conf/
+      - ./telegraf/conf/:/etc/telegraf/conf/
       - ppm_tag:/etc/telegraf/tag
     #depends_on:
     #  - mosquitto
-    command: telegraf --config /etc/telegraf/telegraf.conf --config-directory /etc/telegraf/tag/
+    command: telegraf --config /etc/telegraf/telegraf.conf --config-directory /etc/telegraf/conf/
     env_file:
       - .env
     environment:

@@ -1,0 +1,905 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\" style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0); padding: 0px;\">\n    <tbody>\n        <tr>\n            <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0); padding: 0px;\">\n                <img src=\"/public/img/icon/map-pin.svg\" width=\"22px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 30%; border: rgb(0, 0, 0); padding: 0px;\">{{english}}</td>\n            <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0); padding: 0px;\">\n                <img src=\"/public/img/icon/user.svg\" width=\"22px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 20%; border: rgb(0, 0, 0); padding: 0px;\">{{contact}}</td>\n            <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0); padding: 0px;\">\n                <img src=\"/public/img/icon/phone.svg\" width=\"22px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 20%; border: rgb(0, 0, 0); padding: 0px;\">{{telno1}}</td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 413,
+          "language": "markdown"
+        },
+        "editors": [
+          "styles",
+          "default"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  border-spacing: 0px;\n}\n\n.border_td {\n  border-top: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT english, contact, telno1, telno2 FROM alert_db.map_table \nWHERE property_code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 9,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\"\n    style=\"width: 100%; background-color: rgb(0, 86, 214); color: rgb(255, 255, 255); border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 75%; border: rgb(0, 0, 0);\">Alarms Count</td>\n            <td style=\"width: 15%; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/alarm_count.svg\" width=\"20px\"><br>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 100%; border: rgb(0, 0, 0);\" colspan=\"2\">\n                <span style='font-family: \"Arial\", Gadget, sans-serif; font-size: 48px;'>\n                    <a\n                        href=\"https://{{variableValue '${Domain}'}}/d/{{variableValue '${__dashboard.uid}'}}/{{variableValue '${__dashboard.name}'}}?orgId={{variableValue '${__org.id}'}}&var-Condition=1\">\n                    {{CT}}</a>\n                </span>\n            </td>\n        </tr>\n    </tbody>\n</table>\n</body>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 423,
+          "language": "html"
+        },
+        "editors": [
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  border: 1px solid black;\n  border-radius: 15px;\n}\na {\n    color: inherit;\n    text-decoration: none;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) CT FROM alert_db.alert_table \nwhere code = \"${Code}\" and start_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 10,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\"\n    style=\"width: 100%; background-color: rgb(134, 252, 141); color: rgb(0, 0, 0); border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 75%; border: rgb(0, 0, 0);\">Alarms Closed</td>\n            <td style=\"width: 15%; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/alarm_close.svg\" width=\"20px\"><br>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 100%; border: rgb(0, 0, 0);\" colspan=\"2\">\n                <span style=\"font-family: Arial, Helvetica, sans-serif; font-size: 48px;\">\n                    <a href=\"https://{{variableValue '${Domain}'}}/d/{{variableValue '${__dashboard.uid}'}}/{{variableValue '${__dashboard.name}'}}?orgId={{variableValue '${__org.id}'}}&var-Condition=2\">\n                    {{CT}}</a>\n                </span>\n            </td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 200,
+          "language": "html"
+        },
+        "editors": [
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  border: 1px solid black;\n  border-radius: 15px;\n}\n\na {\n    color: inherit;\n    text-decoration: none;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) CT FROM alert_db.alert_table \nwhere code = \"${Code}\" and progress = 3 and start_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 11,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\"\n    style=\"width: 100%; background-color: rgb(255, 38, 0); color: rgb(235, 235, 235); border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 75%; border: rgb(0, 0, 0);\">Critical Alarms</td>\n            <td style=\"width: 15%; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/critical_alarm.svg\" width=\"25px\"><br>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 100%; border: rgb(0, 0, 0);\" colspan=\"2\">\n                <span style=\"font-family: Arial, Helvetica, sans-serif; font-size: 48px;\">\n                    <a href=\"https://{{variableValue '${Domain}'}}/d/{{variableValue '${__dashboard.uid}'}}/{{variableValue '${__dashboard.name}'}}?orgId={{variableValue '${__org.id}'}}&var-Condition=3\">\n                    {{CT}}</a>\n                </span>\n            </td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 200,
+          "language": "html"
+        },
+        "editors": [
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  border: 1px solid black;\n  border-radius: 15px;\n}\na {\n    color: inherit;\n    text-decoration: none;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) CT FROM alert_db.alert_table \nwhere code = \"${Code}\" \nand alarm_priority = \"Critical\"\nand start_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 12,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\"\n    style=\"width: 100%; background-color: rgb(253, 241, 122); color: rgb(0, 0, 0); border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 75%; border: rgb(0, 0, 0);\">Alarms In Progress</td>\n            <td style=\"width: 15%; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/in_progress.svg\" width=\"25px\"><br>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 100%; border: rgb(0, 0, 0);\" colspan=\"2\">\n                <span style=\"font-family: Arial, Helvetica, sans-serif; font-size: 48px;\">\n                    <a href=\"https://{{variableValue '${Domain}'}}/d/{{variableValue '${__dashboard.uid}'}}/{{variableValue '${__dashboard.name}'}}?orgId={{variableValue '${__org.id}'}}&var-Condition=4\">\n                    {{CT}}</a>\n                </span>\n            </td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 200,
+          "language": "html"
+        },
+        "editors": [
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  border: 1px solid black;\n  border-radius: 15px;\n}\na {\n    color: inherit;\n    text-decoration: none;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) CT FROM alert_db.alert_table \nwhere code = \"${Code}\" and progress =1 and start_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "dark-red",
+                  "index": 0,
+                  "text": "public/img/icon/progress.svg"
+                },
+                "1": {
+                  "color": "dark-orange",
+                  "index": 1,
+                  "text": "public/img/icon/progress.svg"
+                },
+                "2": {
+                  "index": 2,
+                  "text": "public/img/icon/closed.svg"
+                },
+                "3": {
+                  "color": "dark-blue",
+                  "index": 3,
+                  "text": "public/img/icon/closed.svg"
+                },
+                "Battery_Low": {
+                  "index": 10,
+                  "text": "Battery Low"
+                },
+                "Critical": {
+                  "color": "red",
+                  "index": 4,
+                  "text": "public/img/icon/critical.svg"
+                },
+                "Door_Contact": {
+                  "index": 9,
+                  "text": "Door Contact"
+                },
+                "FCP_Alarm": {
+                  "index": 16,
+                  "text": "FCP Alarm"
+                },
+                "FallDown_Detected": {
+                  "index": 15,
+                  "text": "Fall Down Detected"
+                },
+                "High": {
+                  "color": "orange",
+                  "index": 5,
+                  "text": "public/img/icon/high.svg"
+                },
+                "IAQ": {
+                  "index": 8,
+                  "text": "IAQ"
+                },
+                "Intrusion_Detected": {
+                  "index": 11,
+                  "text": "Intrusion Detected"
+                },
+                "Loitering_Detected": {
+                  "index": 14,
+                  "text": "Loitering Detected"
+                },
+                "Medium": {
+                  "color": "yellow",
+                  "index": 13
+                },
+                "Sensor_Disconnect": {
+                  "index": 12,
+                  "text": "Sensor Disconnect"
+                },
+                "Temperature_Humidity": {
+                  "index": 7,
+                  "text": "Temperature/Humidity"
+                },
+                "Water_Leakage": {
+                  "index": 6,
+                  "text": "Water Leakage"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Priority"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "image"
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Alarm Status"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "image"
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.width",
+                "value": 199
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time Stamp"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 175
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Alarm Type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 18,
+        "x": 0,
+        "y": 5
+      },
+      "hideTimeOverride": true,
+      "id": 1,
+      "interval": "3s",
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT alarm_type, \nstart_time,\narea, alarm_priority, progress \nFROM alert_db.alert_table \nWHERE code = \"${Code}\" \n${Condition}\nAND start_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)\nORDER BY start_time desc",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "timeFrom": "5s",
+      "title": "Most Recent Alarms",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "SOP": true,
+              "X": true,
+              "Y": true,
+              "alarm_group": true,
+              "alarm_image": true,
+              "cam_link": true,
+              "closing_time": true,
+              "code": true,
+              "deviceID": true,
+              "device_name": true,
+              "floor": true,
+              "incident_id": true,
+              "stage": true
+            },
+            "indexByName": {
+              "SOP": 13,
+              "X": 15,
+              "Y": 16,
+              "alarm_group": 10,
+              "alarm_image": 11,
+              "alarm_priority": 3,
+              "alarm_type": 0,
+              "area": 2,
+              "cam_link": 12,
+              "closing_time": 17,
+              "code": 7,
+              "deviceID": 8,
+              "device_name": 9,
+              "floor": 4,
+              "incident_id": 6,
+              "progress": 5,
+              "stage": 14,
+              "start_time": 1
+            },
+            "renameByName": {
+              "UNIX_TIMESTAMP(start_time)": "Time Stamp",
+              "alarm_priority": "Priority",
+              "alarm_type": "Alarm Type",
+              "area": "Area Of Interest",
+              "floor": "",
+              "incident_id": "",
+              "progress": "Alarm Status",
+              "stage": "",
+              "start_time": "Time Stamp",
+              "time": ""
+            }
+          }
+        },
+        {
+          "disabled": true,
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "dateFormat": "YY-MM-DD HH:mm:ss",
+                "destinationType": "time",
+                "targetField": "Time Stamp"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 6,
+        "x": 18,
+        "y": 5
+      },
+      "id": 6,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<img src=\"/public/img/building/${Code}.jpg\" \nonerror=\"this.src='/public/img/icon/image-err.svg'\" style=\"width:100%\" />",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.1.6",
+      "type": "text"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Stage_I",
+          "value": "Stage_I"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "HGET ${__user.login}@${__org.name} team",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Team",
+        "options": [],
+        "query": "HGET ${__user.login}@${__org.name} team",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "0600_00",
+          "value": "0600_00"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "HMGET ${__user.login}@${__org.name} site ",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Code",
+        "options": [],
+        "query": "HMGET ${__user.login}@${__org.name} site ",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "1",
+          "value": ""
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Condition",
+        "options": [
+          {
+            "selected": true,
+            "text": "1",
+            "value": ""
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "AND progress = 3"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "AND alarm_priority = \"Critical\""
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "AND progress = 1"
+          }
+        ],
+        "query": "1 :  ,  2 : AND progress = 3 , 3 :  AND alarm_priority = \"Critical\" , 4 : AND progress = 1",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "robertcloud.net",
+          "value": "robertcloud.net"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "GET domain",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Domain",
+        "options": [],
+        "query": "GET domain",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": [
+      "5s"
+    ]
+  },
+  "timezone": "utc",
+  "title": "Alarm Overview",
+  "uid": "d7ca06ca-507f-44b2-adaf-04973c89cacf",
+  "version": 14,
+  "weekStart": ""
+}

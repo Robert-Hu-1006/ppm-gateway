@@ -1,0 +1,834 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "bgColor": "",
+        "clockType": "24 hour",
+        "countdownSettings": {
+          "endCountdownTime": "2024-03-12T03:05:43+08:00",
+          "endText": "00:00:00"
+        },
+        "countupSettings": {
+          "beginCountupTime": "2024-03-12T03:05:43+08:00",
+          "beginText": "00:00:00"
+        },
+        "dateSettings": {
+          "dateFormat": "YYYY-MM-DD",
+          "fontSize": "20px",
+          "fontWeight": "normal",
+          "locale": "",
+          "showDate": true
+        },
+        "fontMono": false,
+        "mode": "time",
+        "refresh": "sec",
+        "timeSettings": {
+          "fontSize": "36px",
+          "fontWeight": "normal"
+        },
+        "timezone": "",
+        "timezoneSettings": {
+          "fontSize": "12px",
+          "fontWeight": "normal",
+          "showTimezone": false,
+          "zoneFormat": "offsetAbbv"
+        }
+      },
+      "pluginVersion": "2.1.5",
+      "type": "grafana-clock-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [
+            {
+              "options": {
+                "001": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "Driving"
+                },
+                "002": {
+                  "color": "yellow",
+                  "index": 1,
+                  "text": "Stop"
+                },
+                "003": {
+                  "color": "#808080",
+                  "index": 2,
+                  "text": "Stall"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-blue",
+                "value": null
+              },
+              {
+                "color": "dark-orange",
+                "value": 1
+              },
+              {
+                "color": "dark-red",
+                "value": 10
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 19,
+        "x": 5,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "opacity": 1,
+          "type": "xyz"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "field": "CT",
+                  "fixed": "dark-blue"
+                },
+                "opacity": 0.9,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 15,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "field": "",
+                  "fixed": "img/icon/s.svg",
+                  "mode": "fixed"
+                },
+                "text": {
+                  "field": "english",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 14,
+                  "offsetX": 0,
+                  "offsetY": -24,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "SPML",
+            "tooltip": true,
+            "type": "markers"
+          },
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "dark-blue"
+                },
+                "opacity": 0.9,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 15,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icon/g.svg",
+                  "mode": "fixed"
+                },
+                "text": {
+                  "field": "english",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 14,
+                  "offsetX": 0,
+                  "offsetY": -24,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "B"
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "GPML",
+            "tooltip": true,
+            "type": "markers"
+          },
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "#373939"
+                },
+                "opacity": 0.4,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 15,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icon/pin-car.svg",
+                  "mode": "fixed"
+                },
+                "text": {
+                  "field": "licPlateNoHk",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 14,
+                  "offsetX": 0,
+                  "offsetY": -15,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "C"
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "name": "Patrol",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": false,
+          "id": "fit",
+          "lastOnly": false,
+          "lat": 0,
+          "layer": "SPML",
+          "lon": 0,
+          "padding": 10,
+          "zoom": 18
+        }
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.map_table as M\nleft join  \n(SELECT code, count(*) CT FROM alert_db.alert_table WHERE progress < 2 group by code) as A\non M.property_code = A.code\nWHERE\n  property_grp = \"SPML\"\nAND area = \"${Area}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.map_table \nWHERE property_grp = \"GPML\"\nAND area = \"${Area}\"",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT * from (\nselect *,\nrow_number() over (partition by licPlateNoHk order by eventTime desc) sn\nfrom alert_db.patrol_table) R\nwhere R.sn= 1 ",
+          "refId": "C",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Area - ${Area}",
+      "transformations": [
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "C"
+          },
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "deviceId": true,
+              "property_grp": true,
+              "refId": true,
+              "remark": true,
+              "sn": true,
+              "team": true,
+              "telno2": true
+            },
+            "indexByName": {
+              "deviceId": 1,
+              "eventTime": 3,
+              "latitude": 6,
+              "licPlateNoHk": 2,
+              "longitude": 7,
+              "messageId": 4,
+              "refId": 0,
+              "sn": 8,
+              "speed": 5
+            },
+            "renameByName": {
+              "area": "Area",
+              "chinese": "Chinese",
+              "contact": "Contact",
+              "english": "English",
+              "eventTime": "Message Time",
+              "licPlateNoHk": "Plate No",
+              "messageId": "Status",
+              "property_code": "Property Code",
+              "regions": "Regions",
+              "speed": "Speed",
+              "street": "Street",
+              "telno1": "Tel No"
+            }
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "B"
+          },
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "remark": true,
+              "team": true,
+              "telno2": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "area": "Area",
+              "chinese": "Chinese",
+              "contact": "Contact",
+              "english": "English",
+              "property_code": "Property Code",
+              "property_grp": "Group",
+              "regions": "Regions",
+              "street": "Street",
+              "telno1": "Tel No"
+            }
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "A"
+          },
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "property_grp": true,
+              "remark": true,
+              "team": true,
+              "telno2": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "CT": "Alarm Count",
+              "english": "",
+              "property_code": "Property Code",
+              "telno1": "Tel No"
+            }
+          }
+        }
+      ],
+      "type": "geomap"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 5,
+        "x": 0,
+        "y": 3
+      },
+      "hideTimeOverride": true,
+      "id": 8,
+      "maxDataPoints": 1000,
+      "options": {
+        "afterRender": "",
+        "content": "<table style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 33.2515%; text-align: center; border: rgb(0, 0, 0);\" rowspan=\"2\">\n               <img src=\"/public/img/weather/w{{icon}}.png\" width=\"120px\"><br>\n              </td>\n            <td style=\"width: 33.3742%; border: rgb(0, 0, 0);\">Temperature<br></td>\n            <td style=\"width: 33.3742%; border: rgb(0, 0, 0);\">Humidity<br></td>\n        </tr>\n        <tr>\n            <td style=\"width: 33.3742%; text-align: center; border: rgb(0, 0, 0);\"><span style=\"font-size: 36px;\">{{temp}}</span><span style=\"text-align: start;color: rgb(32, 33, 36);background-color: rgb(255, 255, 255);font-size: 16px;\">&deg;C</span></td>\n            <td style=\"width: 33.3742%; text-align: center; border: rgb(0, 0, 0);\"><span style=\"font-size: 36px;\">{{RH}}</span>%</td>\n        </tr>\n    </tbody>\n</table>\n<p><br></p>",
+        "defaultContent": "Weather information is empty",
+        "editor": {
+          "format": "none",
+          "height": 304,
+          "language": "html"
+        },
+        "editors": [
+          "default"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "4.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(weather_gauge[30m])",
+          "format": "table",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "timeFrom": "30s",
+      "timeShift": "1h",
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 6
+      },
+      "id": 6,
+      "options": {
+        "afterRender": "",
+        "content": "<table style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 100%; text-align: left; border: rgb(0, 0, 0);\" colspan=\"2\">\n                <span style=\"font-size: 28px;\">{{variable \"Building\"}}</span>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 20%; text-align: right; border: rgb(0, 0, 0);\">Property_Code:</td>\n            <td style=\"width: 80%; border: rgb(0, 0, 0);\">{{variable \"Code\"}}</td>\n        </tr>\n        <tr>\n            <td style=\"width: 20%; text-align: right; border: rgb(0, 0, 0);\">Alarm Count:<br></td>\n            <td style=\"width: 80%; border: rgb(0, 0, 0);\">{{CT}}<br></td>\n        </tr>\n        <tr>\n            <td style=\"width: 99.5153%; text-align: center; border: rgb(0, 0, 0);\" colspan=\"2\">\n                {{#if (eq incidentID null)}}\n                <img src=\" /public/img/icon/create-g.svg\" width=\"110px\"><br>\n                                {{else}}\n                <a\n                    href=\"http://{{variableValue '${Domain}'}}/api/savills/dashboard?login={{variableValue '${__user.login}'}}&code={{variableValue '${Code}'}}&alarm=\">\n                    <img src=\" /public/img/icon/alarm_btn.svg\" width=\"110px\"><br></a>\n                {{/if}}\n            </td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 200,
+          "language": "html"
+        },
+        "editors": [
+          "default",
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.border_td {\n  border-top: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "4.3.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) CT FROM alert_db.alert_table \nWHERE progress < 2 \nAND code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 5,
+        "x": 0,
+        "y": 11
+      },
+      "id": 3,
+      "options": {
+        "alwaysVisibleFilter": true,
+        "autoScroll": false,
+        "displayMode": "table",
+        "emptyValue": false,
+        "favorites": false,
+        "filter": true,
+        "groupSelection": false,
+        "header": true,
+        "padding": 10,
+        "persistent": false,
+        "showName": false,
+        "statusSort": false,
+        "sticky": false,
+        "variable": "Building"
+      },
+      "type": "volkovlabs-variable-panel"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Admiralty",
+          "value": "Admiralty"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT area FROM alert_db.map_table WHERE english = \"${Building}\"",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Area",
+        "options": [],
+        "query": "SELECT area FROM alert_db.map_table WHERE english = \"${Building}\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Lippo Centre",
+          "value": "Lippo Centre"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT English FROM alert_db.map_table",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Building",
+        "options": [],
+        "query": "SELECT English FROM alert_db.map_table",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "0600_00",
+          "value": "0600_00"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT property_code FROM alert_db.map_table Where English = \"${Building}\"",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Code",
+        "options": [],
+        "query": "SELECT property_code FROM alert_db.map_table Where English = \"${Building}\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "robertcloud.net",
+          "value": "robertcloud.net"
+        },
+        "datasource": {
+          "type": "marcusolsson-json-datasource",
+          "uid": "json_user"
+        },
+        "definition": "$.domain.url",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Domain",
+        "options": [],
+        "query": {
+          "cacheDurationSeconds": 300,
+          "fields": [
+            {
+              "jsonPath": "$.domain.url"
+            }
+          ],
+          "method": "GET",
+          "queryParams": "",
+          "urlPath": ""
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "2D Map",
+  "uid": "da6d9151-254e-4232-8904-402284adcfce",
+  "version": 13,
+  "weekStart": ""
+}

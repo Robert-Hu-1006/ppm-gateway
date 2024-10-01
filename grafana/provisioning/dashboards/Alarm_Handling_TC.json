@@ -1,0 +1,1960 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "hideTimeOverride": true,
+      "id": 2,
+      "interval": "5s",
+      "maxDataPoints": 2,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\" style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n  <tbody>\n    <tr>\n      <td class=\"border_td\" style=\"width: 60%; border: rgb(0, 0, 0);\" rowspan=\"6\">\n        <span style=\"font-size: 28px;\">{{chinese}}</span></td>\n      <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n        <img src=\"/public/img/icon/{{alarm_type}}.svg\" width=\"24px\"><br>\n      </td>\n      <td style=\"width: 30%; border: rgb(0, 0, 0);\">\n        {{#if (eq alarm_priority \"Critical\")}}\n      <td style=\"width: 30%; border:0;\"><span style=\"background-color: rgb(200, 0, 0);\">{{alarm_priority}}</span></td>\n      {{/if}}\n      {{#if (eq alarm_priority \"High\")}}\n      <td style=\"width: 30%; border:0;\"><span style=\"background-color: rgb(230, 120, 50);\">{{alarm_priority}}</span>\n      </td>\n      {{/if}}\n      {{#if (eq alarm_priority \"Medium\")}}\n      <td style=\"width: 30%; border:0;\"><span style=\"background-color: rgb(230, 230, 50);\">{{alarm_priority}}</span>\n      </td>\n      {{/if}}\n      </td>\n    </tr>\n    <tr>\n      <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n        <img src=\"/public/img/icon/iot.png\" width=\"20px\"><br>\n      </td>\n      <td style=\"width: 30%; border: rgb(0, 0, 0);\">{{device_name}}</td>\n    </tr>\n    <tr>\n      <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n        <img src=\"/public/img/icon/calendar.png\" width=\"18px\"><br>\n      </td>\n      <td style=\"width: 30%; border: rgb(0, 0, 0);\">\n        {{date TT \"YYYY-MM-DD\"}}\n      </td>\n    </tr>\n    <tr>\n      <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n        <img src=\"/public/img/icon/clock.png\" width=\"20px\"><br>\n      </td>\n      <td style=\"width: 30%; border: rgb(0, 0, 0);\">\n        {{date TT \"HH:mm:ss\"}}<br></td>\n    </tr>\n    <tr>\n      <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n        <img src=\"/public/img/icon/floor.png\" width=\"20px\"><br>\n      </td>\n      <td style=\"width: 30%; border: rgb(0, 0, 0);\">\n        {{floor}}<br>\n      </td>\n    </tr>\n    <tr>\n      <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n        <img src=\"/public/img/icon/area.png\" width=\"16px\"><br>\n      </td>\n      <td style=\"width: 30%; border: rgb(0, 0, 0);\">{{area}}</td>\n    </tr>\n  </tbody>\n</table>",
+        "defaultContent": "No Alarm Selected!",
+        "editor": {
+          "format": "auto",
+          "height": 375,
+          "language": "html"
+        },
+        "editors": [
+          "default",
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.border_td {\n  border-top: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT *, date_sub(start_time, interval +8 hour) TT \nFROM alert_db.alert_table as A\nleft join\n(SELECT chinese, property_code  FROM alert_db.map_table ) as M\non M.property_code = A.code\nWHERE incidentID = \"${ID}\"\n\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "timeFrom": "5s",
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 8,
+        "y": 0
+      },
+      "id": 10,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "id": "log_content",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:log_content",
+              "refId": "A",
+              "value": "log_content"
+            },
+            "rows": 2,
+            "section": "",
+            "showIf": "",
+            "title": "記錄訊息",
+            "tooltip": "",
+            "type": "textarea",
+            "uid": "3308ae55-ba45-49ed-bfca-beaf82b0ccbb",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "console.log(context.panel.data, context.panel.response, context.panel.initial, context.panel.elements);\n\nreturn;\n\n/**\n * Data Source\n * Requires form elements to be defined\n */\nconst dataQuery = context.utils.toDataQueryResponse(context.panel.response);\nconsole.log(dataQuery);",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": true,
+          "highlightColor": "blue",
+          "method": "query",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "存檔",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['警報處理', '訊息已成功紀錄.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['警報處理', '紀錄訊息時發生錯誤.']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "datasource": "MySQL",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n  payload['ID'] = '${ID}';\n  payload['Stage'] = 1;\n  payload['User'] = '${__user.login}';\n})\n\nreturn payload;",
+          "method": "POST",
+          "payload": {
+            "0": "c",
+            "1": "o",
+            "2": "n",
+            "3": "s",
+            "4": "t",
+            "5": " ",
+            "6": "p",
+            "7": "a",
+            "8": "y",
+            "9": "l",
+            "10": "o",
+            "11": "a",
+            "12": "d",
+            "13": " ",
+            "14": "=",
+            "15": " ",
+            "16": "{",
+            "17": "}",
+            "18": ";",
+            "19": "\n",
+            "20": "\n",
+            "21": "c",
+            "22": "o",
+            "23": "n",
+            "24": "t",
+            "25": "e",
+            "26": "x",
+            "27": "t",
+            "28": ".",
+            "29": "p",
+            "30": "a",
+            "31": "n",
+            "32": "e",
+            "33": "l",
+            "34": ".",
+            "35": "e",
+            "36": "l",
+            "37": "e",
+            "38": "m",
+            "39": "e",
+            "40": "n",
+            "41": "t",
+            "42": "s",
+            "43": ".",
+            "44": "f",
+            "45": "o",
+            "46": "r",
+            "47": "E",
+            "48": "a",
+            "49": "c",
+            "50": "h",
+            "51": "(",
+            "52": "(",
+            "53": "e",
+            "54": "l",
+            "55": "e",
+            "56": "m",
+            "57": "e",
+            "58": "n",
+            "59": "t",
+            "60": ")",
+            "61": " ",
+            "62": "=",
+            "63": ">",
+            "64": " ",
+            "65": "{",
+            "66": "\n",
+            "67": " ",
+            "68": " ",
+            "69": "i",
+            "70": "f",
+            "71": " ",
+            "72": "(",
+            "73": "!",
+            "74": "e",
+            "75": "l",
+            "76": "e",
+            "77": "m",
+            "78": "e",
+            "79": "n",
+            "80": "t",
+            "81": ".",
+            "82": "v",
+            "83": "a",
+            "84": "l",
+            "85": "u",
+            "86": "e",
+            "87": ")",
+            "88": " ",
+            "89": "{",
+            "90": "\n",
+            "91": " ",
+            "92": " ",
+            "93": " ",
+            "94": " ",
+            "95": "r",
+            "96": "e",
+            "97": "t",
+            "98": "u",
+            "99": "r",
+            "100": "n",
+            "101": ";",
+            "102": "\n",
+            "103": " ",
+            "104": " ",
+            "105": "}",
+            "106": "\n",
+            "107": "\n",
+            "108": " ",
+            "109": " ",
+            "110": "p",
+            "111": "a",
+            "112": "y",
+            "113": "l",
+            "114": "o",
+            "115": "a",
+            "116": "d",
+            "117": "[",
+            "118": "e",
+            "119": "l",
+            "120": "e",
+            "121": "m",
+            "122": "e",
+            "123": "n",
+            "124": "t",
+            "125": ".",
+            "126": "i",
+            "127": "d",
+            "128": "]",
+            "129": " ",
+            "130": "=",
+            "131": " ",
+            "132": "e",
+            "133": "l",
+            "134": "e",
+            "135": "m",
+            "136": "e",
+            "137": "n",
+            "138": "t",
+            "139": ".",
+            "140": "v",
+            "141": "a",
+            "142": "l",
+            "143": "u",
+            "144": "e",
+            "145": ";",
+            "146": "\n",
+            "147": "}",
+            "148": ")",
+            "149": "\n",
+            "150": "\n",
+            "151": "r",
+            "152": "e",
+            "153": "t",
+            "154": "u",
+            "155": "r",
+            "156": "n",
+            "157": " ",
+            "158": "p",
+            "159": "a",
+            "160": "y",
+            "161": "l",
+            "162": "o",
+            "163": "a",
+            "164": "d",
+            "165": ";",
+            "dataset": "alert_db",
+            "editorMode": "builder",
+            "format": "table",
+            "rawSql": "",
+            "refId": "A"
+          },
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/progress"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.progress_table\nWHERE incidentID = \"${ID}\" \nAND stage = 1",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "確認警報",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 21,
+        "w": 9,
+        "x": 15,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "autoPlay": false,
+        "buttons": [
+          "navigation",
+          "zoom"
+        ],
+        "controls": false,
+        "formats": [
+          "audio",
+          "image",
+          "pdf",
+          "video"
+        ],
+        "height": 0,
+        "heightMode": "auto",
+        "infinityPlay": false,
+        "name": "pdf",
+        "noResultsMessage": "Nothing to display...",
+        "scale": "auto",
+        "toolbar": true,
+        "width": 0,
+        "widthMode": "auto",
+        "zoomType": "panpinch"
+      },
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT pdf FROM alert_db.SOP\nWHERE sop_id = (SELECT SOP FROM alert_db.alert_table \nWHERE incidentID = \"${ID}\")",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "標準作業程序",
+      "type": "volkovlabs-image-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 8,
+        "y": 4
+      },
+      "id": 11,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "id": "log_content",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:log_content",
+              "refId": "A",
+              "value": "log_content"
+            },
+            "rows": 2,
+            "section": "",
+            "showIf": "",
+            "title": "記錄訊息",
+            "tooltip": "",
+            "type": "textarea",
+            "uid": "3308ae55-ba45-49ed-bfca-beaf82b0ccbb",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "console.log(context.panel.data, context.panel.response, context.panel.initial, context.panel.elements);\n\nreturn;\n\n/**\n * Data Source\n * Requires form elements to be defined\n */\nconst dataQuery = context.utils.toDataQueryResponse(context.panel.response);\nconsole.log(dataQuery);",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": true,
+          "highlightColor": "blue",
+          "method": "query",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "存檔",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['警報處理', '訊息已成功紀錄.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['警報處理', '紀錄訊息時發生錯誤.']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "datasource": "MySQL",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n  payload['ID'] = '${ID}';\n  payload['Stage'] = 2;\n  payload['User'] = '${__user.login}';\n})\n\nreturn payload;",
+          "method": "POST",
+          "payload": {
+            "0": "c",
+            "1": "o",
+            "2": "n",
+            "3": "s",
+            "4": "t",
+            "5": " ",
+            "6": "p",
+            "7": "a",
+            "8": "y",
+            "9": "l",
+            "10": "o",
+            "11": "a",
+            "12": "d",
+            "13": " ",
+            "14": "=",
+            "15": " ",
+            "16": "{",
+            "17": "}",
+            "18": ";",
+            "19": "\n",
+            "20": "\n",
+            "21": "c",
+            "22": "o",
+            "23": "n",
+            "24": "t",
+            "25": "e",
+            "26": "x",
+            "27": "t",
+            "28": ".",
+            "29": "p",
+            "30": "a",
+            "31": "n",
+            "32": "e",
+            "33": "l",
+            "34": ".",
+            "35": "e",
+            "36": "l",
+            "37": "e",
+            "38": "m",
+            "39": "e",
+            "40": "n",
+            "41": "t",
+            "42": "s",
+            "43": ".",
+            "44": "f",
+            "45": "o",
+            "46": "r",
+            "47": "E",
+            "48": "a",
+            "49": "c",
+            "50": "h",
+            "51": "(",
+            "52": "(",
+            "53": "e",
+            "54": "l",
+            "55": "e",
+            "56": "m",
+            "57": "e",
+            "58": "n",
+            "59": "t",
+            "60": ")",
+            "61": " ",
+            "62": "=",
+            "63": ">",
+            "64": " ",
+            "65": "{",
+            "66": "\n",
+            "67": " ",
+            "68": " ",
+            "69": "i",
+            "70": "f",
+            "71": " ",
+            "72": "(",
+            "73": "!",
+            "74": "e",
+            "75": "l",
+            "76": "e",
+            "77": "m",
+            "78": "e",
+            "79": "n",
+            "80": "t",
+            "81": ".",
+            "82": "v",
+            "83": "a",
+            "84": "l",
+            "85": "u",
+            "86": "e",
+            "87": ")",
+            "88": " ",
+            "89": "{",
+            "90": "\n",
+            "91": " ",
+            "92": " ",
+            "93": " ",
+            "94": " ",
+            "95": "r",
+            "96": "e",
+            "97": "t",
+            "98": "u",
+            "99": "r",
+            "100": "n",
+            "101": ";",
+            "102": "\n",
+            "103": " ",
+            "104": " ",
+            "105": "}",
+            "106": "\n",
+            "107": "\n",
+            "108": " ",
+            "109": " ",
+            "110": "p",
+            "111": "a",
+            "112": "y",
+            "113": "l",
+            "114": "o",
+            "115": "a",
+            "116": "d",
+            "117": "[",
+            "118": "e",
+            "119": "l",
+            "120": "e",
+            "121": "m",
+            "122": "e",
+            "123": "n",
+            "124": "t",
+            "125": ".",
+            "126": "i",
+            "127": "d",
+            "128": "]",
+            "129": " ",
+            "130": "=",
+            "131": " ",
+            "132": "e",
+            "133": "l",
+            "134": "e",
+            "135": "m",
+            "136": "e",
+            "137": "n",
+            "138": "t",
+            "139": ".",
+            "140": "v",
+            "141": "a",
+            "142": "l",
+            "143": "u",
+            "144": "e",
+            "145": ";",
+            "146": "\n",
+            "147": "}",
+            "148": ")",
+            "149": "\n",
+            "150": "\n",
+            "151": "r",
+            "152": "e",
+            "153": "t",
+            "154": "u",
+            "155": "r",
+            "156": "n",
+            "157": " ",
+            "158": "p",
+            "159": "a",
+            "160": "y",
+            "161": "l",
+            "162": "o",
+            "163": "a",
+            "164": "d",
+            "165": ";",
+            "dataset": "alert_db",
+            "editorMode": "builder",
+            "format": "table",
+            "rawSql": "",
+            "refId": "A"
+          },
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/progress"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.progress_table\nWHERE incidentID = \"${ID}\" \nAND stage = 2",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "通知現場工作人員",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 8,
+        "x": 0,
+        "y": 5
+      },
+      "id": 5,
+      "options": {
+        "afterRender": "",
+        "content": "<table style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 80%; border: rgb(0, 0, 0);\" colspan=\"4\">\n                {{#if (eq stage 0)}}\n                <img src=\"/public/img/icon/New_Alarm.svg\" width=\"120px\"><br>\n                {{/if}}\n                {{#if (eq stage 1)}}\n                <img src=\"/public/img/icon/Alarm_Acknowledged.svg\" width=\"120px\"><br>\n                {{/if}}\n                {{#if (eq stage 2)}}\n                <img src=\"/public/img/icon/Site_Staff_Informed.svg\" width=\"120px\"><br>\n                {{/if}}\n                {{#if (eq stage 3)}}\n                <img src=\"/public/img/icon/Site_Staff_Response.svg\" width=\"120px\"><br>\n                {{/if}}\n                {{#if (eq stage 4)}}\n                <img src=\"/public/img/icon/Site_Staff_Report.svg\" width=\"120px\"><br>\n                {{/if}}\n                {{#if (eq stage 5)}}\n                <img src=\"/public/img/icon/Alarm_Closed.svg\" width=\"120px\"><br>\n                {{/if}}\n            </td>\n            <td style=\"width: 20%; text-align: center; border: rgb(0, 0, 0);\" rowspan=\"3\">\n                {{#if (eq log_time null)}}\n                <img src=\" /public/img/icon/default.svg\" width=\"32px\"><br>\n            {{else}}\n                <img src=\"/public/img/icon/press.svg\" width=\"32px\"><br>\n            {{/if}}\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 10%; text-align: center; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/log_time.png\" width=\"18px\"><br>\n            </td>\n            <td style=\"text-align: left; width: 30%; border: rgb(0, 0, 0);\">\n                {{#if (eq log_time null)}}\n                {{else}}\n                {{date TT \"HH:mm:ss\"}}\n                {{/if}}\n            </td>\n            <td style=\"width: 10%; text-align: center; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/log_user.png\" width=\"18px\"><br>\n            </td>\n            <td style=\"text-align: left; width: 30%; border: rgb(0, 0, 0);\">{{user}}<br></td>\n        </tr>\n        <tr>\n            <td style=\"width: 80%; border: rgb(0, 0, 0);\" colspan=\"4\">{{log_content}}</td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "height": 388,
+          "language": "html"
+        },
+        "editors": [
+          "default",
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT *, date_sub(log_time, interval +8 hour) TT  FROM alert_db.progress_table \nWHERE incidentID = \"${ID}\" ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 5,
+        "w": 7,
+        "x": 8,
+        "y": 8
+      },
+      "id": 13,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "id": "confirm",
+            "labelWidth": 15,
+            "section": "",
+            "showIf": "",
+            "title": "警報確認",
+            "tooltip": "",
+            "type": "boolean",
+            "uid": "11d80f32-6ca5-443e-a645-4c7c1246fc8c",
+            "unit": "",
+            "value": false
+          },
+          {
+            "id": "log_content",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:log_content",
+              "refId": "A",
+              "value": "log_content"
+            },
+            "rows": 2,
+            "section": "",
+            "showIf": "",
+            "title": "記錄訊息",
+            "tooltip": "",
+            "type": "textarea",
+            "uid": "3308ae55-ba45-49ed-bfca-beaf82b0ccbb",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "console.log(context.panel.data, context.panel.response, context.panel.initial, context.panel.elements);\n\nreturn;\n\n/**\n * Data Source\n * Requires form elements to be defined\n */\nconst dataQuery = context.utils.toDataQueryResponse(context.panel.response);\nconsole.log(dataQuery);",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": true,
+          "highlightColor": "blue",
+          "method": "query",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "回報",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['警報處理', '訊息已成功回報.']);\n  context.grafana.locationService.reload();\n} else {\n  const opt = context.panel.elements.find(\n    (element) => element.id === \"confirm\"\n  );\n\n  if (opt.value == 0) {\n    const url = 'https://' + '${Domain}' + '/d/' + '${Verify_ID}' + '?orgId=' + '${__org.id}'\n    window.location.replace(url);\n  }\n  context.grafana.notifyError(['警報處理', '回報訊息時發生錯誤.']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "datasource": "MySQL",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n//  if (!element.value) {\n//    return;\n//  }\n\n  payload[element.id] = element.value;\n\n})\npayload['ID'] = '${ID}';\npayload['Stage'] = 3;\npayload['User'] = '${__user.login}';\n\nreturn payload;",
+          "method": "POST",
+          "payload": {
+            "0": "c",
+            "1": "o",
+            "2": "n",
+            "3": "s",
+            "4": "t",
+            "5": " ",
+            "6": "p",
+            "7": "a",
+            "8": "y",
+            "9": "l",
+            "10": "o",
+            "11": "a",
+            "12": "d",
+            "13": " ",
+            "14": "=",
+            "15": " ",
+            "16": "{",
+            "17": "}",
+            "18": ";",
+            "19": "\n",
+            "20": "\n",
+            "21": "c",
+            "22": "o",
+            "23": "n",
+            "24": "t",
+            "25": "e",
+            "26": "x",
+            "27": "t",
+            "28": ".",
+            "29": "p",
+            "30": "a",
+            "31": "n",
+            "32": "e",
+            "33": "l",
+            "34": ".",
+            "35": "e",
+            "36": "l",
+            "37": "e",
+            "38": "m",
+            "39": "e",
+            "40": "n",
+            "41": "t",
+            "42": "s",
+            "43": ".",
+            "44": "f",
+            "45": "o",
+            "46": "r",
+            "47": "E",
+            "48": "a",
+            "49": "c",
+            "50": "h",
+            "51": "(",
+            "52": "(",
+            "53": "e",
+            "54": "l",
+            "55": "e",
+            "56": "m",
+            "57": "e",
+            "58": "n",
+            "59": "t",
+            "60": ")",
+            "61": " ",
+            "62": "=",
+            "63": ">",
+            "64": " ",
+            "65": "{",
+            "66": "\n",
+            "67": " ",
+            "68": " ",
+            "69": "i",
+            "70": "f",
+            "71": " ",
+            "72": "(",
+            "73": "!",
+            "74": "e",
+            "75": "l",
+            "76": "e",
+            "77": "m",
+            "78": "e",
+            "79": "n",
+            "80": "t",
+            "81": ".",
+            "82": "v",
+            "83": "a",
+            "84": "l",
+            "85": "u",
+            "86": "e",
+            "87": ")",
+            "88": " ",
+            "89": "{",
+            "90": "\n",
+            "91": " ",
+            "92": " ",
+            "93": " ",
+            "94": " ",
+            "95": "r",
+            "96": "e",
+            "97": "t",
+            "98": "u",
+            "99": "r",
+            "100": "n",
+            "101": ";",
+            "102": "\n",
+            "103": " ",
+            "104": " ",
+            "105": "}",
+            "106": "\n",
+            "107": "\n",
+            "108": " ",
+            "109": " ",
+            "110": "p",
+            "111": "a",
+            "112": "y",
+            "113": "l",
+            "114": "o",
+            "115": "a",
+            "116": "d",
+            "117": "[",
+            "118": "e",
+            "119": "l",
+            "120": "e",
+            "121": "m",
+            "122": "e",
+            "123": "n",
+            "124": "t",
+            "125": ".",
+            "126": "i",
+            "127": "d",
+            "128": "]",
+            "129": " ",
+            "130": "=",
+            "131": " ",
+            "132": "e",
+            "133": "l",
+            "134": "e",
+            "135": "m",
+            "136": "e",
+            "137": "n",
+            "138": "t",
+            "139": ".",
+            "140": "v",
+            "141": "a",
+            "142": "l",
+            "143": "u",
+            "144": "e",
+            "145": ";",
+            "146": "\n",
+            "147": "}",
+            "148": ")",
+            "149": "\n",
+            "150": "\n",
+            "151": "r",
+            "152": "e",
+            "153": "t",
+            "154": "u",
+            "155": "r",
+            "156": "n",
+            "157": " ",
+            "158": "p",
+            "159": "a",
+            "160": "y",
+            "161": "l",
+            "162": "o",
+            "163": "a",
+            "164": "d",
+            "165": ";",
+            "dataset": "alert_db",
+            "editorMode": "builder",
+            "format": "table",
+            "rawSql": "",
+            "refId": "A"
+          },
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/progress"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.progress_table\nWHERE incidentID = \"${ID}\" \nAND stage = 3",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "現場工作人員回應",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 8,
+        "y": 13
+      },
+      "id": 14,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "id": "log_content",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:log_content",
+              "refId": "A",
+              "value": "log_content"
+            },
+            "rows": 2,
+            "section": "",
+            "showIf": "",
+            "title": "記錄訊息",
+            "tooltip": "",
+            "type": "textarea",
+            "uid": "3308ae55-ba45-49ed-bfca-beaf82b0ccbb",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "console.log(context.panel.data, context.panel.response, context.panel.initial, context.panel.elements);\n\nreturn;\n\n/**\n * Data Source\n * Requires form elements to be defined\n */\nconst dataQuery = context.utils.toDataQueryResponse(context.panel.response);\nconsole.log(dataQuery);",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": true,
+          "highlightColor": "blue",
+          "method": "query",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "存檔",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['警報處理', '訊息已成功紀錄.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['警報處理', '紀錄訊息時發生錯誤.']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "datasource": "MySQL",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n  payload['ID'] = '${ID}';\n  payload['Stage'] = 4;\n  payload['User'] = '${__user.login}';\n})\n\nreturn payload;",
+          "method": "POST",
+          "payload": {
+            "0": "c",
+            "1": "o",
+            "2": "n",
+            "3": "s",
+            "4": "t",
+            "5": " ",
+            "6": "p",
+            "7": "a",
+            "8": "y",
+            "9": "l",
+            "10": "o",
+            "11": "a",
+            "12": "d",
+            "13": " ",
+            "14": "=",
+            "15": " ",
+            "16": "{",
+            "17": "}",
+            "18": ";",
+            "19": "\n",
+            "20": "\n",
+            "21": "c",
+            "22": "o",
+            "23": "n",
+            "24": "t",
+            "25": "e",
+            "26": "x",
+            "27": "t",
+            "28": ".",
+            "29": "p",
+            "30": "a",
+            "31": "n",
+            "32": "e",
+            "33": "l",
+            "34": ".",
+            "35": "e",
+            "36": "l",
+            "37": "e",
+            "38": "m",
+            "39": "e",
+            "40": "n",
+            "41": "t",
+            "42": "s",
+            "43": ".",
+            "44": "f",
+            "45": "o",
+            "46": "r",
+            "47": "E",
+            "48": "a",
+            "49": "c",
+            "50": "h",
+            "51": "(",
+            "52": "(",
+            "53": "e",
+            "54": "l",
+            "55": "e",
+            "56": "m",
+            "57": "e",
+            "58": "n",
+            "59": "t",
+            "60": ")",
+            "61": " ",
+            "62": "=",
+            "63": ">",
+            "64": " ",
+            "65": "{",
+            "66": "\n",
+            "67": " ",
+            "68": " ",
+            "69": "i",
+            "70": "f",
+            "71": " ",
+            "72": "(",
+            "73": "!",
+            "74": "e",
+            "75": "l",
+            "76": "e",
+            "77": "m",
+            "78": "e",
+            "79": "n",
+            "80": "t",
+            "81": ".",
+            "82": "v",
+            "83": "a",
+            "84": "l",
+            "85": "u",
+            "86": "e",
+            "87": ")",
+            "88": " ",
+            "89": "{",
+            "90": "\n",
+            "91": " ",
+            "92": " ",
+            "93": " ",
+            "94": " ",
+            "95": "r",
+            "96": "e",
+            "97": "t",
+            "98": "u",
+            "99": "r",
+            "100": "n",
+            "101": ";",
+            "102": "\n",
+            "103": " ",
+            "104": " ",
+            "105": "}",
+            "106": "\n",
+            "107": "\n",
+            "108": " ",
+            "109": " ",
+            "110": "p",
+            "111": "a",
+            "112": "y",
+            "113": "l",
+            "114": "o",
+            "115": "a",
+            "116": "d",
+            "117": "[",
+            "118": "e",
+            "119": "l",
+            "120": "e",
+            "121": "m",
+            "122": "e",
+            "123": "n",
+            "124": "t",
+            "125": ".",
+            "126": "i",
+            "127": "d",
+            "128": "]",
+            "129": " ",
+            "130": "=",
+            "131": " ",
+            "132": "e",
+            "133": "l",
+            "134": "e",
+            "135": "m",
+            "136": "e",
+            "137": "n",
+            "138": "t",
+            "139": ".",
+            "140": "v",
+            "141": "a",
+            "142": "l",
+            "143": "u",
+            "144": "e",
+            "145": ";",
+            "146": "\n",
+            "147": "}",
+            "148": ")",
+            "149": "\n",
+            "150": "\n",
+            "151": "r",
+            "152": "e",
+            "153": "t",
+            "154": "u",
+            "155": "r",
+            "156": "n",
+            "157": " ",
+            "158": "p",
+            "159": "a",
+            "160": "y",
+            "161": "l",
+            "162": "o",
+            "163": "a",
+            "164": "d",
+            "165": ";",
+            "dataset": "alert_db",
+            "editorMode": "builder",
+            "format": "table",
+            "rawSql": "",
+            "refId": "A"
+          },
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/progress"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.progress_table\nWHERE incidentID = \"${ID}\" \nAND stage = 4",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "現場工作人員報告",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 8,
+        "y": 17
+      },
+      "id": 15,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "id": "log_content",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:log_content",
+              "refId": "A",
+              "value": "log_content"
+            },
+            "rows": 2,
+            "section": "",
+            "showIf": "",
+            "title": "log",
+            "tooltip": "",
+            "type": "textarea",
+            "uid": "3308ae55-ba45-49ed-bfca-beaf82b0ccbb",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "console.log(context.panel.data, context.panel.response, context.panel.initial, context.panel.elements);\n\nreturn;\n\n/**\n * Data Source\n * Requires form elements to be defined\n */\nconst dataQuery = context.utils.toDataQueryResponse(context.panel.response);\nconsole.log(dataQuery);",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": false,
+          "highlightColor": "red",
+          "method": "query",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "none"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "lock",
+          "text": "結案",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['警報處理', '警報已成功結案.']);\n\n  const url = 'https://' + '${Domain}' + '/d/' + '${Verify_ID}' + '?orgId=' + '${__org.id}'\n  window.location.replace(url);\n\n} else {\n  context.grafana.notifyError(['警報處理', '還有步驟未完成']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "datasource": "MySQL",
+          "getPayload": "const payload = {};\n\n//context.panel.elements.forEach((element) => {\n//  if (!element.value) {\n//    return;\n//  }\n\n//  payload[element.id] = element.value;\n  payload['ID'] = '${ID}';\n  payload['Stage'] = 5;\n  payload['User'] = '${__user.login}';\n//})\n\nreturn payload;",
+          "method": "POST",
+          "payload": {
+            "0": "c",
+            "1": "o",
+            "2": "n",
+            "3": "s",
+            "4": "t",
+            "5": " ",
+            "6": "p",
+            "7": "a",
+            "8": "y",
+            "9": "l",
+            "10": "o",
+            "11": "a",
+            "12": "d",
+            "13": " ",
+            "14": "=",
+            "15": " ",
+            "16": "{",
+            "17": "}",
+            "18": ";",
+            "19": "\n",
+            "20": "\n",
+            "21": "c",
+            "22": "o",
+            "23": "n",
+            "24": "t",
+            "25": "e",
+            "26": "x",
+            "27": "t",
+            "28": ".",
+            "29": "p",
+            "30": "a",
+            "31": "n",
+            "32": "e",
+            "33": "l",
+            "34": ".",
+            "35": "e",
+            "36": "l",
+            "37": "e",
+            "38": "m",
+            "39": "e",
+            "40": "n",
+            "41": "t",
+            "42": "s",
+            "43": ".",
+            "44": "f",
+            "45": "o",
+            "46": "r",
+            "47": "E",
+            "48": "a",
+            "49": "c",
+            "50": "h",
+            "51": "(",
+            "52": "(",
+            "53": "e",
+            "54": "l",
+            "55": "e",
+            "56": "m",
+            "57": "e",
+            "58": "n",
+            "59": "t",
+            "60": ")",
+            "61": " ",
+            "62": "=",
+            "63": ">",
+            "64": " ",
+            "65": "{",
+            "66": "\n",
+            "67": " ",
+            "68": " ",
+            "69": "i",
+            "70": "f",
+            "71": " ",
+            "72": "(",
+            "73": "!",
+            "74": "e",
+            "75": "l",
+            "76": "e",
+            "77": "m",
+            "78": "e",
+            "79": "n",
+            "80": "t",
+            "81": ".",
+            "82": "v",
+            "83": "a",
+            "84": "l",
+            "85": "u",
+            "86": "e",
+            "87": ")",
+            "88": " ",
+            "89": "{",
+            "90": "\n",
+            "91": " ",
+            "92": " ",
+            "93": " ",
+            "94": " ",
+            "95": "r",
+            "96": "e",
+            "97": "t",
+            "98": "u",
+            "99": "r",
+            "100": "n",
+            "101": ";",
+            "102": "\n",
+            "103": " ",
+            "104": " ",
+            "105": "}",
+            "106": "\n",
+            "107": "\n",
+            "108": " ",
+            "109": " ",
+            "110": "p",
+            "111": "a",
+            "112": "y",
+            "113": "l",
+            "114": "o",
+            "115": "a",
+            "116": "d",
+            "117": "[",
+            "118": "e",
+            "119": "l",
+            "120": "e",
+            "121": "m",
+            "122": "e",
+            "123": "n",
+            "124": "t",
+            "125": ".",
+            "126": "i",
+            "127": "d",
+            "128": "]",
+            "129": " ",
+            "130": "=",
+            "131": " ",
+            "132": "e",
+            "133": "l",
+            "134": "e",
+            "135": "m",
+            "136": "e",
+            "137": "n",
+            "138": "t",
+            "139": ".",
+            "140": "v",
+            "141": "a",
+            "142": "l",
+            "143": "u",
+            "144": "e",
+            "145": ";",
+            "146": "\n",
+            "147": "}",
+            "148": ")",
+            "149": "\n",
+            "150": "\n",
+            "151": "r",
+            "152": "e",
+            "153": "t",
+            "154": "u",
+            "155": "r",
+            "156": "n",
+            "157": " ",
+            "158": "p",
+            "159": "a",
+            "160": "y",
+            "161": "l",
+            "162": "o",
+            "163": "a",
+            "164": "d",
+            "165": ";",
+            "dataset": "alert_db",
+            "editorMode": "builder",
+            "format": "table",
+            "rawSql": "",
+            "refId": "A"
+          },
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/close"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.progress_table\nWHERE incidentID = \"${ID}\" \nAND stage = 5",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "警報結案",
+      "type": "volkovlabs-form-panel"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "robertcloud.net",
+          "value": "robertcloud.net"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "GET domain",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Domain",
+        "options": [],
+        "query": "GET domain",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "xVNwRx2c",
+          "value": "xVNwRx2c"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "HMGET ${__user.login}@${__org.name} id",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "ID",
+        "options": [],
+        "query": "HMGET ${__user.login}@${__org.name} id",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "ed11db7c-39d3-4971-8cc6-7449ba93a142",
+          "value": "ed11db7c-39d3-4971-8cc6-7449ba93a142"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT tc FROM alert_db.dashboard\nWHERE item = \"D2\"",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Verify_ID",
+        "options": [],
+        "query": "SELECT tc FROM alert_db.dashboard\nWHERE item = \"D2\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": []
+  },
+  "timezone": "",
+  "title": "警報處理",
+  "uid": "c7940ee2-6db4-456a-a297-47ff7b1abaf0",
+  "version": 9,
+  "weekStart": ""
+}

@@ -1,0 +1,2460 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 0
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) FROM alert_db.device_table\nWHERE category = \"iot\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "感測器數量",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) FROM alert_db.device_table\nWHERE category = \"cam\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "攝影機數量",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 0
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) FROM alert_db.message_table",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "警報訊息數量",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 15,
+        "x": 9,
+        "y": 0
+      },
+      "id": 18,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\" style=\"width: 100%;\">\n    <tbody>\n        <tr>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/Water_Leakage.svg\" width=\"22px\"><br>\n            </td>\n            <td style=\"width: 18%;\">漏水警報</td>\n            <td style=\"width: 10%;\">{{Water_Leakage}}</td>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/Temperature_Humidity.svg\" width=\"20px\"><br>\n            </td>\n            <td style=\"width: 18%;\">溫濕度警報</td>\n            <td style=\"width: 10%;\">{{Temperature_Humidity}}</td>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/Loitering_Detected.svg\" width=\"20px\"><br>\n            </td>\n            <td style=\"width: 18%;\">徘徊警報</td>\n            <td style=\"width: 10%;\">{{Loitering_Detected}}</td>\n        </tr>\n        <tr>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/Battery_Low.svg\" height=\"20px\"><br>\n            </td>\n            <td style=\"width: 18%;\">電量不足警報</td>\n            <td style=\"width: 10%;\">{{Battery_Low}}</td>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/FCP_Alarm.svg\" width=\"20px\"><br>\n            </td>\n            <td style=\"width: 18;\">消防控制箱警報</td>\n            <td style=\"width: 10%;\">{{FCP_Alarm}}</td>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/Intrusion_Detected.svg\" width=\"20px\"><br>\n            </td>\n            <td style=\"width: 18%;\">侵入警報</td>\n            <td style=\"width: 10%;\">{{Intrusion_Detected}}</td>\n        </tr>\n        <tr>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/Sensor_Disconnect.svg\" width=\"20px\"><br>\n            </td>\n            <td style=\"width: 18%;\">斷線警報</td>\n            <td style=\"width: 10%;\">{{Sensor_Disconnect}}</td>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/Door_Contact.svg\" width=\"20px\"><br>\n            </td>\n            <td style=\"width: 18%;\">門窗警報</td>\n            <td style=\"width: 10%;\">{{Door_Contact}}</td>\n            <td style=\"width: 5%; text-align: center;\">\n                <img src=\"/public/img/icon/FallDown_Detected.svg\" width=\"20px\"><br>\n            </td>\n            <td style=\"width: 18%;\">跌倒警報</td>\n            <td style=\"width: 10%;\">{{FallDown_Detected}}</td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "html"
+        },
+        "editors": [
+          "styles",
+          "default"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.border_td {\n  border-top: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select\n\tSUM(CASE WHEN messageType = 'Water_Leakage' THEN 1 END) AS Water_Leakage,\n    SUM(CASE WHEN messageType = 'Temperature_Humidity' THEN 1 END) AS Temperature_Humidity,\n    SUM(CASE WHEN messageType = 'Battery_Low' THEN 1 END) AS Battery_Low,\n    SUM(CASE WHEN messageType = 'Sensor_Disconnect' THEN 1 END) AS Sensor_Disconnect,\n    SUM(CASE WHEN messageType = 'Loitering_Detected' THEN 1 END) AS Loitering_Detected,\n    SUM(CASE WHEN messageType = 'Intrusion_Detected' THEN 1 END) AS Intrusion_Detected,\n    SUM(CASE WHEN messageType = 'FallDown_Detected' THEN 1 END) AS FallDown_Detected,\n    SUM(CASE WHEN messageType = 'FCP_Alarm' THEN 1 END) AS FCP_Alarm,\n    SUM(CASE WHEN messageType = 'Door_Contact' THEN 1 END) AS Door_Contact\nfrom alert_db.message_table",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "警報訊息屬性",
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 13,
+      "panels": [],
+      "title": "感測器設定",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 4,
+        "x": 0,
+        "y": 5
+      },
+      "id": 4,
+      "options": {
+        "alwaysVisibleFilter": true,
+        "autoScroll": true,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "table",
+        "emptyValue": false,
+        "favorites": false,
+        "filter": false,
+        "groupSelection": false,
+        "header": false,
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": false,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": true,
+        "variable": "Building"
+      },
+      "pluginVersion": "3.2.0",
+      "title": "物業大樓",
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "https://${Domain}/d/${__dashboard.uid}/${__dashboard.name}?orgId=${__org.id}&var-Building=${Building}&var-Floor=${Floor}&var-SensorID=﻿${__data.fields[deviceID]}"
+            }
+          ],
+          "mappings": [
+            {
+              "options": {
+                "cam": {
+                  "index": 1,
+                  "text": "/public/img/icon/cam.svg"
+                },
+                "iot": {
+                  "index": 0,
+                  "text": "/public/img/icon/iot.svg"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "category"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "image"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 60
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "displayName",
+                "value": "類別"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "deviceID"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 4,
+        "y": 5
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT category, sensorName, deviceID FROM alert_db.device_table\nWHERE propertyCode = \"${Code}\"\nAND floor = \"${Floor}\" ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "感測器清單",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "sensorName": "名稱",
+              "sensorType": "類別"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 10,
+        "y": 5
+      },
+      "id": 20,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "hidden": false,
+            "id": "deviceID",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:deviceID",
+              "refId": "A",
+              "value": "deviceID"
+            },
+            "section": "",
+            "title": "感測器 ID",
+            "tooltip": "",
+            "type": "string",
+            "uid": "024cbdad-6296-4d0f-91ec-637127690c30",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "hidden": false,
+            "id": "propertyCode",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:propertyCode",
+              "refId": "A",
+              "value": "propertyCode"
+            },
+            "section": "",
+            "title": "物業代碼",
+            "tooltip": "",
+            "type": "string",
+            "uid": "a91ad7a8-dc27-4a65-8988-c5e399d47d59",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "hidden": false,
+            "id": "sensorName",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:sensorName",
+              "refId": "A",
+              "value": "sensorName"
+            },
+            "section": "",
+            "title": "感測器名稱",
+            "tooltip": "",
+            "type": "string",
+            "uid": "1465be81-61ac-4990-9d11-a2ede51454a2",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "id": "sensorType",
+            "labelWidth": 15,
+            "options": [
+              {
+                "icon": "camera",
+                "id": "cam",
+                "label": "IP Camera",
+                "type": "string",
+                "value": "cam"
+              },
+              {
+                "icon": "bell",
+                "id": "iot",
+                "label": "IoT Sensor",
+                "type": "string",
+                "value": "iot"
+              }
+            ],
+            "optionsSource": "Custom",
+            "queryField": {
+              "label": "A:sensorType",
+              "refId": "A",
+              "value": "sensorType"
+            },
+            "section": "",
+            "title": "感測器類別",
+            "tooltip": "",
+            "type": "radio",
+            "uid": "64a37f3d-d6f8-4d52-863f-153cec62c5ae",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "hidden": false,
+            "id": "floor",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:floor",
+              "refId": "A",
+              "value": "floor"
+            },
+            "section": "",
+            "showIf": "",
+            "title": "樓層",
+            "tooltip": "",
+            "type": "string",
+            "uid": "955a70ac-287e-403c-a854-18e81910e7ac",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "hidden": false,
+            "id": "area",
+            "labelWidth": 15,
+            "queryField": {
+              "label": "A:area",
+              "refId": "A",
+              "value": "area"
+            },
+            "section": "",
+            "title": "關注區域",
+            "tooltip": "",
+            "type": "string",
+            "uid": "9b14c8db-cbaa-4acf-8cb9-9cd4f6b22538",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "console.log(context.panel.data, context.panel.response, context.panel.initial, context.panel.elements);\n\nreturn;\n\n/**\n * Data Source\n * Requires form elements to be defined\n */\nconst dataQuery = context.utils.toDataQueryResponse(context.panel.response);\nconsole.log(dataQuery);",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": false,
+          "highlightColor": "red",
+          "method": "query",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "變更",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "datasource": "MySQL",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn  {\n  rawSql: `update alert_db.device_table set sensorType='${payload.sensorType}', \n        propertyCode='${payload.propertyCode}', sensorName='${payload.sensorName}',\n        floor='${payload.floor}', area='${payload.area}' \n        where deviceID='${payload.deviceID}'`,\n  format: \"table\",\n};",
+          "method": "datasource",
+          "payload": {
+            "0": "c",
+            "1": "o",
+            "2": "n",
+            "3": "s",
+            "4": "t",
+            "5": " ",
+            "6": "p",
+            "7": "a",
+            "8": "y",
+            "9": "l",
+            "10": "o",
+            "11": "a",
+            "12": "d",
+            "13": " ",
+            "14": "=",
+            "15": " ",
+            "16": "{",
+            "17": "}",
+            "18": ";",
+            "19": "\n",
+            "20": "\n",
+            "21": "c",
+            "22": "o",
+            "23": "n",
+            "24": "t",
+            "25": "e",
+            "26": "x",
+            "27": "t",
+            "28": ".",
+            "29": "p",
+            "30": "a",
+            "31": "n",
+            "32": "e",
+            "33": "l",
+            "34": ".",
+            "35": "e",
+            "36": "l",
+            "37": "e",
+            "38": "m",
+            "39": "e",
+            "40": "n",
+            "41": "t",
+            "42": "s",
+            "43": ".",
+            "44": "f",
+            "45": "o",
+            "46": "r",
+            "47": "E",
+            "48": "a",
+            "49": "c",
+            "50": "h",
+            "51": "(",
+            "52": "(",
+            "53": "e",
+            "54": "l",
+            "55": "e",
+            "56": "m",
+            "57": "e",
+            "58": "n",
+            "59": "t",
+            "60": ")",
+            "61": " ",
+            "62": "=",
+            "63": ">",
+            "64": " ",
+            "65": "{",
+            "66": "\n",
+            "67": " ",
+            "68": " ",
+            "69": "i",
+            "70": "f",
+            "71": " ",
+            "72": "(",
+            "73": "!",
+            "74": "e",
+            "75": "l",
+            "76": "e",
+            "77": "m",
+            "78": "e",
+            "79": "n",
+            "80": "t",
+            "81": ".",
+            "82": "v",
+            "83": "a",
+            "84": "l",
+            "85": "u",
+            "86": "e",
+            "87": ")",
+            "88": " ",
+            "89": "{",
+            "90": "\n",
+            "91": " ",
+            "92": " ",
+            "93": " ",
+            "94": " ",
+            "95": "r",
+            "96": "e",
+            "97": "t",
+            "98": "u",
+            "99": "r",
+            "100": "n",
+            "101": ";",
+            "102": "\n",
+            "103": " ",
+            "104": " ",
+            "105": "}",
+            "106": "\n",
+            "107": "\n",
+            "108": " ",
+            "109": " ",
+            "110": "p",
+            "111": "a",
+            "112": "y",
+            "113": "l",
+            "114": "o",
+            "115": "a",
+            "116": "d",
+            "117": "[",
+            "118": "e",
+            "119": "l",
+            "120": "e",
+            "121": "m",
+            "122": "e",
+            "123": "n",
+            "124": "t",
+            "125": ".",
+            "126": "i",
+            "127": "d",
+            "128": "]",
+            "129": " ",
+            "130": "=",
+            "131": " ",
+            "132": "e",
+            "133": "l",
+            "134": "e",
+            "135": "m",
+            "136": "e",
+            "137": "n",
+            "138": "t",
+            "139": ".",
+            "140": "v",
+            "141": "a",
+            "142": "l",
+            "143": "u",
+            "144": "e",
+            "145": ";",
+            "146": "\n",
+            "147": "}",
+            "148": ")",
+            "149": "\n",
+            "150": "\n",
+            "151": "r",
+            "152": "e",
+            "153": "t",
+            "154": "u",
+            "155": "r",
+            "156": "n",
+            "157": " ",
+            "158": "p",
+            "159": "a",
+            "160": "y",
+            "161": "l",
+            "162": "o",
+            "163": "a",
+            "164": "d",
+            "165": ";",
+            "dataset": "alert_db",
+            "editorMode": "code",
+            "format": "table",
+            "rawSql": "",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          "payloadMode": "custom"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.device_table\nWHERE deviceID = \"${SensorID}\" \nAND floor = \"${Floor}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "感測器屬性",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "https://${Domain}/d/${__dashboard.uid}/${__dashboard.name}?orgId=${__org.id}&var-Building=${Building}&var-Floor=${Floor}&var-SensorID=﻿${SensorID}&var-Key=﻿${__data.fields[deviceID]}_${__data.fields[dataChannel]}"
+            }
+          ],
+          "mappings": [
+            {
+              "options": {
+                "Battery_Low": {
+                  "index": 4,
+                  "text": "public/img/icon/Battery_Low.svg"
+                },
+                "Door_Contact": {
+                  "index": 3,
+                  "text": "public/img/icon/Door_Contact.svg"
+                },
+                "FCP_Alarm": {
+                  "index": 9,
+                  "text": "public/img/icon/FCP_Alarm.svg"
+                },
+                "FallDown_Detected": {
+                  "index": 8,
+                  "text": "public/img/icon/FallDown_Detected.svg"
+                },
+                "IAQ": {
+                  "index": 2,
+                  "text": "public/img/icon/IAQ.svg"
+                },
+                "Intrusion_Detected": {
+                  "index": 5,
+                  "text": "public/img/icon/Intrusion_Detected.svg"
+                },
+                "Loitering_Detected": {
+                  "index": 6,
+                  "text": "public/img/icon/Loitering_Detected.svg"
+                },
+                "Sensor_Disconnect": {
+                  "index": 7,
+                  "text": "public/img/icon/Sensor_Disconnect.svg"
+                },
+                "Temperature_Humidity": {
+                  "index": 1,
+                  "text": "public/img/icon/Temperature_Humidity.svg"
+                },
+                "Water_Leakage": {
+                  "index": 0,
+                  "text": "public/img/icon/Water_Leakage.svg"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "image"
+                }
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "deviceID"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 17,
+        "y": 5
+      },
+      "id": 12,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.message_table\nWHERE deviceID = \"${SensorID}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "警報訊息清單- $Key",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "deviceID": false
+            },
+            "indexByName": {},
+            "renameByName": {
+              "dataChannel": "Data",
+              "messageType": "Type"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "thresholdsStyle": {
+              "mode": "color",
+              "thresholds": []
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 4,
+        "x": 0,
+        "y": 14
+      },
+      "id": 5,
+      "options": {
+        "alwaysVisibleFilter": false,
+        "autoScroll": false,
+        "collapsedByDefault": false,
+        "customValue": false,
+        "displayMode": "button",
+        "emptyValue": false,
+        "favorites": false,
+        "filter": false,
+        "groupSelection": false,
+        "header": true,
+        "padding": 10,
+        "persistent": false,
+        "saveSelectedGroup": false,
+        "saveSelectedGroupKey": "",
+        "showGroupTotal": false,
+        "showLabel": false,
+        "showName": false,
+        "showResetButton": false,
+        "showTotal": false,
+        "statusSort": false,
+        "sticky": false,
+        "variable": "Floor"
+      },
+      "pluginVersion": "3.2.0",
+      "title": "樓層",
+      "type": "volkovlabs-variable-panel"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 6,
+        "x": 4,
+        "y": 14
+      },
+      "id": 11,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\" style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 50%; border: rgb(0, 0, 0); color: rgb(247, 218, 100);\" class=\"fr-cell-fixed \">平面圖 :</td>\n            <td style=\"width: 50%; border: rgb(0, 0, 0);\" rowspan=\"2\">\n            <img src=\"/public/img/floorplan/{{variableValue '${Code}'}}/{{variableValue '${Floor}'}}.jpg\"\n                onerror=\"this.src='/public/img/icon/pic-err.svg'\" width=\"150px\"/>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 50%; border: rgb(0, 0, 0); vertical-align: top;\">\n                {{variableValue '${Floor}'}}\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 50%; border: rgb(0, 0, 0); color: rgb(247, 218, 100);\">周邊區域 :</td>\n            <td style=\"width: 50%; border: rgb(0, 0, 0);\" rowspan=\"2\">\n                <img src=\"/public/img/floorplan/{{variableValue '${Code}'}}/{{variableValue '${Area}'}}.jpg\"\n                onerror=\"this.src='/public/img/icon/pic-err.svg'\" width=\"150px\"/>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 50%; border: rgb(0, 0, 0); vertical-align: top;\">\n                {{variableValue '${Area}'}}<br>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 50%; border: rgb(0, 0, 0); color: rgb(247, 218, 100);\">感測器周邊 :</td>\n            <td style=\"width: 50%; border: rgb(0, 0, 0);\" rowspan=\"2\" class=\"fr-cell-handler \">\n                <img src=\"/public/img/floorplan/{{variableValue '${Code}'}}/{{variableValue '${Sensor}'}}.jpg\"\n                onerror=\"this.src='/public/img/icon/pic-err.svg'\" width=\"150px\"/>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 50%; border: rgb(0, 0, 0); vertical-align: top;\">\n                {{variableValue '${Sensor}'}}<br>\n            </td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "markdown"
+        },
+        "editors": [
+          "default",
+          "styles"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "data",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.border_td {\n  border-top: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "5.1.0",
+      "title": "影像檔預覽",
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 10,
+        "y": 14
+      },
+      "id": 21,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "id": "fileOption",
+            "labelWidth": 8,
+            "options": [
+              {
+                "id": "1",
+                "label": "Floor Plan",
+                "type": "string",
+                "value": "1"
+              },
+              {
+                "id": "2",
+                "label": "Area View",
+                "type": "string",
+                "value": "2"
+              },
+              {
+                "id": "3",
+                "label": "Sensor View",
+                "type": "string",
+                "value": "3"
+              }
+            ],
+            "optionsSource": "Custom",
+            "section": "",
+            "title": "類別",
+            "tooltip": "",
+            "type": "radio",
+            "uid": "bfbece3c-2d7d-46d3-9958-555952162952",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "accept": "jpg",
+            "id": "file",
+            "labelWidth": 8,
+            "multiple": false,
+            "section": "",
+            "showIf": "",
+            "title": "檔案",
+            "tooltip": "",
+            "type": "file",
+            "uid": "e0531c29-ea85-489b-8da1-34108fe2cb0a",
+            "unit": "",
+            "value": []
+          }
+        ],
+        "initial": {
+          "code": "console.log(context.panel.data, context.panel.response, context.panel.initial, context.panel.elements);\n\nreturn;\n\n/**\n * Data Source\n * Requires form elements to be defined\n */\nconst dataQuery = context.utils.toDataQueryResponse(context.panel.response);\nconsole.log(dataQuery);",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": false,
+          "highlightColor": "red",
+          "method": "-",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "上傳",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Upload', 'File uploaded successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'Please make sure the type option is correct.']);\n}",
+          "confirm": false,
+          "contentType": "multipart/form-data",
+          "getPayload": "const payload = {};\n\npayload['code'] = '${Code}';\npayload['floor'] = '${Floor}';\npayload['area'] = '${Area}';\npayload['sensor'] = '${Sensor}';\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\nreturn payload;",
+          "method": "POST",
+          "payload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn payload;",
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/config/upload"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "title": "影像檔上傳",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 11,
+        "w": 7,
+        "x": 17,
+        "y": 14
+      },
+      "id": 10,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "id": "type",
+            "labelWidth": 15,
+            "options": [
+              {
+                "icon": "rss",
+                "id": "Door_Contact",
+                "label": "門窗警報",
+                "type": "string",
+                "value": "Door_Contact"
+              },
+              {
+                "icon": "rss",
+                "id": "Water_Leakage",
+                "label": "漏水警報",
+                "type": "string",
+                "value": "Water_Leakage"
+              },
+              {
+                "icon": "rss",
+                "id": "Battery_Low",
+                "label": "電量不足警報",
+                "type": "string",
+                "value": "Battery_Low"
+              },
+              {
+                "icon": "rss",
+                "id": "Temperature_Humidity",
+                "label": "溫濕度警報",
+                "type": "string",
+                "value": "Temperature_Humidity"
+              },
+              {
+                "icon": "rss",
+                "id": "Sensor_Disconnect",
+                "label": "感測器斷線",
+                "type": "string",
+                "value": "Sensor_Disconnect"
+              },
+              {
+                "icon": "rss",
+                "id": "FCP_Alarm",
+                "label": "消防控制箱警報",
+                "type": "string",
+                "value": "FCP_Alarm"
+              },
+              {
+                "icon": "rss",
+                "id": "FallDown_Detected",
+                "label": "跌倒警報",
+                "type": "string",
+                "value": "FallDown_Detected"
+              },
+              {
+                "icon": "camera",
+                "id": "Intrusion_Detected",
+                "label": "入侵警報",
+                "type": "string",
+                "value": "Intrusion_Detected"
+              },
+              {
+                "icon": "camera",
+                "id": "Loitering_Detected",
+                "label": "徘徊警報",
+                "type": "string",
+                "value": "Loitering_Detected"
+              }
+            ],
+            "optionsSource": "Custom",
+            "section": "",
+            "title": "警報類別",
+            "tooltip": "",
+            "type": "select",
+            "uid": "e4fb225e-13da-4dfc-949a-24c818dddd61",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "hidden": false,
+            "id": "group",
+            "labelWidth": 15,
+            "section": "",
+            "title": "感測器供應商",
+            "tooltip": "",
+            "type": "string",
+            "uid": "b29905e9-5bec-4813-8a23-210852032751",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "id": "x",
+            "labelWidth": 18,
+            "section": "",
+            "title": "座標位置 (X)",
+            "tooltip": "",
+            "type": "number",
+            "uid": "782bd7c7-3445-440d-968d-02357a73c083",
+            "unit": "",
+            "value": 0
+          },
+          {
+            "id": "y",
+            "labelWidth": 18,
+            "section": "",
+            "title": "座標位置 (Y)",
+            "tooltip": "",
+            "type": "number",
+            "uid": "c9614729-9caf-47d1-bf3d-597e755786f1",
+            "unit": "",
+            "value": 0
+          },
+          {
+            "id": "priority",
+            "labelWidth": 15,
+            "options": [
+              {
+                "id": "Critical",
+                "label": "嚴重",
+                "type": "string",
+                "value": "Critical"
+              },
+              {
+                "id": "High",
+                "label": "高",
+                "type": "string",
+                "value": "High"
+              },
+              {
+                "id": "Medium",
+                "label": "中",
+                "type": "string",
+                "value": "Medium"
+              }
+            ],
+            "optionsSource": "Custom",
+            "section": "",
+            "title": "優先等級",
+            "tooltip": "",
+            "type": "radio",
+            "uid": "11a0b404-1974-4398-be41-1f4b254e19db",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "hidden": false,
+            "id": "sop",
+            "labelWidth": 20,
+            "section": "",
+            "title": "SOP代碼",
+            "tooltip": "",
+            "type": "string",
+            "uid": "036f5e5b-9dde-4b81-a9e2-03b0fe66bb24",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "hidden": false,
+            "id": "cam_link",
+            "labelWidth": 20,
+            "section": "",
+            "title": "連動攝像機ID",
+            "tooltip": "",
+            "type": "string",
+            "uid": "bfb24953-4dea-45d9-a57a-97009c53ceff",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "const alarmType = context.panel.elements.find((element) => element.id === \"channel\");\nconst sensorProvider = context.panel.elements.find((element) => element.id === \"provider\");\n\n\n",
+          "contentType": "application/json",
+          "getPayload": "return {\n  rawSql: '',\n  format: 'table',\n}",
+          "highlight": false,
+          "highlightColor": "red",
+          "method": "GET",
+          "payload": {},
+          "url": "https://${Domain}/api/savills/config/alarm?key=${Key}"
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occured updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {\n  rawSql: '',\n  format: 'table',\n}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "變更",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['系統設定', '屬性變更成功']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['系統設定', '權限不足']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\npayload['code'] = '${Code}';\npayload['deviceID'] = '${SensorID}';\npayload['name'] = '${Sensor}';\n\npayload['key'] = '${Key}';\nreturn payload;\n",
+          "method": "POST",
+          "payload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn payload;",
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/config/alarm"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "警報訊息屬性",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 10,
+        "y": 21
+      },
+      "id": 22,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "hidden": false,
+            "id": "email",
+            "labelWidth": 15,
+            "section": "",
+            "title": "收件者電郵",
+            "tooltip": "",
+            "type": "string",
+            "uid": "371b2909-491c-4117-9f6f-2756010a0bea",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "const email = context.panel.elements.find((element) => element.id === \"email\");\n\nemail.value = \"${__user.email}\";\n\nreturn;\n",
+          "contentType": "application/json",
+          "getPayload": "return {}",
+          "highlight": false,
+          "highlightColor": "red",
+          "method": "-",
+          "payload": {}
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 2,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occurred updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-download",
+          "text": "Export",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['Export', 'Export config success.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Export', 'Permission denied! Please login as supervisor.']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn payload;",
+          "method": "-",
+          "payload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn payload;",
+          "payloadMode": "all"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "title": "設定檔匯出",
+      "type": "volkovlabs-form-panel"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 7,
+      "panels": [],
+      "title": "登入帳號設定",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 5,
+        "x": 0,
+        "y": 26
+      },
+      "id": 3,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<table style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 15%; text-align: center; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/user.png\" width=\"18px\"><br>\n            </td>\n            <td style=\"width: 85%; border: rgb(0, 0, 0);\"><span style=\"font-size: 28px;\">${__user.login}</span></td>\n        </tr>\n        <tr>\n            <td style=\"width: 15%; text-align: center; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/case.png\" width=\"18px\"><br>\n            </td>\n            <td style=\"width: 85%; border: rgb(0, 0, 0);\">${__org.name}</td>\n        </tr>\n        <tr>\n            <td style=\"width: 15%; text-align: center; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/pin.png\" width=\"18px\"><br>\n            </td>\n            <td style=\"width: 85%; border: rgb(0, 0, 0);\">${Team}</td>\n        </tr>\n    </tbody>\n</table>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.1.6",
+      "title": "目前登入帳號",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "volkovlabs-grapi-datasource",
+        "uid": "P26F10315EDE95C88"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "https://${Domain}/d/${__dashboard.uid}/${__dashboard.name}?orgId=${__org.id}&var-User=﻿${__data.fields[login]}&var-Role=${__data.fields[role]}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Last Login"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeFromNow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Role"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 11,
+        "x": 5,
+        "y": 26
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "annotationDashboard": "",
+          "annotationLimit": 100,
+          "annotationNewState": "",
+          "annotationPattern": "",
+          "annotationPrevState": "",
+          "annotationRange": "",
+          "annotationRules": true,
+          "annotationType": "",
+          "datasource": {
+            "type": "volkovlabs-grapi-datasource",
+            "uid": "P26F10315EDE95C88"
+          },
+          "refId": "A",
+          "requestType": "orgUsers"
+        }
+      ],
+      "title": "帳號清單",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "authLabels": true,
+              "avatarUrl": true,
+              "isDisabled": true,
+              "isExternallySynced": true,
+              "lastSeenAt": false,
+              "lastSeenAtAge": true,
+              "orgId": true,
+              "role": false,
+              "userId": true
+            },
+            "indexByName": {
+              "authLabels": 9,
+              "avatarUrl": 5,
+              "email": 3,
+              "isDisabled": 8,
+              "isExternallySynced": 11,
+              "lastSeenAt": 6,
+              "lastSeenAtAge": 7,
+              "login": 2,
+              "name": 4,
+              "orgId": 0,
+              "role": 10,
+              "userId": 1
+            },
+            "renameByName": {
+              "avatarUrl": "",
+              "email": "電郵",
+              "lastSeenAt": "上次登入",
+              "login": "登入帳號",
+              "name": "帳號名稱",
+              "role": "Role"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 26
+      },
+      "id": 2,
+      "options": {
+        "buttonGroup": {
+          "orientation": "center",
+          "size": "md"
+        },
+        "confirmModal": {
+          "body": "Please confirm to update changed values",
+          "cancel": "Cancel",
+          "columns": {
+            "include": [
+              "name",
+              "oldValue",
+              "newValue"
+            ],
+            "name": "Label",
+            "newValue": "New Value",
+            "oldValue": "Old Value"
+          },
+          "confirm": "Confirm",
+          "elementDisplayMode": "modified",
+          "title": "Confirm update request"
+        },
+        "elementValueChanged": "",
+        "elements": [
+          {
+            "getOptions": "",
+            "id": "user",
+            "labelWidth": 20,
+            "options": [],
+            "optionsSource": "Code",
+            "section": "",
+            "showIf": "",
+            "title": "登入帳號",
+            "tooltip": "",
+            "type": "disabled",
+            "uid": "6bd75b21-6ce1-4c64-beb0-7c4f3b550736",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "id": "team",
+            "labelWidth": 20,
+            "options": [],
+            "optionsSource": "Custom",
+            "section": "",
+            "showIf": "",
+            "title": "物業群組",
+            "tooltip": "",
+            "type": "disabled",
+            "uid": "97a318f1-2bb6-43c1-bbb1-02d2070bc97f",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "id": "role",
+            "labelWidth": 20,
+            "options": [],
+            "optionsSource": "Query",
+            "section": "",
+            "title": "權限規則",
+            "tooltip": "",
+            "type": "disabled",
+            "uid": "48cf2ce6-a594-40c9-821a-70f4ba47a340",
+            "unit": "",
+            "value": ""
+          },
+          {
+            "id": "lang",
+            "labelWidth": 20,
+            "options": [
+              {
+                "icon": "check-circle",
+                "id": "en",
+                "label": "English",
+                "type": "string",
+                "value": "en"
+              },
+              {
+                "icon": "check-circle",
+                "id": "tc",
+                "label": "繁中",
+                "type": "string",
+                "value": "tc"
+              }
+            ],
+            "optionsSource": "Custom",
+            "section": "",
+            "title": "語言",
+            "tooltip": "",
+            "type": "radio",
+            "uid": "59fc81b4-5b00-48dd-9e39-3857d59df9ea",
+            "unit": "",
+            "value": ""
+          }
+        ],
+        "initial": {
+          "code": "const userName = context.panel.elements.find((element) => element.id === \"user\");\nconst userRole = context.panel.elements.find((element) => element.id === \"role\");\n\nuserName.value = \"$User\";\nuserRole.value = \"$Role\";\n\nif (userName.value != null) {\n  const langOpt = context.panel.elements.find((element) => element.id === \"lang\");\n  const propertyZone = context.panel.elements.find((element) => element.id === \"team\");\n\n  if (propertyZone) {\n    return propertyZone.value === propertyZone.team;\n  }\n \n  if (langOpt) {\n    return langOpt.value === langOpt.lang;\n  }\n}",
+          "contentType": "application/json",
+          "getPayload": "return {\n  rawSql: '',\n  format: 'table',\n}",
+          "header": [],
+          "highlight": false,
+          "highlightColor": "red",
+          "method": "GET",
+          "payload": {},
+          "url": "https://${Domain}/api/savills/config/user?account=${User}&org=${__org.name}"
+        },
+        "layout": {
+          "orientation": "horizontal",
+          "padding": 10,
+          "sectionVariant": "default",
+          "variant": "single"
+        },
+        "reset": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "process",
+          "text": "Reset",
+          "variant": "hidden"
+        },
+        "resetAction": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'An error occured updating values.']);\n}",
+          "confirm": false,
+          "getPayload": "return {\n  rawSql: '',\n  format: 'table',\n}",
+          "mode": "initial",
+          "payload": {}
+        },
+        "saveDefault": {
+          "icon": "save",
+          "text": "Save Default",
+          "variant": "hidden"
+        },
+        "submit": {
+          "backgroundColor": "purple",
+          "foregroundColor": "yellow",
+          "icon": "cloud-upload",
+          "text": "變更",
+          "variant": "primary"
+        },
+        "sync": true,
+        "update": {
+          "code": "if (context.panel.response && context.panel.response.ok) {\n  context.grafana.notifySuccess(['Update', 'Values updated successfully.']);\n  context.grafana.locationService.reload();\n} else {\n  context.grafana.notifyError(['Update', 'Permission Deny!']);\n}",
+          "confirm": false,
+          "contentType": "application/json",
+          "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\npayload['login'] = '${__user.login}';\npayload['org'] = '${__org.name}';\nreturn payload;\n",
+          "method": "POST",
+          "payload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn payload;",
+          "payloadMode": "custom",
+          "url": "https://${Domain}/api/savills/config/user"
+        },
+        "updateEnabled": "auto"
+      },
+      "pluginVersion": "4.2.0",
+      "title": "帳號屬性",
+      "type": "volkovlabs-form-panel"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "hide": 2,
+        "name": "User",
+        "query": "",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "hide": 2,
+        "name": "Role",
+        "query": "",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "hide": 2,
+        "name": "SensorID",
+        "query": "",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT sensorName FROM alert_db.device_table where deviceID = \"${SensorID}\"",
+        "hide": 2,
+        "includeAll": false,
+        "label": "sensor",
+        "multi": false,
+        "name": "Sensor",
+        "options": [],
+        "query": "SELECT sensorName FROM alert_db.device_table where deviceID = \"${SensorID}\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "robertcloud.net",
+          "value": "robertcloud.net"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "GET domain",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Domain",
+        "options": [],
+        "query": "GET domain",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Stage_I",
+          "value": "Stage_I"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "HGET ${__user.login}@${__org.name} team",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Team",
+        "options": [],
+        "query": "HGET ${__user.login}@${__org.name} team",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "第一太平戴維斯大廈",
+          "value": "第一太平戴維斯大廈"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT chinese FROM alert_db.map_table WHERE  team = \"${Team}\"",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Building",
+        "options": [],
+        "query": "SELECT chinese FROM alert_db.map_table WHERE  team = \"${Team}\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "0888_00",
+          "value": "0888_00"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT property_code FROM alert_db.map_table where chinese in (${Building:doublequote});",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Code",
+        "options": [],
+        "query": "SELECT property_code FROM alert_db.map_table where chinese in (${Building:doublequote});",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "GF",
+          "value": "GF"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT DISTINCT floor FROM alert_db.device_table where propertyCode in (${Code:doublequote})",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Floor",
+        "options": [],
+        "query": "SELECT DISTINCT floor FROM alert_db.device_table where propertyCode in (${Code:doublequote})",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "P211906C1C32DB77E"
+        },
+        "definition": "SELECT area FROM alert_db.device_table where deviceID = \"${SensorID}\"",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Area",
+        "options": [],
+        "query": "SELECT area FROM alert_db.device_table where deviceID = \"${SensorID}\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "hide": 2,
+        "name": "Key",
+        "query": "",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "系統設定",
+  "uid": "e8553aca-c425-4e51-91db-6df9d2ac8e22",
+  "version": 2,
+  "weekStart": ""
+}

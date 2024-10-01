@@ -1,0 +1,1291 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "afterRender": "",
+        "content": "<span style=\"font-size: 28px;\">{{english}}</span>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "markdown"
+        },
+        "editors": [],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": true
+      },
+      "pluginVersion": "4.5.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT english, contact, telno1, telno2 FROM alert_db.map_table \nWHERE property_code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 50,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "7D"
+            },
+            "properties": [
+              {
+                "id": "custom.axisColorMode",
+                "value": "text"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 6,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "barRadius": 0.2,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.6,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 30
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "area",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100
+      },
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT area, floor, alarm_type, alarm_priority, count(*) 7D FROM alert_db.alert_table \nwhere start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY) and code = \"${Code}\" \ngroup by area, floor, alarm_type, alarm_priority\norder by floor ;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT area, floor, alarm_type, alarm_priority, count(*) 14D FROM alert_db.alert_table \nwhere start_time between DATE_SUB(NOW(), INTERVAL 14 DAY) and DATE_SUB(NOW(), INTERVAL 7 DAY)\nand code = \"${Code}\" \ngroup by area, floor, alarm_type, alarm_priority\norder by floor ;",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Incidents Analysis by Areas of Interest",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "area",
+            "mode": "outerTabular"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "alarm_priority 1": true,
+              "alarm_priority 2": true,
+              "alarm_type 1": false,
+              "alarm_type 2": true,
+              "floor 1": false,
+              "floor 2": true
+            },
+            "indexByName": {
+              "14D": 4,
+              "7D": 5,
+              "alarm_priority 1": 3,
+              "alarm_priority 2": 8,
+              "alarm_type 1": 2,
+              "alarm_type 2": 7,
+              "area": 0,
+              "floor 1": 1,
+              "floor 2": 6
+            },
+            "renameByName": {
+              "14D": "Weeks Before",
+              "7D": "Last Week",
+              "alarm_type 1": "",
+              "floor 1": "Floor"
+            }
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 22,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "hideTimeOverride": true,
+      "id": 9,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\" style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td class=\"border_td\" style=\"width: 15%; text-align: center; border: rgb(0, 0, 0);\" rowspan=\"2\">\n              {{#if (eq sensorType 'cam')}}\n                <img src=\"/public/img/icon/cam.svg\" width=\"30px\"><br>\n              {{else}} \n                <img src=\"/public/img/icon/iot.svg\" width=\"30px\"><br>\n              {{/if}}\n              </td>\n            <td style=\"width: 14.9723%; text-align: right; border: rgb(0, 0, 0);\">\n              <img src=\"/public/img/icon/box.svg\" width=\"24px\"><br></td>\n            <td style=\"width: 40%; border: rgb(0, 0, 0);\">{{sensorName}}</td>\n            <td style=\"width: 29.39%; text-align: center; border: rgb(0, 0, 0);\" rowspan=\"2\">\n              {{#if (eq Value Null)}} \n              <img src=\"/public/img/icon/off.svg\" width=\"30px\"><br>\n              {{else}} \n              <img src=\"/public/img/icon/on.svg\" width=\"30px\"><br>\n              {{/if}}\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 14.9723%; text-align: right; border: rgb(0, 0, 0);\">\n            <img src=\"/public/img/icon/Area_of_Interest.svg\" width=\"20px\"><br></td>\n            <td class=\"border_td\" style=\"width: 37.3383%; border: rgb(0, 0, 0);\">{{area}}</td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "markdown"
+        },
+        "editors": [
+          "styles",
+          "default"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.border_td {\n  border-top: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}",
+        "wrap": true
+      },
+      "pluginVersion": "4.5.0",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT * FROM alert_db.device_table\nWHERE propertyCode = \"$Code\" ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "{__name__=~\"probe_.+|data_.+\",code=\"${Code}\"}",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "timeFrom": "1d",
+      "title": "Sensor Status",
+      "transformations": [
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "B"
+          },
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "area": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "code": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "name": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "area",
+            "mode": "outerTabular"
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 6,
+        "x": 0,
+        "y": 2
+      },
+      "id": 10,
+      "options": {
+        "afterRender": "",
+        "content": "<table class=\"border_table\" style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td class=\"border_td\" style=\"width: 15%; border: rgb(0, 0, 0);\"><span style=\"font-size: 22px;\">\n                {{floor}}</span></td>\n            <td style=\"width: 60%; border: rgb(0, 0, 0);\" colspan=\"2\"><span style=\"font-size: 22px;\">\n                {{area}}</span></td>\n        </tr>\n        <tr>\n            <td style=\"width: 15%; text-align: right; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/Drop.svg\" width=\"24px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 60%; border: rgb(0, 0, 0);\"><span style=\"text-align: start; font-size: 14px;\">Water Leakage </span></td>\n            <td style=\"width: 25%; text-align: center; border: rgb(0, 0, 0);\"><span style=\"color: rgb(247, 218, 100); font-size: 20px;\">\n                {{#if (eq alarm_type \"Water_Leakage\")}}\n                    {{#if (eq 7D Null)}}\n                        0\n                    {{else}}\n                        {{7D}}\n                    {{/if}}\n                {{else}}\n                    0\n                {{/if}}\n            </span></td>\n        </tr>\n        <tr>\n            <td style=\"width: 15%; text-align: right; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/PersonSimpleRun.svg\" width=\"24px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 60%; border: rgb(0, 0, 0);\"><span style=\"text-align: start; font-size: 12pt;\"><span style=\"text-align: start; font-size: 14px;\">Intrusion Detected</span></span><br></td>\n            <td style=\"width: 25%; text-align: center; border: rgb(0, 0, 0);\"><span style=\"color: rgb(247, 218, 100); font-size: 20px;\">\n                {{#if (eq alarm_type \"Intrusion_Detected\")}}\n                    {{#if (eq 7D Null)}}\n                        0\n                    {{else}}\n                        {{7D}}\n                    {{/if}}\n                {{else}}\n                    0\n                {{/if}}\n            </span></td>\n        </tr>\n        <tr>\n            <td style=\"width: 15%; text-align: right; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/BatteryLow.svg\" width=\"24px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 60%; border: rgb(0, 0, 0);\"><span style=\"text-align: start; font-size: 14px;\">Battery Low</span><br></td>\n            <td style=\"width: 25%; text-align: center; border: rgb(0, 0, 0);\"><span style=\"color: rgb(247, 218, 100);\"><span style=\"font-size: 20px;\">\n                {{#if (eq alarm_type \"Battery_Low\")}}\n                    {{7D}}\n                {{else}}\n                    0\n                {{/if}}\n            </span></span></td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "none",
+          "language": "markdown"
+        },
+        "editors": [
+          "styles",
+          "default"
+        ],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": ".border_table {\n  border-top: 0px;\n  table-layout: fixed;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.border_td {\n  border-top: 0px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}",
+        "wrap": false
+      },
+      "pluginVersion": "4.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 2,
+          "refId": "A",
+          "withTransforms": false
+        }
+      ],
+      "title": "Alarm Counts - By Area Of Interests",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 50,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 6,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0.2,
+        "barWidth": 0.1,
+        "fullHighlight": false,
+        "groupWidth": 0.75,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "always",
+        "stacking": "none",
+        "text": {
+          "valueSize": 30
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xField": "alarm_type",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT alarm_type, count(*) CT FROM alert_db.alert_table \nwhere start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY) \nand code = \"${Code}\"\ngroup by alarm_type",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Incidents Analysis by Alarm Types",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "alarm_priority 1": true,
+              "alarm_priority 2": true,
+              "alarm_type 1": true,
+              "alarm_type 2": true,
+              "floor 1": false,
+              "floor 2": true
+            },
+            "indexByName": {
+              "14D": 4,
+              "7D": 5,
+              "alarm_priority 1": 3,
+              "alarm_priority 2": 8,
+              "alarm_type 1": 2,
+              "alarm_type 2": 7,
+              "area": 0,
+              "floor 1": 1,
+              "floor 2": 6
+            },
+            "renameByName": {
+              "14D": "Weeks Before",
+              "7D": "Last Week",
+              "CT": "Last_Week",
+              "floor 1": "Floor"
+            }
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 14
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) CT FROM alert_db.alert_table \nwhere start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY) \nand code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Alarm Counts",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 9,
+        "y": 14
+      },
+      "id": 11,
+      "options": {
+        "afterRender": "",
+        "content": "<table style=\"width: 100%; border-collapse: collapse; border: rgb(0, 0, 0);\">\n    <tbody>\n        <tr>\n            <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/Drop.svg\" width=\"24px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 65%; border: rgb(0, 0, 0);\">\n                <span style=\"text-align: start; font-size: 12pt;\">Water Leakage </span>\n            </td>\n            <td style=\"width: 25%; text-align: center; border: rgb(0, 0, 0);\">\n                <span style=\"color: rgb(247, 218, 100); font-size: 20px;\">\n                    {{#if (eq Water_Leakage Null)}}\n                        0\n                    {{else}}\n                        {{Water_Leakage}}\n                    {{/if}}\n                </span>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/PersonSimpleRun.svg\" width=\"24px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 65%; border: rgb(0, 0, 0);\">\n                <span style=\"text-align: start; font-size: 12pt;\"><span style=\"text-align: start; font-size: 12pt;\">Intrusion Detected</span></span><br>\n            </td>\n            <td style=\"width: 25%; text-align: center; border: rgb(0, 0, 0);\">\n                <span style=\"color: rgb(247, 218, 100); font-size: 20px;\">\n                    {{#if (eq Intrusion_Detected Null)}}\n                    0\n                    {{else}}\n                    {{Intrusion_Detected}}\n                    {{/if}}\n                </span>\n            </td>\n        </tr>\n        <tr>\n            <td style=\"width: 10%; text-align: right; border: rgb(0, 0, 0);\">\n                <img src=\"/public/img/icon/BatteryLow.svg\" width=\"24px\" height=\"22px\"><br>\n            </td>\n            <td style=\"width: 65%; border: rgb(0, 0, 0);\">\n                <span style=\"text-align: start; font-size: 12pt;\">Battery Low</span><br>\n            </td>\n            <td style=\"width: 25%; text-align: center; border: rgb(0, 0, 0);\">\n                <span style=\"color: rgb(247, 218, 100);\"><span style=\"font-size: 20px;\">\n                    {{#if (eq Battery_Low Null)}}\n                    0\n                    {{else}}\n                    {{Battery_Low}}\n                    {{/if}}\n                </span></span>\n            </td>\n        </tr>\n    </tbody>\n</table>",
+        "defaultContent": "The query didn't return any results.",
+        "editor": {
+          "format": "auto",
+          "language": "html"
+        },
+        "editors": [],
+        "externalScripts": [],
+        "externalStyles": [],
+        "helpers": "",
+        "renderMode": "everyRow",
+        "styles": "",
+        "wrap": false
+      },
+      "pluginVersion": "4.5.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 3,
+          "refId": "A",
+          "withTransforms": false
+        }
+      ],
+      "transformations": [
+        {
+          "id": "rowsToFields",
+          "options": {
+            "mappings": [
+              {
+                "fieldName": "alarm_type",
+                "handlerKey": "field.name"
+              },
+              {
+                "fieldName": "CT",
+                "handlerKey": "field.value"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "marcusolsson-dynamictext-panel"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 15,
+        "y": 14
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) CT FROM alert_db.alert_table \nwhere start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY) \nand progress = '3'\nand code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Alarm Closed",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 18
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) CT FROM alert_db.alert_table \nwhere start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY) \nand alarm_priority = 'critical'\nand code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Critical Alarms",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 18
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) CT FROM alert_db.alert_table \nwhere start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY) \nand alarm_priority = 'high'\nand code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "High Priority Alarms",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 18
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) CT FROM alert_db.alert_table \nwhere start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY) \nand progress = '0'\nand code = \"${Code}\"",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Unattended Alarm",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 15,
+        "y": 18
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.6",
+      "targets": [
+        {
+          "dataset": "alert_db",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) FROM alert_db.device_table\nWHERE propertyCode = \"$Code\" ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Sensor Count",
+      "type": "stat"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "0617_00",
+          "value": "0617_00"
+        },
+        "datasource": {
+          "type": "redis-datasource",
+          "uid": "PA7F6415749A3297A"
+        },
+        "definition": "HMGET ${__user.login}@${__org.name} site",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "Code",
+        "options": [],
+        "query": "HMGET ${__user.login}@${__org.name} site",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5m"
+    ]
+  },
+  "timezone": "",
+  "title": "Site Dashboard",
+  "uid": "d954d47d-8acc-4cad-b076-d624474bf725",
+  "version": 2,
+  "weekStart": ""
+}
