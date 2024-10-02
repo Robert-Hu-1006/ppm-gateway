@@ -1,0 +1,50 @@
+{
+  "1F_Counter": {
+    "code": "24092401",
+    "cam_id": "bbf6e391-beb5-828a-64f7-86677fb65430",
+    "path": "",
+    "floor": "1F",
+    "area": "Counter",
+    "ip": "192.168.18.7",
+    "port": "7001",
+    "account": "admin",
+    "passwd": "Az123567",
+    "token": ""
+  },
+  "1F_Lobby": {
+    "code": "24092401",
+    "cam_id": "3645c7ee-ca91-e579-e753-1d85af1fd08c",
+    "path": "",
+    "floor": "1F",
+    "area": "Lobby",
+    "ip": "192.168.18.7",
+    "port": "7001",
+    "account": "admin",
+    "passwd": "Az123567",
+    "token": ""
+  },
+  "2F_Office": {
+    "code": "24092401",
+    "cam_id": "e3e9a385-7fe0-3ba5-5482-a86cde7faf48",
+    "path": "",
+    "floor": "2F",
+    "area": "Office",
+    "ip": "192.168.18.7",
+    "port": "7001",
+    "account": "admin",
+    "passwd": "Az123567",
+    "token": ""
+  },
+  "2F_PumpRoom": {
+    "code": "24092401",
+    "cam_id": "3ce36e62-7416-4f42-0339-0adca55a9091",
+    "path": "",
+    "floor": "2F",
+    "area": "PumpRoom",
+    "ip": "192.168.18.7",
+    "port": "7001",
+    "account": "admin",
+    "passwd": "Az123567",
+    "token": ""
+  }
+}

@@ -30,8 +30,6 @@ async def killProcess(pid):
         proc.kill()
     process.kill()
     #os.killpg(pid, signal.SIGUSR1)
-    Cprocess.pid = 0
-    Cprocess.cam = ''
 
 
 async def pushStream(pull_url, push_url):
@@ -47,62 +45,88 @@ async def pushStream(pull_url, push_url):
                 '-preset', 'ultrafast',
                 push_url]
 
-    #process = subprocess.run(command)
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-    try:
-        output, error = process.communicate(timeout=2.5)
-        LOGGER.info('output:%s error:%s', output.decode(), str(error.decode()))
-        if process.returncode is None:
-            rtnPID = process.pid
-            rtnCode = 0
-        #return rtnPID, rtnCode
-    except subprocess.TimeoutExpired as e:
+    #process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    process = subprocess.Popen(command, start_new_session=True)
+    
+    if process.returncode is None:
+        rtnPID = process.pid
+        rtnCode = 0
+    else:
         rtnPID = 0
-        rtnCode = 503
+        rtnCode = process.returncode
         process.kill()
+        LOGGER.info('error::%s', str(process.returncode))
     return rtnPID, rtnCode
    
     #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/bbf6e391-beb5-828a-64f7-86677fb65430 \
     #-preset ultrafast \
     #-c copy -f rtsp rtsp://127.0.0.1:8554/stream/h1 
-async def loadPingTable(wrkSheet):
+async def loadPingTable(sheet):
     pingTable = {}
-    gSheet = wrkSheet.get_values('A2', 'J')
+    wrkSheet = sheet.worksheet_by_title('Sensor')
+    gSheet = wrkSheet.get_values('A2', 'K')
     config = configparser.ConfigParser(strict=False)
     pCode = os.getenv('PPM_PCODE')
-    pcStream = Stream(0, '')
-    phoneStream = Stream(0, '')
+    
     ipList = []
+    #if os.path.isfile('/etc/telegraf/conf/ping.conf'):
+    #    os.remove('/etc/telegraf/conf/ping.conf')
+    if os.path.isfile('./streamer/ping.conf'):
+        os.remove('./streamer/ping.conf')
+
     for i in range(len(gSheet)-1):
         if gSheet[i + 1][1] == pCode: 
-            print('config pCode ::', gSheet[i + 1][1])
-            config['[inputs.ping]'] = {}
-            deviceID = gSheet[i + 1][2].lower()
-            if deviceID not in ipList:
-                ipList.append(deviceID)
-                config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][3] + '"]'
+            ip = gSheet[i + 1][4]
+            if ip not in ipList:
+                config['[inputs.ping]'] = {}
+                ipList.append(ip)
+                config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][4] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
                 config['[inputs.ping]']['interval'] = '"15s"'
 
                 config['inputs.ping.tags'] = {}
-                config['inputs.ping.tags']['ID'] = '"' + deviceID + '"'
-                if len(deviceID) == 36:
+                config['inputs.ping.tags']['ID'] = '"' + gSheet[i + 1][2].lower() + '"'
+                if len(gSheet[i + 1][2]) == 36:
                     config['inputs.ping.tags']['type'] = '"' + 'cam' + '"'
                 else:
                     config['inputs.ping.tags']['type'] = '"' + 'iot' + '"'
 
-                config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][4] + '"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][8] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][9] + '"'
-        
-        if os.path.isfile('ping.conf') :
-            os.remove('ping.conf')
-        with open('ping.conf', 'a') as configfile:
-            config.write(configfile)
-            config = configparser.ConfigParser(strict=False)
-        configfile.close
-        
+                config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][3] + '"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][9] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][10] + '"'
+    
+            #with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
+            with open('./streamer/ping.conf', 'a') as configfile:
+                config.write(configfile)
+                config = configparser.ConfigParser(strict=False)
+            configfile.close
+
+    wrkSheet = sheet.worksheet_by_title('LiveCam')
+    gSheet = wrkSheet.get_values('A2', 'K')
+    for j in range(len(gSheet)-1):
+        if gSheet[j + 1][1] == pCode: 
+            ip = gSheet[i + 1][7]
+            if ip not in ipList:
+                config['[inputs.ping]'] = {}
+                ipList.append(ip)
+                config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][7] + '"]'
+                config['[inputs.ping]']['method'] = '"exec"'
+                config['[inputs.ping]']['count'] = '3'
+                config['[inputs.ping]']['interval'] = '"15s"'
+
+                config['inputs.ping.tags'] = {}
+                config['inputs.ping.tags']['ID'] = '"' + gSheet[i + 1][2].lower() + '"'
+                config['inputs.ping.tags']['type'] = '"' + 'cam' + '"'
+                config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][3] + '"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][5] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][6] + '"'
+    
+            #with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
+            with open('./streamer/ping.conf', 'a') as configfile:
+                config.write(configfile)
+                config = configparser.ConfigParser(strict=False)
+            configfile.close    
     
 async def loadCamTable(wrkSheet):
     camTable = {}
@@ -123,14 +147,17 @@ async def loadCamTable(wrkSheet):
             camTable[name]['passwd'] =  gSheet[i + 1][10]
             camTable[name]['token'] =  gSheet[i + 1][11]
 
-    with open('camTable.json', 'w', encoding='utf8') as camFile:
+    if os.path.isfile('./streamer/camTable.json'):
+        os.remove('./streamer/camTable.json')
+
+    with open('./streamer/camTable.json', 'w', encoding='utf8') as camFile:
         json.dump(camTable, camFile, ensure_ascii=False, indent=2)
     camFile.close
     return i, camTable
 
 async def configTables():
     try:
-        client = pygsheets.authorize(service_account_file='./streamer/client_secret.json')
+        client = pygsheets.authorize(service_account_file='/Users/robert/Code/client_secret.json')
         sheet = client.open_by_key(LICENSE['sheet'])
         
         # reload camera table from google sheet
@@ -140,8 +167,7 @@ async def configTables():
             CAM_TABLE = json.load(open('./streamer/camTable.json','r'))
 
         # reload ping table from google sheet for telegraf
-        wrkSheet = sheet.worksheet_by_title('Sensor')
-        await loadPingTable(wrkSheet)
+        await loadPingTable(sheet)
 
     except Exception as e:
         LOGGER.info('Read Google Sheet Error :: %s', str(e))
@@ -173,9 +199,11 @@ async def main():
                     )
     LOGGER.info('Connect MQTT Broker :%s', str(client))
     interval = 3  # Seconds
-    topic = 'gateway/' + os.getenv('PPM_ORG') + '/' + os.getenv('P_CODE')
+    topic = 'gateway/' + os.getenv('PPM_ORG') + '/' + os.getenv('PPM_PCODE')
     LOGGER.info('topic :%s', topic)
-    
+    pcStream = Stream(0, '')
+    phoneStream = Stream(0, '')
+
     while True:
         try:
             async with client:
@@ -190,27 +218,41 @@ async def main():
                                 CAM_TABLE[msg['name']]['port'] + '/' + \
                                 CAM_TABLE[msg['name']]['path'] + \
                                 CAM_TABLE[msg['name']]['cam_id']
-                                
+
                             pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
-                                os.getenv('PPM_ORG') + '/' + \
-                                msg['name']
+                                    str(msg['type']) + '/' + \
+                                    os.getenv('PPM_ORG') + '/' + \
+                                    msg['name']
+
+                            if msg['type'] == 0:
+                                if pcStream.pid != 0:
+                                    await killProcess(pcStream.pid)
                             
-                            if Cprocess.pid != 0:
-                                await killProcess(Cprocess.pid)
+                                pid, rtnCode = await pushStream(pullURL, pushURL)
+                                if rtnCode == 0:
+                                    pcStream.pid = pid
+                                    pcStream.name = msg['name']
+                            else:
+                                if phoneStream.pid != 0:
+                                    await killProcess(phoneStream.pid)
                             
-                            pid, rtnCode = await pushStream(pullURL, pushURL)
-                            
-                            if rtnCode == 0:
-                                Cprocess.pid = pid
-                                Cprocess.cam = msg['name']
-                                
-                            print('err::', rtnCode)
+                                pid, rtnCode = await pushStream(pullURL, pushURL)
+                                if rtnCode == 0:
+                                    phoneStream.pid = pid
+                                    phoneStream.name = msg['name']
+                        
                         case 'close':
-                            print('clse::', Cprocess.pid)
-                            if Cprocess.pid != 0:
-                                await killProcess(Cprocess.pid)
-                            
-                    
+                            if msg['type'] == 0:
+                                if pcStream.pid != 0:
+                                    await killProcess(pcStream.pid)
+                                    pcStream.pid = 0
+                                    pcStream.name = ''
+                            else:
+                                if phoneStream.pid != 0:
+                                    await killProcess(phoneStream.pid)
+                                    phoneStream.pid = 0
+                                    phoneStream.name = ''
+                                     
         except aiomqtt.MqttError:
             print(f"Connection lost; Reconnecting in {interval} seconds ...")
             await asyncio.sleep(interval)
