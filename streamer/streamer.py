@@ -19,25 +19,10 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 MQTT_POOL = None
 LICENSE = None
 CAM_TABLE = {}
-class Cprocess:
-    pid = 0
-    cam = ''
-
-async def getMysqlPool():
-    global MQTT_POOL
-
-    if MQTT_POOL : return MQTT_POOL
-    MQTT_POOL = aiomqtt.Client(
-                            hostname=os.getenv('MQTT_HOST'),
-                            port=int(os.getenv('MQTT_PORT')),
-                            username=os.getenv('MQTT_USR'),
-                            password=os.getenv('MQTT_PWD'),
-                            client_id='apiserver')
-                            #protocol=ProtocolVersion.V31
-                #await conn.connect(timeout=60)
-            
-    print('Connect to MQTT Broker :: %s', str(MQTT_POOL))
-    return MQTT_POOL
+class Stream:
+    def __init__(self, pid, name):
+        self.pid = pid
+        self.name = name
 
 async def killProcess(pid):
     process = psutil.Process(pid)
@@ -85,18 +70,21 @@ async def loadPingTable(wrkSheet):
     gSheet = wrkSheet.get_values('A2', 'J')
     config = configparser.ConfigParser(strict=False)
     pCode = os.getenv('PPM_PCODE')
-
-    idList = []
+    pcStream = Stream(0, '')
+    phoneStream = Stream(0, '')
+    ipList = []
     for i in range(len(gSheet)-1):
         if gSheet[i + 1][1] == pCode: 
             print('config pCode ::', gSheet[i + 1][1])
             config['[inputs.ping]'] = {}
             deviceID = gSheet[i + 1][2].lower()
-            if deviceID not in idList:
-                idList.append(deviceID)
+            if deviceID not in ipList:
+                ipList.append(deviceID)
                 config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][3] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
+                config['[inputs.ping]']['interval'] = '"15s"'
+
                 config['inputs.ping.tags'] = {}
                 config['inputs.ping.tags']['ID'] = '"' + deviceID + '"'
                 if len(deviceID) == 36:
