@@ -4,7 +4,12 @@ volumes:
   grafana_data: {}
   mqtt_data: {}
   mqtt_log: {}
-  
+  telegraf_conf:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/robert/data/ppm/conf
+      o: bind
   ppm_tag:
     driver: local
     driver_opts:
@@ -82,10 +87,10 @@ services:
       - 9273:9273
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
-      - ./telegraf/conf/:/etc/telegraf/conf/
+      - telegraf_conf:/etc/telegraf/conf/
       - ppm_tag:/etc/telegraf/tag
-    #depends_on:
-    #  - mosquitto
+    depends_on:
+      - mosquitto
     command: telegraf --config /etc/telegraf/telegraf.conf --config-directory /etc/telegraf/conf/
     env_file:
       - .env

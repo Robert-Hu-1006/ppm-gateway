@@ -156,6 +156,7 @@ async def loadCamTable(wrkSheet):
     return i, camTable
 
 async def configTables():
+    global CAM_TABLE
     try:
         client = pygsheets.authorize(service_account_file='/Users/robert/Code/client_secret.json')
         sheet = client.open_by_key(LICENSE['sheet'])
@@ -179,11 +180,13 @@ async def getLicenseInfo():
             "Authorization": "Bearer " + os.getenv('API_TOKEN')
         }
     async with aiohttp.ClientSession() as session:
-        async with session.get(queryURL, headers=headers) as response:
-            if response.status == 200:
-                licRtn = await response.json()
-                return licRtn 
-                #if searchRtn.get('message','') == 'user not found':
+        try:
+            async with session.get(queryURL, headers=headers) as response:
+                if response.status == 200:
+                    licRtn = await response.json()
+                    return licRtn 
+        except aiohttp.ClientConnectorError as e:
+          LOGGER.info('Connection Error::%s', str(e))
     
 async def main():
     global LICENSE
@@ -214,7 +217,7 @@ async def main():
                         case 'open':
                             pullURL = 'rtsp://' + CAM_TABLE[msg['name']]['account'] + ':' + \
                                 CAM_TABLE[msg['name']]['passwd'] + '@' + \
-                                CAM_TABLE[msg['name']]['host'] + ':' + \
+                                CAM_TABLE[msg['name']]['ip'] + ':' + \
                                 CAM_TABLE[msg['name']]['port'] + '/' + \
                                 CAM_TABLE[msg['name']]['path'] + \
                                 CAM_TABLE[msg['name']]['cam_id']
@@ -254,7 +257,7 @@ async def main():
                                     phoneStream.name = ''
                                      
         except aiomqtt.MqttError:
-            print(f"Connection lost; Reconnecting in {interval} seconds ...")
+            LOGGER.info('MQTT connection lost; Reconnecting ...')
             await asyncio.sleep(interval)
     
 
