@@ -24,6 +24,37 @@ class Stream:
         self.pid = pid
         self.name = name
 
+
+async def genTelegrafTag(sheet):
+    ppm_tag = '/etc/telegraf/tag/ppm_tag.json'
+    sensorTable = {}
+
+    if os.path.isfile(ppm_tag):
+        os.remove(ppm_tag)
+    wrkSheet = sheet.worksheet_by_title('Sensor')
+    gTable = wrkSheet.get_values('A2', 'N')
+    for i in range(len(gTable) - 1):
+        deviceID = gTable[i + 1][2].lower()
+        dataChannel = gTable[i + 1][6].lower()
+        key = deviceID + '_' + dataChannel
+        sensorTable[key] = {}
+        sensorTable[key]['org'] =  gTable[i + 1][0]
+        sensorTable[key]['code'] =  gTable[i + 1][1]
+        sensorTable[key]['device'] =  gTable[i + 1][3]
+        sensorTable[key]['sensor'] =  gTable[i + 1][5]
+        sensorTable[key]['alarm'] =  gTable[i + 1][7]
+        sensorTable[key]['floor'] =  gTable[i + 1][8]
+        sensorTable[key]['area'] =  gTable[i + 1][9]
+        sensorTable[key]['priority'] =  gTable[i + 1][10]
+        sensorTable[key]['sop'] =  gTable[i + 1][11]
+        sensorTable[key]['source'] =  gTable[i + 1][12]
+        sensorTable[key]['cam_link'] =  gTable[i + 1][13]
+
+    with open(ppm_tag, 'w') as SensorFile:
+        json.dump(sensorTable, SensorFile, indent=2)
+    SensorFile.close
+
+
 async def killProcess(pid):
     process = psutil.Process(pid)
     for proc in process.children(recursive=True):
@@ -69,10 +100,10 @@ async def loadPingTable(sheet):
     pCode = os.getenv('PPM_PCODE')
     
     ipList = []
-    #if os.path.isfile('/etc/telegraf/conf/ping.conf'):
-    #    os.remove('/etc/telegraf/conf/ping.conf')
-    if os.path.isfile('./streamer/ping.conf'):
-        os.remove('./streamer/ping.conf')
+    if os.path.isfile('/etc/telegraf/conf/ping.conf'):
+        os.remove('/etc/telegraf/conf/ping.conf')
+    #if os.path.isfile('./streamer/ping.conf'):
+    #    os.remove('./streamer/ping.conf')
 
     for i in range(len(gSheet)-1):
         if gSheet[i + 1][1] == pCode: 
@@ -96,8 +127,8 @@ async def loadPingTable(sheet):
                 config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][9] + '"'
                 config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][10] + '"'
     
-            #with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
-            with open('./streamer/ping.conf', 'a') as configfile:
+            with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
+            #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
                 config = configparser.ConfigParser(strict=False)
             configfile.close
@@ -122,8 +153,8 @@ async def loadPingTable(sheet):
                 config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][5] + '"'
                 config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][6] + '"'
     
-            #with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
-            with open('./streamer/ping.conf', 'a') as configfile:
+            with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
+            # with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
                 config = configparser.ConfigParser(strict=False)
             configfile.close    
@@ -147,10 +178,10 @@ async def loadCamTable(wrkSheet):
             camTable[name]['passwd'] =  gSheet[i + 1][10]
             camTable[name]['token'] =  gSheet[i + 1][11]
 
-    if os.path.isfile('./streamer/camTable.json'):
-        os.remove('./streamer/camTable.json')
+    if os.path.isfile('/app/camTable.json'):
+        os.remove('/app/camTable.json')
 
-    with open('./streamer/camTable.json', 'w', encoding='utf8') as camFile:
+    with open('/app/camTable.json', 'w', encoding='utf8') as camFile:
         json.dump(camTable, camFile, ensure_ascii=False, indent=2)
     camFile.close
     return i, camTable
@@ -158,14 +189,14 @@ async def loadCamTable(wrkSheet):
 async def configTables():
     global CAM_TABLE
     try:
-        client = pygsheets.authorize(service_account_file='/Users/robert/Code/client_secret.json')
+        client = pygsheets.authorize(service_account_file='/app/service.json')
         sheet = client.open_by_key(LICENSE['sheet'])
         
         # reload camera table from google sheet
         wrkSheet = sheet.worksheet_by_title('LiveCam')
         count, CAM_TABLE = await loadCamTable(wrkSheet)
         if count == 0:
-            CAM_TABLE = json.load(open('./streamer/camTable.json','r'))
+            CAM_TABLE = json.load(open('/app/camTable.json','r'))
 
         # reload ping table from google sheet for telegraf
         await loadPingTable(sheet)
@@ -173,8 +204,31 @@ async def configTables():
     except Exception as e:
         LOGGER.info('Read Google Sheet Error :: %s', str(e))
 
+
+async def downloadGoogleKey():
+    downloadURL = 'https://' + os.getenv('PPM_CLOUD') + \
+                        '/api/ppm/license/download?org=' + \
+                        os.getenv('PPM_ORG') + \
+                        '&code=' + os.getenv('PPM_PCODE')
+    headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer " + os.getenv('API_TOKEN')
+        }
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(downloadURL, headers=headers) as response:
+                if response.status == 200:
+                    keyRtn = await response.json()
+                    ##await response.read()
+                    with open('/app/service.json', 'w') as keyFile:
+                        json.dump(keyRtn, keyFile, indent=2)
+                    keyFile.close 
+                    return response.status 
+        except aiohttp.ClientConnectorError as e:
+          LOGGER.info('Connection Error::%s', str(e))
+    
 async def getLicenseInfo():
-    queryURL = 'http://' + os.getenv('PPM_CLOUD') + ':3010/api/ppm/license/query?org=' + os.getenv('PPM_ORG')
+    queryURL = 'https://' + os.getenv('PPM_CLOUD') + '/api/ppm/license/query?org=' + os.getenv('PPM_ORG')
     headers = {
             "accept": "application/json",
             "Authorization": "Bearer " + os.getenv('API_TOKEN')
@@ -191,8 +245,11 @@ async def getLicenseInfo():
 async def main():
     global LICENSE
     LICENSE = await getLicenseInfo()
-    
+    LOGGER.info('license expire date:%s', LICENSE['expire'])
+
+    await downloadGoogleKey()
     await configTables()
+    await genTelegrafTag()
     
     client = aiomqtt.Client(
                     hostname=os.getenv('PPM_CLOUD'),
@@ -255,7 +312,8 @@ async def main():
                                     await killProcess(phoneStream.pid)
                                     phoneStream.pid = 0
                                     phoneStream.name = ''
-                                     
+                        case 'setup':
+                            await configTables()
         except aiomqtt.MqttError:
             LOGGER.info('MQTT connection lost; Reconnecting ...')
             await asyncio.sleep(interval)

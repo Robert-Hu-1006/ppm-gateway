@@ -123,7 +123,9 @@ celerybeat.pid
 
 # Environments
 #.env
+# Mac Temp File
 .DS_Store
+
 .venv
 env/
 venv/

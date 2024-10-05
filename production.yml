@@ -8,13 +8,13 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /Users/robert/data/ppm/conf
+      device: /home/data/ppm/conf
       o: bind
   ppm_tag:
     driver: local
     driver_opts:
       type: none
-      device: /Users/robert/data/ppm/tag
+      device: /home/data/ppm/tag
       o: bind
 networks:
   video_net:
