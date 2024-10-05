@@ -21,4 +21,4 @@ COPY ./ /app/
 #RUN pip install --upgrade pip && \
 #    pip install -r requirements.txt
 
-CMD python streamer.py 
+CMD ["python", "streamer.py"] 
