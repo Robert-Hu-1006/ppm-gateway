@@ -229,13 +229,10 @@ async def downloadGoogleKey():
     
 async def getLicenseInfo():
     queryURL = 'https://' + os.getenv('PPM_CLOUD') + '/api/ppm/license/query?org=' + os.getenv('PPM_ORG')
-    headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer " + os.getenv('API_TOKEN')
-        }
+    headers = { "Authorization": "Bearer " + os.getenv('API_TOKEN')}
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.get(queryURL, headers=headers) as response:
+            async with session.get(queryURL, headers=headers, ssl=False) as response:
                 if response.status == 200:
                     licRtn = await response.json()
                     return licRtn 
@@ -245,7 +242,8 @@ async def getLicenseInfo():
 async def main():
     global LICENSE
     LICENSE = await getLicenseInfo()
-    LOGGER.info('license expire date:%s', LICENSE['expire'])
+    if 'expire' in LICENSE.keys():
+        LOGGER.info('license expire date:%s', LICENSE['expire'])
 
     await downloadGoogleKey()
     await configTables()
