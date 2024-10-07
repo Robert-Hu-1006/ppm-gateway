@@ -60,6 +60,7 @@ services:
     depends_on:
       - mosquitto
       - streamer
+      - grafana
 
   grafana:
     image: roberthu1006/gateway-grafana:0.0.1

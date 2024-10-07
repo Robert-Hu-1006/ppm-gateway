@@ -9,6 +9,7 @@ import asyncio
 import aiomqtt
 import aiohttp
 import configparser
+#import ssl
 from dotenv import load_dotenv
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
@@ -106,7 +107,8 @@ async def loadPingTable(sheet):
         os.remove('/etc/telegraf/conf/ping.conf')
     #if os.path.isfile('./streamer/ping.conf'):
     #    os.remove('./streamer/ping.conf')
-
+    LOGGER.info('sensor len:%s', str(len(gSheet)))
+    
     for i in range(len(gSheet)-1):
         if gSheet[i + 1][1] == pCode: 
             ip = gSheet[i + 1][4]
@@ -137,6 +139,7 @@ async def loadPingTable(sheet):
 
     wrkSheet = sheet.worksheet_by_title('LiveCam')
     gSheet = wrkSheet.get_values('A2', 'K')
+    LOGGER.info('livecam len:%s', str(len(gSheet)))
     for j in range(len(gSheet)-1):
         if gSheet[j + 1][1] == pCode: 
             ip = gSheet[i + 1][7]
@@ -251,6 +254,16 @@ async def main():
     await configTables()
     await genTelegrafTag()
     
+    #ls_params = aiomqtt.TLSParameters(
+    #    #ca_certs='./ca.pem',
+    #    ca_certs=None,
+    #    certfile=None,
+    #    keyfile=None,
+    #    #cert_reqs=ssl.CERT_REQUIRED,
+    #    cert_reqs=None,
+    #    tls_version=ssl.PROTOCOL_TLS,
+    #    ciphers=None,
+    #)
     client = aiomqtt.Client(
                     hostname=os.getenv('PPM_CLOUD'),
                     port=int(os.getenv('MQTT_PORT')),
