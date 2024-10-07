@@ -8,17 +8,18 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /data/conf
+      device: /data/ppm/conf
       o: bind
   ppm_tag:
     driver: local
     driver_opts:
       type: none
-      device: /data/tag
+      device: /data/ppm/tag
       o: bind
 networks:
   video_net:
   iot_net:
+  back_net:
 
 services:
   mosquitto:
@@ -45,7 +46,6 @@ services:
     image: roberthu1006/gateway-nginx:0.0.1
     container_name: nginx
     hostname: nginx
-    build: ./nginx
     restart: always
     ports:
       - 80:80
@@ -57,15 +57,14 @@ services:
     networks:
       - video_net
       - iot_net
+      - back_net
     depends_on:
       - mosquitto
       - streamer
+      - grafana
 
   grafana:
     image: roberthu1006/gateway-grafana:0.0.1
-    build:
-      context: ./grafana
-      dockerfile: Dockerfile
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
@@ -80,6 +79,8 @@ services:
       - .env
     environment:
       - TZ=Asia/Taipei  
+    networks:
+      - back_net
     
   telegraf:
     image: telegraf:1.32.0
@@ -105,9 +106,6 @@ services:
     
   streamer:
     image: roberthu1006/gateway-streamer:0.0.1
-    build:
-      context: ./streamer
-      dockerfile: Dockerfile
     container_name: streamer
     hostname: streamer
     restart: always
