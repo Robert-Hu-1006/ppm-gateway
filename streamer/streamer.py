@@ -25,7 +25,9 @@ class Stream:
         self.name = name
 
 
-async def genTelegrafTag(sheet):
+async def genTelegrafTag():
+    client = pygsheets.authorize(service_account_file='/app/service.json')
+    sheet = client.open_by_key(LICENSE['sheet'])
     ppm_tag = '/etc/telegraf/tag/ppm_tag.json'
     sensorTable = {}
 
@@ -216,7 +218,7 @@ async def downloadGoogleKey():
         }
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.get(downloadURL, headers=headers) as response:
+            async with session.get(downloadURL, headers=headers, ssl=False) as response:
                 if response.status == 200:
                     keyRtn = await response.json()
                     ##await response.read()
