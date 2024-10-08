@@ -98,7 +98,7 @@ async def pushStream(pull_url, push_url):
 async def loadPingTable(sheet):
     pingTable = {}
     wrkSheet = sheet.worksheet_by_title('Sensor')
-    gSheet = wrkSheet.get_values('A2', 'K')
+    gSheet = wrkSheet.get_values('A2', 'N')
     config = configparser.ConfigParser(strict=False)
     pCode = os.getenv('PPM_PCODE')
     
@@ -249,88 +249,82 @@ async def main():
     LICENSE = await getLicenseInfo()
     if 'expire' in LICENSE.keys():
         LOGGER.info('license expire date:%s', LICENSE['expire'])
+        
+        await downloadGoogleKey()
+        await configTables()
+        await genTelegrafTag()
 
-    await downloadGoogleKey()
-    await configTables()
-    await genTelegrafTag()
-    
-    #ls_params = aiomqtt.TLSParameters(
-    #    #ca_certs='./ca.pem',
-    #    ca_certs=None,
-    #    certfile=None,
-    #    keyfile=None,
-    #    #cert_reqs=ssl.CERT_REQUIRED,
-    #    cert_reqs=None,
-    #    tls_version=ssl.PROTOCOL_TLS,
-    #    ciphers=None,
-    #)
-    client = aiomqtt.Client(
-                    hostname=os.getenv('PPM_CLOUD'),
-                    port=int(os.getenv('MQTT_PORT')),
-                    username=os.getenv('MQTT_USR'),
-                    password=os.getenv('MQTT_PWD')
-                    )
-    LOGGER.info('Connect MQTT Broker :%s', str(client))
-    interval = 3  # Seconds
-    topic = 'gateway/' + os.getenv('PPM_ORG') + '/' + os.getenv('PPM_PCODE')
-    LOGGER.info('topic :%s', topic)
-    pcStream = Stream(0, '')
-    phoneStream = Stream(0, '')
+        client = aiomqtt.Client(
+                        hostname=os.getenv('PPM_CLOUD'),
+                        port=1888,
+                        username=os.getenv('MQTT_USR'),
+                        password=os.getenv('MQTT_PWD'),
+                        identifier = os.getenv('PPM_ORG') + '_' + os.getenv('PPM_PCODE'), 
+                        clean_session = True,
+                        timeout=10,
+                        keepalive=10
+                        )
+        LOGGER.info('Connect MQTT Broker :%s', str(client))
+        interval = 3  # Seconds
+        topic = 'gateway/' + os.getenv('PPM_ORG') + '/' + os.getenv('PPM_PCODE')
+        LOGGER.info('topic :%s', topic)
+        pcStream = Stream(0, '')
+        phoneStream = Stream(0, '')
 
-    while True:
-        try:
-            async with client:
-                await client.subscribe(topic)
-                async for message in client.messages:
-                    msg = json.loads(message.payload)
-                    match msg['cmd']:
-                        case 'open':
-                            pullURL = 'rtsp://' + CAM_TABLE[msg['name']]['account'] + ':' + \
-                                CAM_TABLE[msg['name']]['passwd'] + '@' + \
-                                CAM_TABLE[msg['name']]['ip'] + ':' + \
-                                CAM_TABLE[msg['name']]['port'] + '/' + \
-                                CAM_TABLE[msg['name']]['path'] + \
-                                CAM_TABLE[msg['name']]['cam_id']
+        while True:
+            try:
+                async with client:
+                    await client.subscribe(topic)
+                    async for message in client.messages:
+                        msg = json.loads(message.payload)
+                        match msg['cmd']:
+                            case 'open':
+                                pullURL = 'rtsp://' + CAM_TABLE[msg['name']]['account'] + ':' + \
+                                    CAM_TABLE[msg['name']]['passwd'] + '@' + \
+                                    CAM_TABLE[msg['name']]['ip'] + ':' + \
+                                    CAM_TABLE[msg['name']]['port'] + '/' + \
+                                    CAM_TABLE[msg['name']]['path'] + \
+                                    CAM_TABLE[msg['name']]['cam_id']
 
-                            pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
-                                    str(msg['type']) + '/' + \
-                                    os.getenv('PPM_ORG') + '/' + \
-                                    msg['name']
+                                pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
+                                        str(msg['type']) + '/' + \
+                                        os.getenv('PPM_ORG') + '/' + \
+                                        msg['name']
 
-                            if msg['type'] == 0:
-                                if pcStream.pid != 0:
-                                    await killProcess(pcStream.pid)
+                                if msg['type'] == 0:
+                                    if pcStream.pid != 0:
+                                        await killProcess(pcStream.pid)
+                                
+                                    pid, rtnCode = await pushStream(pullURL, pushURL)
+                                    if rtnCode == 0:
+                                        pcStream.pid = pid
+                                        pcStream.name = msg['name']
+                                else:
+                                    if phoneStream.pid != 0:
+                                        await killProcess(phoneStream.pid)
+                                
+                                    pid, rtnCode = await pushStream(pullURL, pushURL)
+                                    if rtnCode == 0:
+                                        phoneStream.pid = pid
+                                        phoneStream.name = msg['name']
                             
-                                pid, rtnCode = await pushStream(pullURL, pushURL)
-                                if rtnCode == 0:
-                                    pcStream.pid = pid
-                                    pcStream.name = msg['name']
-                            else:
-                                if phoneStream.pid != 0:
-                                    await killProcess(phoneStream.pid)
-                            
-                                pid, rtnCode = await pushStream(pullURL, pushURL)
-                                if rtnCode == 0:
-                                    phoneStream.pid = pid
-                                    phoneStream.name = msg['name']
-                        
-                        case 'close':
-                            if msg['type'] == 0:
-                                if pcStream.pid != 0:
-                                    await killProcess(pcStream.pid)
-                                    pcStream.pid = 0
-                                    pcStream.name = ''
-                            else:
-                                if phoneStream.pid != 0:
-                                    await killProcess(phoneStream.pid)
-                                    phoneStream.pid = 0
-                                    phoneStream.name = ''
-                        case 'setup':
-                            await configTables()
-        except aiomqtt.MqttError:
-            LOGGER.info('MQTT connection lost; Reconnecting ...')
-            await asyncio.sleep(interval)
-    
+                            case 'close':
+                                if msg['type'] == 0:
+                                    if pcStream.pid != 0:
+                                        await killProcess(pcStream.pid)
+                                        pcStream.pid = 0
+                                        pcStream.name = ''
+                                else:
+                                    if phoneStream.pid != 0:
+                                        await killProcess(phoneStream.pid)
+                                        phoneStream.pid = 0
+                                        phoneStream.name = ''
+                            case 'setup':
+                                await configTables()
+            except aiomqtt.MqttError:
+                LOGGER.info('MQTT connection lost; Reconnecting ...')
+                await asyncio.sleep(interval)
+        
 
 if __name__ == '__main__':
     load_dotenv()
