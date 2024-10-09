@@ -1,10 +1,14 @@
 FROM python:3.13-rc-alpine3.20
 
 USER root
+RUN apk update && apk upgrade && \
+    apk add --no-cache ffmpeg gcc python3-dev musl-dev linux-headers
 
-RUN apk add gcc python3-dev musl-dev linux-headers
+#RUN apk add gcc python3-dev musl-dev linux-headers
 
-RUN pip install FFmpeg \
+RUN pip install --upgrade pip \
+    #FFmpeg \
+    ffmpeg-python \
     asyncio \
     aiomqtt \
     pygsheets \

@@ -67,8 +67,8 @@ async def killProcess(pid):
 
 
 async def pushStream(pull_url, push_url):
-    LOGGER.info('pull url:%s', pull_url)
-    LOGGER.info('push url:%s', push_url)
+    #LOGGER.info('pull url:%s', pull_url)
+    #LOGGER.info('push url:%s', push_url)
     #pull_url = 'rtsp://admin:Az123567@192.168.18.7:7001/bbf6e391-beb5-828a-64f7-86677fb65430'
     #push_url = 'rtsp://127.0.0.1:8554/live/h1'
     command = ['ffmpeg',
@@ -80,6 +80,7 @@ async def pushStream(pull_url, push_url):
                 push_url]
 
     #process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    LOGGER.info('cmd::%s', command)
     process = subprocess.Popen(command, start_new_session=True)
     
     if process.returncode is None:
@@ -247,7 +248,8 @@ async def getLicenseInfo():
 async def main():
     global LICENSE
     LICENSE = await getLicenseInfo()
-    if 'expire' in LICENSE.keys():
+    if (LICENSE is not None) and ('expire' in LICENSE.keys()):
+    #if 'expire' in LICENSE.keys():
         LOGGER.info('license expire date:%s', LICENSE['expire'])
         
         await downloadGoogleKey()
