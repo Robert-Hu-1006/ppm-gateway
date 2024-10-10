@@ -4,8 +4,6 @@ USER root
 RUN apk update && apk upgrade && \
     apk add --no-cache ffmpeg gcc python3-dev musl-dev linux-headers
 
-#RUN apk add gcc python3-dev musl-dev linux-headers
-
 RUN pip install --upgrade pip \
     #FFmpeg \
     ffmpeg-python \

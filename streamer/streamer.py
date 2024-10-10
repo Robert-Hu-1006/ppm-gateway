@@ -150,7 +150,8 @@ async def loadPingTable(sheet):
                 config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][7] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
-                config['[inputs.ping]']['interval'] = '"15s"'
+                config['[inputs.ping]']['interval'] = '"60s"'
+                config['[inputs.ping]']['timeout'] = '3'
 
                 config['inputs.ping.tags'] = {}
                 config['inputs.ping.tags']['ID'] = '"' + gSheet[i + 1][2].lower() + '"'

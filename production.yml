@@ -1,7 +1,6 @@
 version: '3'
 
 volumes:
-  grafana_data: {}
   mqtt_data: {}
   mqtt_log: {}
   telegraf_conf:
@@ -19,9 +18,26 @@ volumes:
 networks:
   video_net:
   iot_net:
-  back_net:
 
 services:
+  grafana:
+    image: roberthu1006/gateway-grafana:0.0.1
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/icon:/usr/share/grafana/public/img/icon
+    env_file: 
+      - .env
+    environment:
+      - TZ=Asia/Taipei  
+    networks:
+      - iot_net
+
   mosquitto:
     image: eclipse-mosquitto:2.0.18
     restart: unless-stopped
@@ -57,30 +73,10 @@ services:
     networks:
       - video_net
       - iot_net
-      - back_net
     depends_on:
       - mosquitto
       - streamer
       - grafana
-
-  grafana:
-    image: roberthu1006/gateway-grafana:0.0.1
-    container_name: grafana
-    hostname: grafana
-    restart: unless-stopped
-    ports:
-      - 3000:3000
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning/:/etc/grafana/provisioning/
-      - ./grafana/icon:/usr/share/grafana/public/img/icon
-      #- ppm_data:/usr/share/grafana/public/ppm/
-    env_file: 
-      - .env
-    environment:
-      - TZ=Asia/Taipei  
-    networks:
-      - back_net
     
   telegraf:
     image: telegraf:1.32.0

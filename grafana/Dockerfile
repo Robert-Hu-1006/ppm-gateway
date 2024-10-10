@@ -108,9 +108,9 @@ RUN find /usr/share/grafana/public/build/ -name *.js \
 ## Remove Version in the Footer
     -exec sed -i 's|({target:"_blank",id:"version",.*CHANGELOG.md":void 0})|()|g' {} \; \
 ## Remove News icon
-    -exec sed -i 's|(.,.....)(....,{className:.,onClick:.,iconOnly:!0,icon:"rss","aria-label":"News"})|null|g' {} \;
+    -exec sed -i 's|(.,.....)(....,{className:.,onClick:.,iconOnly:!0,icon:"rss","aria-label":"News"})|null|g' {} \; \
 ## Remove Open Source icon
-#    -exec sed -i 's|.push({target:"_blank",id:"version",text:`${..edition}${.}`,url:..licenseUrl,icon:"external-link-alt"})||g' {} \;
+    -exec sed -i 's|.push({target:"_blank",id:"version",text:`${..edition}${.}`,url:..licenseUrl,icon:"external-link-alt"})||g' {};
 
 ##################################################################
 ## CLEANING
@@ -157,8 +157,8 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/panel/alertlist \
 RUN grafana cli plugins install marcusolsson-dynamictext-panel &&\
     grafana cli plugins install volkovlabs-variable-panel &&\
     grafana cli plugins install volkovlabs-form-panel &&\
-    grafana cli plugins install volkovlabs-image-panel &&\
-    grafana cli plugins install redis-datasource && \
+    #grafana cli plugins install volkovlabs-image-panel &&\
+    #grafana cli plugins install redis-datasource && \
     grafana cli plugins install grafana-googlesheets-datasource
     
 USER grafana
