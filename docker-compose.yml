@@ -19,8 +19,28 @@ volumes:
 networks:
   video_net:
   iot_net:
+  back_net:
 
 services:
+  apiserver:
+    image: roberthu1006/gateway-apiserver:0.0.1
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile
+    container_name: apiserver
+    hostname: apiserver
+    restart: always
+    ports:
+      - 3010:3010
+    #volumes:
+    #  - ppm_tag:/etc/tag.d
+    #  - api_image:/etc/image
+      #- /var/run/docker.sock:/var/run/docker.sock
+    env_file: 
+      - .env
+    networks:
+      - back_net
+
   grafana:
     image: roberthu1006/gateway-grafana:0.0.1
     build:
@@ -41,6 +61,7 @@ services:
       - TZ=Asia/Taipei  
     networks:
       - iot_net
+      - back_net
 
   mosquitto:
     image: eclipse-mosquitto:2.0.18
