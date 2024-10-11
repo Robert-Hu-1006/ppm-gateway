@@ -143,22 +143,22 @@ async def loadPingTable(sheet):
     LOGGER.info('livecam len:%s', str(len(gSheet)))
     for j in range(len(gSheet)-1):
         if gSheet[j + 1][1] == pCode: 
-            ip = gSheet[i + 1][7]
+            ip = gSheet[j + 1][7]
             if ip not in ipList:
                 config['[inputs.ping]'] = {}
                 ipList.append(ip)
-                config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][7] + '"]'
+                config['[inputs.ping]']['urls'] = '["' + gSheet[j + 1][7] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
                 config['[inputs.ping]']['interval'] = '"60s"'
                 config['[inputs.ping]']['timeout'] = '3'
 
                 config['inputs.ping.tags'] = {}
-                config['inputs.ping.tags']['ID'] = '"' + gSheet[i + 1][2].lower() + '"'
+                config['inputs.ping.tags']['ID'] = '"' + gSheet[j + 1][2].lower() + '"'
                 config['inputs.ping.tags']['type'] = '"' + 'cam' + '"'
-                config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][3] + '"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][5] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][6] + '"'
+                config['inputs.ping.tags']['name'] = '"' + gSheet[j + 1][3] + '"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[j + 1][5] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[j + 1][6] + '"'
     
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             # with open('./streamer/ping.conf', 'a') as configfile:
