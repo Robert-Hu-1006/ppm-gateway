@@ -72,7 +72,7 @@ def initServer() -> web.Application:
     for route in list(app.router.routes()):
         cors.add(route)
     
-    app.on_startup.append(startupTasks)
+    #app.on_startup.append(startupTasks)
     setup(app)
     return app
 

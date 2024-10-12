@@ -21,18 +21,15 @@ COPY ./ /app/
 #RUN pip install setuptools --upgrade
 #RUN apk add gcc
 
-RUN pip install pygsheets aiomysql \
+RUN pip install \
 asyncio \
 python-dotenv \
+netifaces2 \
 #prometheus-client \
 aiohttp \
 aiohttp_tokenauth \
 #aiojobs \
 aiohttp_cors \
 logging 
-#pybase64 \
-#aioredis \
-#aiomqtt \
-#cryptography 
 
 CMD ["python", "apiserver.py"]

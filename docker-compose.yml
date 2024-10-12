@@ -22,16 +22,16 @@ networks:
   back_net:
 
 services:
-  apiserver:
-    image: roberthu1006/gateway-apiserver:0.0.1
+  rfcomm:
+    image: roberthu1006/gateway-rfcomm:0.0.1
     build:
-      context: ./apiserver
+      context: ./rfcomm
       dockerfile: Dockerfile
-    container_name: apiserver
-    hostname: apiserver
+    container_name: rfcomm
+    hostname: rfcomm
     restart: always
-    ports:
-      - 3010:3010
+    #ports:
+    #  - 3010:3010
     #volumes:
     #  - ppm_tag:/etc/tag.d
     #  - api_image:/etc/image
