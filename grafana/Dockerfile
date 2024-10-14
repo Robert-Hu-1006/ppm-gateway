@@ -154,10 +154,11 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/panel/alertlist \
 
 ##################################################################
 
-RUN grafana cli plugins install marcusolsson-dynamictext-panel &&\
-    grafana cli plugins install volkovlabs-variable-panel &&\
-    grafana cli plugins install volkovlabs-form-panel &&\
+RUN grafana cli plugins install marcusolsson-dynamictext-panel \
+    grafana cli plugins install volkovlabs-variable-panel \
+    grafana cli plugins install volkovlabs-form-panel \
     grafana cli plugins install marcusolsson-json-datasource
+    
     #grafana cli plugins install volkovlabs-image-panel &&\
     #grafana cli plugins install redis-datasource && \
     #grafana cli plugins install grafana-googlesheets-datasource
