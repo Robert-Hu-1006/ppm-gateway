@@ -147,7 +147,7 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/panel/alertlist \
     /usr/share/grafana/public/app/plugins/panel/annolist \
     /usr/share/grafana/public/app/plugins/panel/dashlist \
     /usr/share/grafana/public/app/plugins/panel/news \
-    # /usr/share/grafana/public/app/plugins/panel/geomap \
+    /usr/share/grafana/public/app/plugins/panel/geomap \
     /usr/share/grafana/public/app/plugins/panel/table-old \
     /usr/share/grafana/public/app/plugins/panel/traces \
     /usr/share/grafana/public/app/plugins/panel/flamegraph
@@ -157,9 +157,10 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/panel/alertlist \
 RUN grafana cli plugins install marcusolsson-dynamictext-panel &&\
     grafana cli plugins install volkovlabs-variable-panel &&\
     grafana cli plugins install volkovlabs-form-panel &&\
+    grafana cli plugins install marcusolsson-json-datasource
     #grafana cli plugins install volkovlabs-image-panel &&\
     #grafana cli plugins install redis-datasource && \
-    grafana cli plugins install grafana-googlesheets-datasource
+    #grafana cli plugins install grafana-googlesheets-datasource
     
 USER grafana
 

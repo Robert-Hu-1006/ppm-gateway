@@ -4,6 +4,12 @@ volumes:
   grafana_data: {}
   mqtt_data: {}
   mqtt_log: {}
+  gateway_json:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/robert/data/ppm/json
+      o: bind
   telegraf_conf:
     driver: local
     driver_opts:
@@ -22,25 +28,6 @@ networks:
   back_net:
 
 services:
-  rfcomm:
-    image: roberthu1006/gateway-rfcomm:0.0.1
-    build:
-      context: ./rfcomm
-      dockerfile: Dockerfile
-    container_name: rfcomm
-    hostname: rfcomm
-    restart: always
-    #ports:
-    #  - 3010:3010
-    #volumes:
-    #  - ppm_tag:/etc/tag.d
-    #  - api_image:/etc/image
-      #- /var/run/docker.sock:/var/run/docker.sock
-    env_file: 
-      - .env
-    networks:
-      - back_net
-
   grafana:
     image: roberthu1006/gateway-grafana:0.0.1
     build:
@@ -99,6 +86,8 @@ services:
     networks:
       - video_net
       - iot_net
+    volumes:
+      - gateway_json:/data
     depends_on:
       - mosquitto
       - streamer
@@ -144,6 +133,7 @@ services:
     volumes:
       - telegraf_conf:/etc/telegraf/conf
       - ppm_tag:/etc/telegraf/tag
+      - gateway_json:/data
     networks:
       - video_net
 

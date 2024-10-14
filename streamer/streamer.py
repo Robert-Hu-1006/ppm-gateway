@@ -51,7 +51,11 @@ async def genTelegrafTag():
         sensorTable[key]['priority'] =  gTable[i + 1][10]
         sensorTable[key]['sop'] =  gTable[i + 1][11]
         sensorTable[key]['source'] =  gTable[i + 1][12]
-        sensorTable[key]['cam_link'] =  gTable[i + 1][13]
+        if gTable[i + 1][13] == '':
+            camLink = 'na'
+        else:
+            camLink = gTable[i + 1][13]
+        sensorTable[key]['cam_link'] =  camLink
 
     with open(ppm_tag, 'w') as SensorFile:
         json.dump(sensorTable, SensorFile, indent=2)
@@ -250,6 +254,9 @@ async def main():
     global LICENSE
     LICENSE = await getLicenseInfo()
     if (LICENSE is not None) and ('expire' in LICENSE.keys()):
+        with open('/data/lic.json', 'w', encoding='utf8') as licFile:
+            json.dump(LICENSE, licFile, ensure_ascii=False, indent=2)
+        licFile.close
     #if 'expire' in LICENSE.keys():
         LOGGER.info('license expire date:%s', LICENSE['expire'])
         

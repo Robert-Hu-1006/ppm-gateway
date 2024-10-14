@@ -63,5 +63,10 @@ datasources:
     editable: true
     secureJsonData:
       password: $REDIS_PASSWORD
+  - name: json_lic
+    uid: json_lic
+    type: marcusolsson-json-datasource
+    url: http://nginx/json/lic.json
+    editable: true
   # org 2 -------
   
