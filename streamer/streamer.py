@@ -133,8 +133,8 @@ async def loadPingTable(sheet):
                     config['inputs.ping.tags']['type'] = '"' + 'iot' + '"'
 
                 config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][3] + '"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][9] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][10] + '"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][8] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][9] + '"'
     
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:

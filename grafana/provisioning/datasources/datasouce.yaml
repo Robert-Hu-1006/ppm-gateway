@@ -33,36 +33,36 @@ datasources:
     version: 1
     editable: true
 
-  - name: MySQL
-    type: mysql
-    orgId: 1
-    url: mysql:3306
-    user: admin
-    jsonData:
-      database: alert_db
-      maxOpenConns: 100 # Grafana v5.4+
-      maxIdleConns: 100 # Grafana v5.4+
-      maxIdleConnsAuto: true # Grafana v9.5.1+
-      connMaxLifetime: 14400 # Grafana v5.4+
-      Timezone: +08:00
-    secureJsonData:
-      password: $MYSQL_ROOT_PASSWORD
-  - name: Redis
-    type: redis-datasource
-    access: proxy
-    orgId: 1
-    isDefault: false
-    version: 1
-    url: redis://redis:6379
-    jsonData:
-      client: standalone
-      poolSize: 5
-      timeout: 10
-      pingInterval: 0
-      pipelineWindow: 0
-    editable: true
-    secureJsonData:
-      password: $REDIS_PASSWORD
+  #- name: MySQL
+  #  type: mysql
+  #  orgId: 1
+  #  url: mysql:3306
+  #  user: admin
+  #  jsonData:
+  #    database: alert_db
+  #    maxOpenConns: 100 # Grafana v5.4+
+  #    maxIdleConns: 100 # Grafana v5.4+
+  #    maxIdleConnsAuto: true # Grafana v9.5.1+
+  #    connMaxLifetime: 14400 # Grafana v5.4+
+  #    Timezone: +08:00
+  #  secureJsonData:
+  #    password: $MYSQL_ROOT_PASSWORD
+  #- name: Redis
+  #  type: redis-datasource
+  #  access: proxy
+  #  orgId: 1
+  #  isDefault: false
+  #  version: 1
+  #  url: redis://redis:6379
+  #  jsonData:
+  #    client: standalone
+  #    poolSize: 5
+  #    timeout: 10
+  #    pingInterval: 0
+  #    pipelineWindow: 0
+  #  editable: true
+  #  secureJsonData:
+  #    password: $REDIS_PASSWORD
   - name: json_lic
     uid: json_lic
     type: marcusolsson-json-datasource
