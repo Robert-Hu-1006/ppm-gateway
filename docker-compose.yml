@@ -65,7 +65,7 @@ services:
       - mqtt_log:/mosquitto/log:rw
       - mqtt_data:/mosquitto/data:rw
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
-      - ./mosquitto/mqtt.pwd:/mosquitto/config/mqtt.pwd
+      - ./mosquitto/mqtt.pwd:/mosquitto/config/mosquitto.pwd
     command: mosquitto -c /mosquitto/config/mosquitto.conf
     networks:
       - iot_net
