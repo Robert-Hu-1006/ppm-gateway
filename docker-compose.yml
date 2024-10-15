@@ -87,7 +87,7 @@ services:
       - video_net
       - iot_net
     volumes:
-      - gateway_json:/data
+      - gateway_json:/data/json
     depends_on:
       - mosquitto
       - streamer
