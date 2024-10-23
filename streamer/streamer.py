@@ -70,11 +70,12 @@ async def killProcess(pid):
     #os.killpg(pid, signal.SIGUSR1)
 
 
-async def pushStream(pull_url, push_url):
+async def pushStream(brand, pull_url, push_url):
     #LOGGER.info('pull url:%s', pull_url)
     #LOGGER.info('push url:%s', push_url)
     #pull_url = 'rtsp://admin:Az123567@192.168.18.7:7001/bbf6e391-beb5-828a-64f7-86677fb65430'
     #push_url = 'rtsp://127.0.0.1:8554/live/h1'
+    
     command = ['ffmpeg',
                 '-rtsp_transport', 'tcp',
                 '-i', pull_url,
@@ -173,21 +174,22 @@ async def loadPingTable(sheet):
 async def loadCamTable(wrkSheet):
     camTable = {}
     pCode = os.getenv('PPM_PCODE')
-    gSheet = wrkSheet.get_values('A2', 'L')
+    gSheet = wrkSheet.get_values('A2', 'N')
     for i in range(len(gSheet) - 1):
         if gSheet[i + 1][1] == pCode:
-            name = gSheet[i + 1][3]
+            name = gSheet[i + 1][4]
             camTable[name] = {}
             camTable[name]['code'] =  gSheet[i + 1][1]
-            camTable[name]['cam_id'] =  gSheet[i + 1][2]
-            camTable[name]['path'] =  gSheet[i + 1][4]
-            camTable[name]['floor'] =  gSheet[i + 1][5]
-            camTable[name]['area'] =  gSheet[i + 1][6]
-            camTable[name]['ip'] =  gSheet[i + 1][7]
-            camTable[name]['port'] =  gSheet[i + 1][8]
-            camTable[name]['account'] =  gSheet[i + 1][9]
-            camTable[name]['passwd'] =  gSheet[i + 1][10]
-            camTable[name]['token'] =  gSheet[i + 1][11]
+            camTable[name]['brand'] =  gSheet[i + 1][2]
+            camTable[name]['cam_id'] =  gSheet[i + 1][3]
+            camTable[name]['path'] =  gSheet[i + 1][5]
+            camTable[name]['floor'] =  gSheet[i + 1][6]
+            camTable[name]['area'] =  gSheet[i + 1][7]
+            camTable[name]['ip'] =  gSheet[i + 1][8]
+            camTable[name]['port'] =  gSheet[i + 1][9]
+            camTable[name]['account'] =  gSheet[i + 1][10]
+            camTable[name]['passwd'] =  gSheet[i + 1][11]
+            camTable[name]['token'] =  gSheet[i + 1][12]
 
     if os.path.isfile('/app/camTable.json'):
         os.remove('/app/camTable.json')
@@ -249,7 +251,37 @@ async def getLicenseInfo():
                     return licRtn 
         except aiohttp.ClientConnectorError as e:
           LOGGER.info('Connection Error::%s', str(e))
-    
+
+
+async def buildCommand(camName):
+    match CAM_TABLE[camName]['brand']:
+        case 'NX':
+            pullURL = 'rtsp://' + CAM_TABLE[camName]['ip'] + ':' + \
+                                CAM_TABLE[camName]['port'] + '/' + \
+                                CAM_TABLE[camName]['cam_id'] + '?lo&auth=' + \
+                                CAM_TABLE[camName]['token']
+
+        case 'Hikvision':
+            pullURL = 'rtsp://' + CAM_TABLE[camName]['account'] + ':' + \
+                                CAM_TABLE[camName]['passwd'] + '@' + \
+                                CAM_TABLE[camName]['ip'] + ':' + \
+                                CAM_TABLE[camName]['port'] + '/' + \
+                                CAM_TABLE[camName]['path'] + \
+                                CAM_TABLE[camName]['cam_id']
+        case '_':
+            pullURL = 'rtsp://' + CAM_TABLE[camName]['account'] + ':' + \
+                                CAM_TABLE[camName]['passwd'] + '@' + \
+                                CAM_TABLE[camName]['ip'] + ':' + \
+                                CAM_TABLE[camName]['port'] + '/' + \
+                                CAM_TABLE[camName]['cam_id']
+
+    pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
+            str(msg['type']) + '/' + \
+            os.getenv('PPM_ORG') + '/' + \
+            msg['name']
+    LOGGER.info('pull url :%s', pullURL)
+    return pullURL, pushURL
+
 async def main():
     global LICENSE
     LICENSE = await getLicenseInfo()
@@ -289,18 +321,7 @@ async def main():
                         msg = json.loads(message.payload)
                         match msg['cmd']:
                             case 'open':
-                                pullURL = 'rtsp://' + CAM_TABLE[msg['name']]['account'] + ':' + \
-                                    CAM_TABLE[msg['name']]['passwd'] + '@' + \
-                                    CAM_TABLE[msg['name']]['ip'] + ':' + \
-                                    CAM_TABLE[msg['name']]['port'] + '/' + \
-                                    CAM_TABLE[msg['name']]['path'] + \
-                                    CAM_TABLE[msg['name']]['cam_id']
-
-                                pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
-                                        str(msg['type']) + '/' + \
-                                        os.getenv('PPM_ORG') + '/' + \
-                                        msg['name']
-
+                                pullURL, pushURL = await buildCommand(msg['name'])
                                 if msg['type'] == 0:
                                     if pcStream.pid != 0:
                                         await killProcess(pcStream.pid)
