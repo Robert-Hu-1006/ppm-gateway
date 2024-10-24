@@ -203,6 +203,7 @@ async def configTables():
     global CAM_TABLE
     try:
         client = pygsheets.authorize(service_account_file='/app/service.json')
+        #client = pygsheets.authorize(service_account_file='/app/client_secret.json')
         sheet = client.open_by_key(LICENSE['sheet'])
         
         # reload camera table from google sheet
