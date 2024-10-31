@@ -69,6 +69,22 @@ async def killProcess(pid):
     process.kill()
     #os.killpg(pid, signal.SIGUSR1)
 
+async def captureFrame(pullURL, fileName):
+    #-frames 1 -qscale 1 -f image2 /home/pi/Pictures/test_image.jpg
+    command = ['ffmpeg',
+                '-rtsp_transport', 'tcp',
+                '-i', pullURL,
+                '-frames', '1',
+                '-qscale', '1',
+                '-f', 'image2', fileName]
+    
+    LOGGER.info('cmd::%s', command)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    stdOut, stdErr = process.communicate(timeout=2)
+    LOGGER.info('stdOut:%s stdErr:%s', stdOut, stdErr)
+    proc.terminate()
+    proc.kill()
+    
 
 async def pushStream(brand, pull_url, push_url):
     #LOGGER.info('pull url:%s', pull_url)
@@ -351,6 +367,10 @@ async def main():
                                         await killProcess(phoneStream.pid)
                                         phoneStream.pid = 0
                                         phoneStream.name = ''
+                            case 'capture':
+                                pullURL, pushURL = await buildCommand(msg['name'])
+                                await captureFrame(pullURL, msg['file'])
+                                
                             case 'setup':
                                 await configTables()
             except aiomqtt.MqttError:
