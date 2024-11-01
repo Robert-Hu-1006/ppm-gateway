@@ -270,7 +270,7 @@ async def getLicenseInfo():
           LOGGER.info('Connection Error::%s', str(e))
 
 
-async def buildCommand(camName):
+async def buildCommand(streamType, camName):
     match CAM_TABLE[camName]['brand']:
         case 'NX':
             pullURL = 'rtsp://' + CAM_TABLE[camName]['ip'] + ':' + \
@@ -293,10 +293,10 @@ async def buildCommand(camName):
                                 CAM_TABLE[camName]['cam_id']
 
     pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
-            str(msg['type']) + '/' + \
+            streamType + '/' + \
             os.getenv('PPM_ORG') + '/' + \
-            msg['name']
-    LOGGER.info('pull url :%s', pullURL)
+            camName
+    LOGGER.info('pull: %s push: %s', pullURL, pushURL)
     return pullURL, pushURL
 
 async def main():
@@ -338,7 +338,7 @@ async def main():
                         msg = json.loads(message.payload)
                         match msg['cmd']:
                             case 'open':
-                                pullURL, pushURL = await buildCommand(msg['name'])
+                                pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
                                 if msg['type'] == 0:
                                     if pcStream.pid != 0:
                                         await killProcess(pcStream.pid)
@@ -368,9 +368,9 @@ async def main():
                                         phoneStream.pid = 0
                                         phoneStream.name = ''
                             case 'capture':
-                                pullURL, pushURL = await buildCommand(msg['name'])
+                                pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
                                 await captureFrame(pullURL, msg['file'])
-                                
+
                             case 'setup':
                                 await configTables()
             except aiomqtt.MqttError:
