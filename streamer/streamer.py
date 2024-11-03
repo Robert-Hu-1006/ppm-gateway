@@ -78,7 +78,7 @@ async def captureFrame(pullURL, fileName):
                 '-qscale', '1',
                 '-f', 'image2', fileName]
     
-    LOGGER.info('cmd::%s', command)
+    LOGGER.info('capture cmd::%s', command)
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     stdOut, stdErr = process.communicate(timeout=2)
     LOGGER.info('stdOut:%s stdErr:%s', stdOut, stdErr)
@@ -86,12 +86,12 @@ async def captureFrame(pullURL, fileName):
     proc.kill()
     
 
-async def pushStream(brand, pull_url, push_url):
-    #LOGGER.info('pull url:%s', pull_url)
-    #LOGGER.info('push url:%s', push_url)
-    #pull_url = 'rtsp://admin:Az123567@192.168.18.7:7001/bbf6e391-beb5-828a-64f7-86677fb65430'
-    #push_url = 'rtsp://127.0.0.1:8554/live/h1'
-    
+async def pushStream( pull_url, push_url):
+    #convert RTSP H265 (hevc) stream to H264
+    #ffmpeg -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -map 0:v:0 -c:v libx264 -preset ultrafast -b:v 500k -max_muxing_queue_size 1024 -f rtsp rtsp://robertcloud.net:8554/live/0/Savills/2F_Office
+    #ffmpeg -fflags +genpts -rtsp_transport tcp  -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -c copy -f rtsp -preset ultrafast rtsp://robertcloud.net:8554/live/0/Savills/2F_Office
+    #ffmpeg -fflags +genpts -rtsp_transport tcp -i rtsp://192.168.18.7/gamamia02.avi -c:v libx264 -f rtsp -preset ultrafast rtsp://robertcloud.net:8554/live/0/Savills/2F_Office
+
     command = ['ffmpeg',
                 '-rtsp_transport', 'tcp',
                 '-i', pull_url,
@@ -99,7 +99,7 @@ async def pushStream(brand, pull_url, push_url):
                 '-f', 'rtsp',
                 '-preset', 'ultrafast',
                 push_url]
-
+    
     #process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     LOGGER.info('cmd::%s', command)
     process = subprocess.Popen(command, start_new_session=True)
@@ -114,9 +114,6 @@ async def pushStream(brand, pull_url, push_url):
         LOGGER.info('error::%s', str(process.returncode))
     return rtnPID, rtnCode
    
-    #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/bbf6e391-beb5-828a-64f7-86677fb65430 \
-    #-preset ultrafast \
-    #-c copy -f rtsp rtsp://127.0.0.1:8554/stream/h1 
 async def loadPingTable(sheet):
     pingTable = {}
     wrkSheet = sheet.worksheet_by_title('Sensor')
@@ -358,6 +355,7 @@ async def main():
                             
                             case 'close':
                                 if msg['type'] == 0:
+                                    LOGGER.info('close process id:%d', pcStream.pid )
                                     if pcStream.pid != 0:
                                         await killProcess(pcStream.pid)
                                         pcStream.pid = 0
