@@ -69,22 +69,40 @@ async def killProcess(pid):
     process.kill()
     #os.killpg(pid, signal.SIGUSR1)
 
+async def picUpload(fileName):
+    uploadURL = 'https://' + os.getenv('PPM_CLOUD') + '/api/ppm/stream/snapshot' 
+    headers = { "Authorization": "Bearer " + os.getenv('API_TOKEN')}
+    payload = {'org': os.getenv('PPM_ORG'),
+            'code': os.getenv('PPM_PCODE'),
+            'file': open('/app/' + filename, 'rb')
+        }
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post(uploadURL, 
+                                    headers=headers, 
+                                    ssl=False, 
+                                    data=payload) as response:
+                return response.status
+        except aiohttp.ClientConnectorError as e:
+          LOGGER.info('Connection Error::%s', str(e))
+
 async def captureFrame(pullURL, fileName):
-    #-frames 1 -qscale 1 -f image2 /home/pi/Pictures/test_image.jpg
+    #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -frames:v 1 -q:v 1 -f image2 /app/test_image.jpg
     command = ['ffmpeg',
                 '-rtsp_transport', 'tcp',
                 '-i', pullURL,
-                '-frames', '1',
-                '-qscale', '1',
-                '-f', 'image2', fileName]
+                '-frames:v', '1',
+                '-q:v', '1',
+                '-f', 'image2', '/app/' + fileName]
     
     LOGGER.info('capture cmd::%s', command)
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     stdOut, stdErr = process.communicate(timeout=2)
     LOGGER.info('stdOut:%s stdErr:%s', stdOut, stdErr)
-    proc.terminate()
-    proc.kill()
-    
+    if os.isfile('/app/' + fileName):
+        rtn = await picUpload(fileName)
+        if rtn == 200:
+            await os.remove('/app/' + fileName)
 
 async def pushStream( pull_url, push_url):
     #convert RTSP H265 (hevc) stream to H264
@@ -105,15 +123,16 @@ async def pushStream( pull_url, push_url):
     #process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     LOGGER.info('cmd::%s', command)
     process = subprocess.Popen(command, 
-                     tdout=subprocess.PIPE,
-                     stderr=subprocess.PIPE,
-                     universal_newlines=True)
-                     #Truestart_new_session=True)
-    
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    start_new_session=True)
+                    #universal_newlines=True)
+
     if process.returncode is None:
         rtnPID = process.pid
     else:
         rtnPID = 0
+        process.terminate()
         process.kill()
         LOGGER.info('error::%s', str(process.returncode))
     return rtnPID
@@ -329,6 +348,7 @@ async def main():
         interval = 3  # Seconds
         topic = 'gateway/' + os.getenv('PPM_ORG') + '/' + os.getenv('PPM_PCODE')
         LOGGER.info('topic :%s', topic)
+        
         pcStream = Stream(0, '')
         phoneStream = Stream(0, '')
 
@@ -341,10 +361,9 @@ async def main():
                         match msg['cmd']:
                             case 'open':
                                 pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
-                                if msg['type'] == 0:    # Desktop
+                                if msg['type'] == '0':    # Desktop
                                     if pcStream.pid != 0:
                                         await killProcess(pcStream.pid)
-                                
                                     pid = await pushStream(pullURL, pushURL)
                                     if pid != 0:
                                         pcStream.pid = pid
