@@ -92,7 +92,9 @@ async def pushStream( pull_url, push_url):
     #ffmpeg -fflags +genpts -rtsp_transport tcp  -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -c copy -f rtsp -preset ultrafast rtsp://robertcloud.net:8554/live/0/Savills/2F_Office
     #ffmpeg -fflags +genpts -rtsp_transport tcp -i rtsp://192.168.18.7/gamamia02.avi -c:v libx264 -f rtsp -preset ultrafast rtsp://robertcloud.net:8554/live/0/Savills/2F_Office
 
+    #-loglevel error
     command = ['ffmpeg',
+                '-fflags', '+genpts',
                 '-rtsp_transport', 'tcp',
                 '-i', pull_url,
                 '-c', 'copy',
@@ -102,17 +104,19 @@ async def pushStream( pull_url, push_url):
     
     #process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     LOGGER.info('cmd::%s', command)
-    process = subprocess.Popen(command, start_new_session=True)
+    process = subprocess.Popen(command, 
+                     tdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE,
+                     universal_newlines=True)
+                     #Truestart_new_session=True)
     
     if process.returncode is None:
         rtnPID = process.pid
-        rtnCode = 0
     else:
         rtnPID = 0
-        rtnCode = process.returncode
         process.kill()
         LOGGER.info('error::%s', str(process.returncode))
-    return rtnPID, rtnCode
+    return rtnPID
    
 async def loadPingTable(sheet):
     pingTable = {}
@@ -137,7 +141,8 @@ async def loadPingTable(sheet):
                 config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][4] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
-                config['[inputs.ping]']['interval'] = '"15s"'
+                config['[inputs.ping]']['interval'] = '"30s"'
+                config['[inputs.ping]']['timeout'] = '3.0'
 
                 config['inputs.ping.tags'] = {}
                 config['inputs.ping.tags']['ID'] = '"' + gSheet[i + 1][2].lower() + '"'
@@ -336,25 +341,24 @@ async def main():
                         match msg['cmd']:
                             case 'open':
                                 pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
-                                if msg['type'] == 0:
+                                if msg['type'] == 0:    # Desktop
                                     if pcStream.pid != 0:
                                         await killProcess(pcStream.pid)
                                 
-                                    pid, rtnCode = await pushStream(pullURL, pushURL)
-                                    if rtnCode == 0:
+                                    pid = await pushStream(pullURL, pushURL)
+                                    if pid != 0:
                                         pcStream.pid = pid
                                         pcStream.name = msg['name']
                                 else:
                                     if phoneStream.pid != 0:
                                         await killProcess(phoneStream.pid)
-                                
-                                    pid, rtnCode = await pushStream(pullURL, pushURL)
-                                    if rtnCode == 0:
+                                    pid = await pushStream(pullURL, pushURL)
+                                    if pid != 0:
                                         phoneStream.pid = pid
                                         phoneStream.name = msg['name']
                             
-                            case 'close':
-                                if msg['type'] == 0:
+                            case 'stop':
+                                if msg['type'] == '0':  # desktop
                                     LOGGER.info('close process id:%d', pcStream.pid )
                                     if pcStream.pid != 0:
                                         await killProcess(pcStream.pid)
