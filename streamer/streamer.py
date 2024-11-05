@@ -72,16 +72,18 @@ async def killProcess(pid):
 async def picUpload(fileName):
     uploadURL = 'https://' + os.getenv('PPM_CLOUD') + '/api/ppm/stream/snapshot' 
     headers = { "Authorization": "Bearer " + os.getenv('API_TOKEN')}
-    payload = {'org': os.getenv('PPM_ORG'),
-            'code': os.getenv('PPM_PCODE'),
-            'file': open('/app/' + filename, 'rb')
-        }
+    formData = aiohttp.FormData()
+    file = open('/app/' + fileName, 'rb')
+    formData.add_field('org', os.getenv('PPM_ORG'))
+    formData.add_field('code', os.getenv('PPM_PCODE'))
+    formData.add_field('file', open('/app/' + fileName, 'rb'), filename=fileName)
+    
     async with aiohttp.ClientSession() as session:
         try:
             async with session.post(uploadURL, 
                                     headers=headers, 
                                     ssl=False, 
-                                    data=payload) as response:
+                                    data=formData) as response:
                 return response.status
         except aiohttp.ClientConnectorError as e:
           LOGGER.info('Connection Error::%s', str(e))
@@ -89,6 +91,7 @@ async def picUpload(fileName):
 async def captureFrame(pullURL, fileName):
     #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -frames:v 1 -q:v 1 -f image2 /app/test_image.jpg
     command = ['ffmpeg',
+                '-loglevel', 'error',
                 '-rtsp_transport', 'tcp',
                 '-i', pullURL,
                 '-frames:v', '1',
@@ -99,10 +102,10 @@ async def captureFrame(pullURL, fileName):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     stdOut, stdErr = process.communicate(timeout=2)
     LOGGER.info('stdOut:%s stdErr:%s', stdOut, stdErr)
-    if os.isfile('/app/' + fileName):
+    if os.path.isfile('/app/' + fileName):
         rtn = await picUpload(fileName)
         if rtn == 200:
-            await os.remove('/app/' + fileName)
+            os.remove('/app/' + fileName)
 
 async def pushStream( pull_url, push_url):
     #convert RTSP H265 (hevc) stream to H264
