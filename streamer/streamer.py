@@ -35,23 +35,24 @@ async def genTelegrafTag():
     if os.path.isfile(ppm_tag):
         os.remove(ppm_tag)
     wrkSheet = sheet.worksheet_by_title('Sensor')
-    gTable = wrkSheet.get_values('A2', 'N')
+    gTable = wrkSheet.get_values('A2', 'P')
     for i in range(len(gTable) - 1):
-        deviceID = gTable[i + 1][2].lower()
-        dataChannel = gTable[i + 1][6].lower()
+        deviceID = gTable[i + 1][3].lower()
+        dataChannel = gTable[i + 1][9].lower()
         key = deviceID + '_' + dataChannel
         sensorTable[key] = {}
         sensorTable[key]['org'] =  gTable[i + 1][0]
         sensorTable[key]['code'] =  gTable[i + 1][1]
-        sensorTable[key]['device'] =  gTable[i + 1][3]
-        sensorTable[key]['sensor'] =  gTable[i + 1][5]
-        sensorTable[key]['alarm'] =  gTable[i + 1][7]
-        sensorTable[key]['floor'] =  gTable[i + 1][8]
-        sensorTable[key]['area'] =  gTable[i + 1][9]
-        sensorTable[key]['priority'] =  gTable[i + 1][10]
-        sensorTable[key]['sop'] =  gTable[i + 1][11]
-        sensorTable[key]['source'] =  gTable[i + 1][12]
-        if gTable[i + 1][13] == '':
+        sensorTable[key]['deviceName'] =  gTable[i + 1][4]
+        sensorTable[key]['sensorType'] =  gTable[i + 1][6]
+        sensorTable[key]['alarmGroup'] =  gTable[i + 1][7]
+        sensorTable[key]['alarmType'] =  gTable[i + 1][8]
+        sensorTable[key]['floor'] =  gTable[i + 1][10]
+        sensorTable[key]['area'] =  gTable[i + 1][11]
+        sensorTable[key]['priority'] =  gTable[i + 1][12]
+        sensorTable[key]['sop'] =  gTable[i + 1][13]
+        sensorTable[key]['source'] =  gTable[i + 1][14]
+        if gTable[i + 1][15] == '':
             camLink = 'na'
         else:
             camLink = gTable[i + 1][13]
@@ -99,13 +100,22 @@ async def captureFrame(pullURL, fileName):
                 '-f', 'image2', '/app/' + fileName]
     
     LOGGER.info('capture cmd::%s', command)
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-    stdOut, stdErr = process.communicate(timeout=2)
-    LOGGER.info('stdOut:%s stdErr:%s', stdOut, stdErr)
-    if os.path.isfile('/app/' + fileName):
-        rtn = await picUpload(fileName)
-        if rtn == 200:
-            os.remove('/app/' + fileName)
+    process = subprocess.Popen(command, 
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                start_new_session=True)
+    
+    stdOut, stdErr = process.communicate()
+    LOGGER.info('stdErr: %s', type(stdErr))
+    if len(stdErr) == 0:
+        if os.path.isfile('/app/' + fileName):
+            rtn = await picUpload(fileName)
+            if rtn == 200:
+                os.remove('/app/' + fileName)
+    else:
+        LOGGER.info('time out error')
+        process.terminate()
+        process.kill()
 
 async def pushStream( pull_url, push_url):
     #convert RTSP H265 (hevc) stream to H264
@@ -129,8 +139,7 @@ async def pushStream( pull_url, push_url):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     start_new_session=True)
-                    #universal_newlines=True)
-
+                    
     if process.returncode is None:
         rtnPID = process.pid
     else:
@@ -143,7 +152,7 @@ async def pushStream( pull_url, push_url):
 async def loadPingTable(sheet):
     pingTable = {}
     wrkSheet = sheet.worksheet_by_title('Sensor')
-    gSheet = wrkSheet.get_values('A2', 'N')
+    gSheet = wrkSheet.get_values('A2', 'P')
     config = configparser.ConfigParser(strict=False)
     pCode = os.getenv('PPM_PCODE')
     
@@ -160,22 +169,18 @@ async def loadPingTable(sheet):
             if ip not in ipList:
                 config['[inputs.ping]'] = {}
                 ipList.append(ip)
-                config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][4] + '"]'
+                config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][5] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
                 config['[inputs.ping]']['interval'] = '"30s"'
                 config['[inputs.ping]']['timeout'] = '3.0'
 
                 config['inputs.ping.tags'] = {}
-                config['inputs.ping.tags']['ID'] = '"' + gSheet[i + 1][2].lower() + '"'
-                if len(gSheet[i + 1][2]) == 36:
-                    config['inputs.ping.tags']['type'] = '"' + 'cam' + '"'
-                else:
-                    config['inputs.ping.tags']['type'] = '"' + 'iot' + '"'
-
-                config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][3] + '"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][8] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][9] + '"'
+                config['inputs.ping.tags']['ID'] = '"' + gSheet[i + 1][3].lower() + '"'
+                config['inputs.ping.tags']['cat'] = '["' + gSheet[i + 1][2] + '"]'
+                config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][4] + '"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][10] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][11] + '"'
     
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:
@@ -199,11 +204,11 @@ async def loadPingTable(sheet):
                 config['[inputs.ping]']['timeout'] = '3'
 
                 config['inputs.ping.tags'] = {}
-                config['inputs.ping.tags']['ID'] = '"' + gSheet[j + 1][2].lower() + '"'
-                config['inputs.ping.tags']['type'] = '"' + 'cam' + '"'
-                config['inputs.ping.tags']['name'] = '"' + gSheet[j + 1][3] + '"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[j + 1][5] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[j + 1][6] + '"'
+                config['inputs.ping.tags']['ID'] = '"' + gSheet[j + 1][3].lower() + '"'
+                config['inputs.ping.tags']['cat'] = '"' + 'cam' + '"'
+                config['inputs.ping.tags']['name'] = '"' + gSheet[j + 1][4] + '"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[j + 1][6] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[j + 1][7] + '"'
     
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             # with open('./streamer/ping.conf', 'a') as configfile:
@@ -220,8 +225,8 @@ async def loadCamTable(wrkSheet):
             name = gSheet[i + 1][4]
             camTable[name] = {}
             camTable[name]['code'] =  gSheet[i + 1][1]
-            camTable[name]['brand'] =  gSheet[i + 1][2]
-            camTable[name]['cam_id'] =  gSheet[i + 1][3]
+            camTable[name]['source'] =  gSheet[i + 1][2]
+            camTable[name]['camID'] =  gSheet[i + 1][3]
             camTable[name]['path'] =  gSheet[i + 1][5]
             camTable[name]['floor'] =  gSheet[i + 1][6]
             camTable[name]['area'] =  gSheet[i + 1][7]
@@ -295,26 +300,27 @@ async def getLicenseInfo():
 
 
 async def buildCommand(streamType, camName):
-    match CAM_TABLE[camName]['brand']:
-        case 'NX':
+    match CAM_TABLE[camName]['source']:
+        case 'NX_MERGE':
             pullURL = 'rtsp://' + CAM_TABLE[camName]['ip'] + ':' + \
                                 CAM_TABLE[camName]['port'] + '/' + \
-                                CAM_TABLE[camName]['cam_id'] + '?lo&auth=' + \
+                                CAM_TABLE[camName]['camID'] + '?lo&auth=' + \
                                 CAM_TABLE[camName]['token']
-
-        case 'Hikvision':
+        case 'NX_NVR':
             pullURL = 'rtsp://' + CAM_TABLE[camName]['account'] + ':' + \
                                 CAM_TABLE[camName]['passwd'] + '@' + \
                                 CAM_TABLE[camName]['ip'] + ':' + \
                                 CAM_TABLE[camName]['port'] + '/' + \
-                                CAM_TABLE[camName]['path'] + \
-                                CAM_TABLE[camName]['cam_id']
+                                CAM_TABLE[camName]['camID']
+        case 'SIM_CAM':
+            pullURL = 'rtsp://' + CAM_TABLE[camName]['ip'] + '/' + \
+                                CAM_TABLE[camName]['camID']
         case '_':
             pullURL = 'rtsp://' + CAM_TABLE[camName]['account'] + ':' + \
                                 CAM_TABLE[camName]['passwd'] + '@' + \
                                 CAM_TABLE[camName]['ip'] + ':' + \
                                 CAM_TABLE[camName]['port'] + '/' + \
-                                CAM_TABLE[camName]['cam_id']
+                                CAM_TABLE[camName]['camID']
 
     pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
             streamType + '/' + \
@@ -394,7 +400,7 @@ async def main():
                             case 'capture':
                                 pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
                                 await captureFrame(pullURL, msg['file'])
-
+                                
                             case 'setup':
                                 await configTables()
             except aiomqtt.MqttError:
