@@ -26,6 +26,7 @@ class Stream:
         self.name = name
 
 async def copyTag(key, row):
+    sensorTable ={}
     sensorTable[key] = {}
     sensorTable[key]['org'] =  row[0]
     sensorTable[key]['code'] =  row[1]
@@ -47,8 +48,12 @@ async def copyTag(key, row):
 
 async def genTelegrafTag():
     client = pygsheets.authorize(service_account_file='/app/service.json')
+    #client = pygsheets.authorize(service_account_file='./streamer/client_secret.json')
     sheet = client.open_by_key(LICENSE['sheet'])
+    #sheet = client.open_by_key('1YjsaWo06B6p02qZfL2sL6N87o3bndwEDa3yCFWQY_QA')
+
     ppm_tag = '/etc/telegraf/tag/ppm_tag.json'
+    #ppm_tag = './streamer/ppm_tag.json'
     tagTable = {}
     urlList = []
     if os.path.isfile(ppm_tag):
@@ -61,25 +66,7 @@ async def genTelegrafTag():
         key = deviceID + '_' + dataChannel
         sensorTable = {}
         sensorTable = await copyTag(key, gTable[i + 1])
-        '''
-        sensorTable[key] = {}
-        sensorTable[key]['org'] =  gTable[i + 1][0]
-        sensorTable[key]['code'] =  gTable[i + 1][1]
-        sensorTable[key]['deviceName'] =  gTable[i + 1][4]
-        sensorTable[key]['sensorType'] =  gTable[i + 1][6]
-        sensorTable[key]['alarmGroup'] =  gTable[i + 1][7]
-        sensorTable[key]['alarmType'] =  gTable[i + 1][8]
-        sensorTable[key]['floor'] =  gTable[i + 1][10]
-        sensorTable[key]['area'] =  gTable[i + 1][11]
-        sensorTable[key]['priority'] =  gTable[i + 1][12]
-        sensorTable[key]['sop'] =  gTable[i + 1][13]
-        sensorTable[key]['source'] =  gTable[i + 1][14]
-        if gTable[i + 1][15] == '':
-            camLink = 'na'
-        else:
-            camLink = gTable[i + 1][13]
-        sensorTable[key]['cam_link'] =  camLink
-        '''
+        
         # IP
         if deviceID not in urlList:
             urlList.append(deviceID)
@@ -90,7 +77,7 @@ async def genTelegrafTag():
             respKey = deviceID + '_average_response_ms_value'
             respTable = {}
             respTable = await copyTag(respKey, gTable[i + 1])
-    tagTable = {**sensorTable, **packetTable, **respTable}
+        tagTable = {**tagTable, **sensorTable, **packetTable, **respTable}
     with open(ppm_tag, 'w') as SensorFile:
         json.dump(tagTable, SensorFile, indent=2)
     SensorFile.close
