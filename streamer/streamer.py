@@ -55,7 +55,7 @@ async def genTelegrafTag():
     ppm_tag = '/etc/telegraf/tag/ppm_tag.json'
     #ppm_tag = './streamer/ppm_tag.json'
     tagTable = {}
-    urlList = []
+    
     if os.path.isfile(ppm_tag):
         os.remove(ppm_tag)
     wrkSheet = sheet.worksheet_by_title('Sensor')
@@ -65,21 +65,26 @@ async def genTelegrafTag():
         dataChannel = gTable[i + 1][9].lower()
         key = deviceID + '_' + dataChannel
         sensorTable = {}
-        sensorTable = await copyTag(key, gTable[i + 1])
+        sensorTable[key] = {}
+        sensorTable[key]['org'] =  gTable[i + 1][0]
+        sensorTable[key]['code'] =  gTable[i + 1][1]
+        sensorTable[key]['deviceName'] =  gTable[i + 1][4]
+        sensorTable[key]['sensorType'] =  gTable[i + 1][6]
+        sensorTable[key]['alarmGroup'] =  gTable[i + 1][7]
+        sensorTable[key]['alarmType'] =  gTable[i + 1][8]
+        sensorTable[key]['floor'] =  gTable[i + 1][10]
+        sensorTable[key]['area'] =  gTable[i + 1][11]
+        sensorTable[key]['priority'] =  gTable[i + 1][12]
+        sensorTable[key]['sop'] =  gTable[i + 1][13]
+        sensorTable[key]['source'] =  gTable[i + 1][14]
+        if gTable[i + 1][15] == '':
+            camLink = 'na'
+        else:
+            camLink = gTable[i + 1][13]
+        sensorTable[key]['cam_link'] =  camLink
         
-        # IP
-        if deviceID not in urlList:
-            urlList.append(deviceID)
-            pingKey = deviceID + '_percent_packet_loss_value'
-            packetTable = {}
-            packetTable = await copyTag(pingKey, gTable[i + 1])
-
-            respKey = deviceID + '_average_response_ms_value'
-            respTable = {}
-            respTable = await copyTag(respKey, gTable[i + 1])
-        tagTable = {**tagTable, **sensorTable, **packetTable, **respTable}
     with open(ppm_tag, 'w') as SensorFile:
-        json.dump(tagTable, SensorFile, indent=2)
+        json.dump(sensorTable, SensorFile, indent=2)
     SensorFile.close
 
 
@@ -174,8 +179,10 @@ async def loadPingTable(sheet):
     wrkSheet = sheet.worksheet_by_title('Sensor')
     gSheet = wrkSheet.get_values('A2', 'P')
     config = configparser.ConfigParser(strict=False)
-    pCode = os.getenv('PPM_PCODE')
+    # 保留原先鍵大小寫
+    config.optionxform = lambda option: option
     
+    pCode = os.getenv('PPM_PCODE')
     ipList = []
     if os.path.isfile('/etc/telegraf/conf/ping.conf'):
         os.remove('/etc/telegraf/conf/ping.conf')
@@ -197,17 +204,20 @@ async def loadPingTable(sheet):
 
                 config['inputs.ping.tags'] = {}
                 config['inputs.ping.tags']['deviceID'] = '"' + gSheet[i + 1][3].lower() + '"'
-                config['inputs.ping.tags']['deviceCAT'] = '["' + gSheet[i + 1][2] + '"]'
                 config['inputs.ping.tags']['deviceName'] = '"' + gSheet[i + 1][4] + '"'
-                config['inputs.ping.tags']['group'] = '"' + gSheet[i + 1][4] + '"'
-                config['inputs.ping.tags']['name'] = '"' + gSheet[i + 1][4] + '"'
+                config['inputs.ping.tags']['sensorType'] = '"' + gSheet[i + 1][6] + '"'
+                config['inputs.ping.tags']['alarmGroup'] = '"' + gSheet[i + 1][7] + '"'
+                config['inputs.ping.tags']['alarmType'] = '"' + gSheet[i + 1][8] + '"'
                 config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][10] + '"'
                 config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][11] + '"'
-    
+                config['inputs.ping.tags']['priority'] = '"' + gSheet[i + 1][12] + '"'
+                config['inputs.ping.tags']['sop'] = '"' + gSheet[i + 1][13] + '"'
+                config['inputs.ping.tags']['source'] = '"' + gSheet[i + 1][14] + '"'
+                config['inputs.ping.tags']['cam_link'] = '"' + gSheet[i + 1][15] + '"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
-                config = configparser.ConfigParser(strict=False)
+                #config = configparser.ConfigParser(strict=False)
             configfile.close
 
     wrkSheet = sheet.worksheet_by_title('LiveCam')
@@ -215,27 +225,32 @@ async def loadPingTable(sheet):
     LOGGER.info('livecam len:%s', str(len(gSheet)))
     for j in range(len(gSheet)-1):
         if gSheet[j + 1][1] == pCode: 
-            ip = gSheet[j + 1][7]
-            if ip not in ipList:
+            ip = gSheet[j + 1][8]
+            if ip not in ipList and ip != '':
                 config['[inputs.ping]'] = {}
                 ipList.append(ip)
-                config['[inputs.ping]']['urls'] = '["' + gSheet[j + 1][7] + '"]'
+                config['[inputs.ping]']['urls'] = '["' + gSheet[j + 1][8] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
                 config['[inputs.ping]']['interval'] = '"60s"'
-                config['[inputs.ping]']['timeout'] = '3'
+                config['[inputs.ping]']['timeout'] = '3.0'
 
-                config['inputs.ping.tags'] = {}
-                config['inputs.ping.tags']['ID'] = '"' + gSheet[j + 1][3].lower() + '"'
-                config['inputs.ping.tags']['cat'] = '"' + 'cam' + '"'
-                config['inputs.ping.tags']['name'] = '"' + gSheet[j + 1][4] + '"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[j + 1][6] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[j + 1][7] + '"'
+                config['inputs.ping.tags']['deviceID'] = '"' + gSheet[i + 1][3].lower() + '"'
+                config['inputs.ping.tags']['deviceName'] = '"' + gSheet[i + 1][4] + '"'
+                config['inputs.ping.tags']['sensorType'] = '"CAM"'
+                config['inputs.ping.tags']['alarmGroup'] = '"IP_Device"'
+                config['inputs.ping.tags']['alarmType'] = '"Device_Disconnect"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][6] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][7] + '"'
+                config['inputs.ping.tags']['priority'] = '"Critical"'
+                config['inputs.ping.tags']['sop'] = '"9"'
+                config['inputs.ping.tags']['source'] = '""'
+                config['inputs.ping.tags']['cam_link'] = '"' + gSheet[i + 1][4] + '"'
     
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             # with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
-                config = configparser.ConfigParser(strict=False)
+                #config = configparser.ConfigParser(strict=False)
             configfile.close    
     
 async def loadCamTable(wrkSheet):
