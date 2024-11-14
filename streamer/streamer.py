@@ -54,7 +54,7 @@ async def genTelegrafTag():
 
     ppm_tag = '/etc/telegraf/tag/ppm_tag.json'
     #ppm_tag = './streamer/ppm_tag.json'
-    tagTable = {}
+    sensorTable = {}
     
     if os.path.isfile(ppm_tag):
         os.remove(ppm_tag)
@@ -64,7 +64,6 @@ async def genTelegrafTag():
         deviceID = gTable[i + 1][3].lower()
         dataChannel = gTable[i + 1][9].lower()
         key = deviceID + '_' + dataChannel
-        sensorTable = {}
         sensorTable[key] = {}
         sensorTable[key]['org'] =  gTable[i + 1][0]
         sensorTable[key]['code'] =  gTable[i + 1][1]
@@ -81,7 +80,7 @@ async def genTelegrafTag():
             camLink = 'na'
         else:
             camLink = gTable[i + 1][13]
-        sensorTable[key]['cam_link'] =  camLink
+            sensorTable[key]['cam_link'] =  camLink
         
     with open(ppm_tag, 'w') as SensorFile:
         json.dump(sensorTable, SensorFile, indent=2)
@@ -199,7 +198,7 @@ async def loadPingTable(sheet):
                 config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][5] + '"]'
                 config['[inputs.ping]']['method'] = '"exec"'
                 config['[inputs.ping]']['count'] = '3'
-                config['[inputs.ping]']['interval'] = '"30s"'
+                config['[inputs.ping]']['interval'] = '"60s"'
                 config['[inputs.ping]']['timeout'] = '3.0'
 
                 config['inputs.ping.tags'] = {}
@@ -235,17 +234,17 @@ async def loadPingTable(sheet):
                 config['[inputs.ping]']['interval'] = '"60s"'
                 config['[inputs.ping]']['timeout'] = '3.0'
 
-                config['inputs.ping.tags']['deviceID'] = '"' + gSheet[i + 1][3].lower() + '"'
-                config['inputs.ping.tags']['deviceName'] = '"' + gSheet[i + 1][4] + '"'
+                config['inputs.ping.tags']['deviceID'] = '"' + gSheet[j + 1][3].lower() + '"'
+                config['inputs.ping.tags']['deviceName'] = '"' + gSheet[j + 1][4] + '"'
                 config['inputs.ping.tags']['sensorType'] = '"CAM"'
                 config['inputs.ping.tags']['alarmGroup'] = '"IP_Device"'
                 config['inputs.ping.tags']['alarmType'] = '"Device_Disconnect"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][6] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][7] + '"'
+                config['inputs.ping.tags']['floor'] = '"' + gSheet[j + 1][6] + '"'
+                config['inputs.ping.tags']['area'] = '"' + gSheet[j + 1][7] + '"'
                 config['inputs.ping.tags']['priority'] = '"Critical"'
                 config['inputs.ping.tags']['sop'] = '"9"'
                 config['inputs.ping.tags']['source'] = '""'
-                config['inputs.ping.tags']['cam_link'] = '"' + gSheet[i + 1][4] + '"'
+                config['inputs.ping.tags']['cam_link'] = '"' + gSheet[j + 1][4] + '"'
     
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             # with open('./streamer/ping.conf', 'a') as configfile:
@@ -437,7 +436,11 @@ async def main():
                             case 'capture':
                                 pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
                                 await captureFrame(pullURL, msg['file'])
+                            
+                            case 'snapshot':
+                                #download 30 sec video
                                 
+                                LOGGER.info('snapshot event time:%d', msg['eventTime'] )
                             case 'setup':
                                 await configTables()
             except aiomqtt.MqttError:
