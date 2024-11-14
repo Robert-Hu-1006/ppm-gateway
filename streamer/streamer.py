@@ -36,7 +36,7 @@ async def copyTag(key, row):
     sensorTable[key]['alarmType'] =  row[8]
     sensorTable[key]['floor'] =  row[10]
     sensorTable[key]['area'] =  row[11]
-    sensorTable[key]['priority'] =  row[12]
+    sensorTable[key]['alarmPriority'] =  row[12]
     sensorTable[key]['sop'] =  row[13]
     sensorTable[key]['source'] =  row[14]
     if row[15] == '':
@@ -73,7 +73,7 @@ async def genTelegrafTag():
         sensorTable[key]['alarmType'] =  gTable[i + 1][8]
         sensorTable[key]['floor'] =  gTable[i + 1][10]
         sensorTable[key]['area'] =  gTable[i + 1][11]
-        sensorTable[key]['priority'] =  gTable[i + 1][12]
+        sensorTable[key]['alarmPriority'] =  gTable[i + 1][12]
         sensorTable[key]['sop'] =  gTable[i + 1][13]
         sensorTable[key]['source'] =  gTable[i + 1][14]
         if gTable[i + 1][15] == '':
@@ -209,10 +209,13 @@ async def loadPingTable(sheet):
                 config['inputs.ping.tags']['alarmType'] = '"Device_Disconnect"'
                 config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][10] + '"'
                 config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][11] + '"'
-                config['inputs.ping.tags']['priority'] = '"Critical"'
+                config['inputs.ping.tags']['alarmPriority'] = '"Critical"'
                 config['inputs.ping.tags']['sop'] = '"9"'
                 config['inputs.ping.tags']['source'] = '"' + gSheet[i + 1][14] + '"'
-                config['inputs.ping.tags']['cam_link'] = '"' + gSheet[i + 1][15] + '"'
+                if gSheet[i + 1][15] == '':
+                    config['inputs.ping.tags']['camLink'] = '"na"'
+                else:
+                    config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
@@ -241,10 +244,10 @@ async def loadPingTable(sheet):
                 config['inputs.ping.tags']['alarmType'] = '"Device_Disconnect"'
                 config['inputs.ping.tags']['floor'] = '"' + gSheet[j + 1][6] + '"'
                 config['inputs.ping.tags']['area'] = '"' + gSheet[j + 1][7] + '"'
-                config['inputs.ping.tags']['priority'] = '"Critical"'
+                config['inputs.ping.tags']['alarmPriority'] = '"Critical"'
                 config['inputs.ping.tags']['sop'] = '"9"'
                 config['inputs.ping.tags']['source'] = '""'
-                config['inputs.ping.tags']['cam_link'] = '"' + gSheet[j + 1][4] + '"'
+                config['inputs.ping.tags']['camLink'] = '"' + gSheet[j + 1][4] + '"'
     
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             # with open('./streamer/ping.conf', 'a') as configfile:
