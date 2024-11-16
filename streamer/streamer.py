@@ -25,26 +25,6 @@ class Stream:
         self.pid = pid
         self.name = name
 
-async def copyTag(key, row):
-    sensorTable ={}
-    sensorTable[key] = {}
-    sensorTable[key]['org'] =  row[0]
-    sensorTable[key]['code'] =  row[1]
-    sensorTable[key]['deviceName'] =  row[4]
-    sensorTable[key]['sensorType'] =  row[6]
-    sensorTable[key]['alarmGroup'] =  row[7]
-    sensorTable[key]['alarmType'] =  row[8]
-    sensorTable[key]['floor'] =  row[10]
-    sensorTable[key]['area'] =  row[11]
-    sensorTable[key]['alarmPriority'] =  row[12]
-    sensorTable[key]['sop'] =  row[13]
-    sensorTable[key]['source'] =  row[14]
-    if row[15] == '':
-        camLink = 'na'
-    else:
-        camLink = row[13]
-    sensorTable[key]['cam_link'] =  camLink
-    return sensorTable
 
 async def genTelegrafTag():
     client = pygsheets.authorize(service_account_file='/app/service.json')
@@ -80,8 +60,9 @@ async def genTelegrafTag():
             camLink = 'na'
         else:
             camLink = gTable[i + 1][13]
-            sensorTable[key]['cam_link'] =  camLink
-        
+            sensorTable[key]['camLink'] =  camLink
+        sensorTable[key]['brief'] = 'System Notify: ' + gTable[i + 1][8]
+
     with open(ppm_tag, 'w') as SensorFile:
         json.dump(sensorTable, SensorFile, indent=2)
     SensorFile.close
@@ -147,7 +128,7 @@ async def pushStream( pull_url, push_url):
     #ffmpeg -fflags +genpts -rtsp_transport tcp  -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -c copy -f rtsp -preset ultrafast rtsp://robertcloud.net:8554/live/0/Savills/2F_Office
     #ffmpeg -fflags +genpts -rtsp_transport tcp -i rtsp://192.168.18.7/gamamia02.avi -c:v libx264 -f rtsp -preset ultrafast rtsp://robertcloud.net:8554/live/0/Savills/2F_Office
 
-    #-loglevel error
+    #-loglevel errorge
     command = ['ffmpeg',
                 '-fflags', '+genpts',
                 '-rtsp_transport', 'tcp',
@@ -191,7 +172,7 @@ async def loadPingTable(sheet):
     
     for i in range(len(gSheet)-1):
         if gSheet[i + 1][1] == pCode: 
-            ip = gSheet[i + 1][4]
+            ip = gSheet[i + 1][5]
             if ip not in ipList:
                 config['[inputs.ping]'] = {}
                 ipList.append(ip)
@@ -216,6 +197,8 @@ async def loadPingTable(sheet):
                     config['inputs.ping.tags']['camLink'] = '"na"'
                 else:
                     config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
+                config['inputs.ping.tags']['tag'] = '"1"'
+                config['inputs.ping.tags']['brief'] = '"System Notify: 100% Packet Loss"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
@@ -248,7 +231,8 @@ async def loadPingTable(sheet):
                 config['inputs.ping.tags']['sop'] = '"9"'
                 config['inputs.ping.tags']['source'] = '""'
                 config['inputs.ping.tags']['camLink'] = '"' + gSheet[j + 1][4] + '"'
-    
+                config['inputs.ping.tags']['tag'] = '"1"'
+                config['inputs.ping.tags']['brief'] = '"System Notify: 100% Packet Loss"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             # with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
@@ -442,8 +426,8 @@ async def main():
                             
                             case 'snapshot':
                                 #download 30 sec video
-                                
-                                LOGGER.info('snapshot event time:%d', msg['eventTime'] )
+                                LOGGER.info('image ID: %s', msg['imageID'])
+                                LOGGER.info('snapshot event time:%s', msg['eventTime'] )
                             case 'setup':
                                 await configTables()
             except aiomqtt.MqttError:
