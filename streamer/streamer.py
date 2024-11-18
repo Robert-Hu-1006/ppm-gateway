@@ -198,7 +198,7 @@ async def loadPingTable(sheet):
                 else:
                     config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
                 config['inputs.ping.tags']['tag'] = '"1"'
-                config['inputs.ping.tags']['brief'] = '"System Notify: 100% Packet Loss"'
+                config['inputs.ping.tags']['brief'] = '"System Notify: Packet Loss"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
