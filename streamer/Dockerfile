@@ -13,7 +13,10 @@ RUN pip install --upgrade pip \
     #--no-binary :all: psutil \
     psutil \
     python-dotenv \
-    aiohttp 
+    aiohttp \
+    aiojobs \
+    requests \
+    pytz
 
 RUN mkdir /app
 WORKDIR /app

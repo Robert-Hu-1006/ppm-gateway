@@ -8,9 +8,11 @@ import json
 import asyncio
 import aiomqtt
 import aiohttp
+import aiojobs
 import configparser
 #import ssl
 from dotenv import load_dotenv
+import HKclient
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
@@ -59,7 +61,7 @@ async def genTelegrafTag():
         if gTable[i + 1][15] == '':
             camLink = 'na'
         else:
-            camLink = gTable[i + 1][13]
+            camLink = gTable[i + 1][15]
             sensorTable[key]['camLink'] =  camLink
         sensorTable[key]['brief'] = 'System Notify: ' + gTable[i + 1][8]
 
@@ -76,23 +78,30 @@ async def killProcess(pid):
     #os.killpg(pid, signal.SIGUSR1)
 
 async def picUpload(fileName):
-    uploadURL = 'https://' + os.getenv('PPM_CLOUD') + '/api/ppm/stream/snapshot' 
-    headers = { "Authorization": "Bearer " + os.getenv('API_TOKEN')}
-    formData = aiohttp.FormData()
-    file = open('/app/' + fileName, 'rb')
-    formData.add_field('org', os.getenv('PPM_ORG'))
-    formData.add_field('code', os.getenv('PPM_PCODE'))
-    formData.add_field('file', open('/app/' + fileName, 'rb'), filename=fileName)
+    if os.path.isfile(fileName):
+        uploadURL = 'https://' + os.getenv('PPM_CLOUD') + '/api/ppm/stream/snapshot' 
+        headers = { "Authorization": "Bearer " + os.getenv('API_TOKEN')}
+        formData = aiohttp.FormData()
+        file = open('/app/' + fileName, 'rb')
+        formData.add_field('org', os.getenv('PPM_ORG'))
+        formData.add_field('code', os.getenv('PPM_PCODE'))
+        formData.add_field('file', open('/app/' + fileName, 'rb'), filename=fileName)
+        
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(uploadURL, 
+                                        headers=headers, 
+                                        ssl=False, 
+                                        data=formData) as response:
+                    if response == 200:
+                        os.remove('/app/' + fileName)
+                    return response.status
+            except aiohttp.ClientConnectorError as e:
+                LOGGER.info('Connection Error::%s', str(e))
+            
+
+
     
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.post(uploadURL, 
-                                    headers=headers, 
-                                    ssl=False, 
-                                    data=formData) as response:
-                return response.status
-        except aiohttp.ClientConnectorError as e:
-          LOGGER.info('Connection Error::%s', str(e))
 
 async def captureFrame(pullURL, fileName):
     #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -frames:v 1 -q:v 1 -f image2 /app/test_image.jpg
@@ -113,10 +122,8 @@ async def captureFrame(pullURL, fileName):
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
     if len(stdErr) == 0:
-        if os.path.isfile('/app/' + fileName):
-            rtn = await picUpload(fileName)
-            if rtn == 200:
-                os.remove('/app/' + fileName)
+        rtn = await picUpload(fileName)
+            
     else:
         LOGGER.info('time out error')
         process.terminate()
@@ -316,7 +323,9 @@ async def getLicenseInfo():
         try:
             async with session.get(queryURL, headers=headers, ssl=False) as response:
                 if response.status == 200:
+                    LOGGER.info('get license:')
                     licRtn = await response.json()
+                    LOGGER.info('get license:%s', licRtn)
                     return licRtn 
         except aiohttp.ClientConnectorError as e:
           LOGGER.info('Connection Error::%s', str(e))
@@ -338,22 +347,62 @@ async def buildCommand(streamType, camName):
         case 'SIM_CAM':
             pullURL = 'rtsp://' + CAM_TABLE[camName]['ip'] + '/' + \
                                 CAM_TABLE[camName]['camID']
+        case 'HK_CAM':
+            pullURL = 'rtsp://' + CAM_TABLE[camName]['account'] + ':' + \
+                                CAM_TABLE[camName]['passwd'] + '@' + \
+                                CAM_TABLE[camName]['ip'] + ':' + \
+                                CAM_TABLE[camName]['port'] + \
+                                CAM_TABLE[camName]['path']
         case '_':
             pullURL = 'rtsp://' + CAM_TABLE[camName]['account'] + ':' + \
                                 CAM_TABLE[camName]['passwd'] + '@' + \
                                 CAM_TABLE[camName]['ip'] + ':' + \
-                                CAM_TABLE[camName]['port'] + '/' + \
-                                CAM_TABLE[camName]['camID']
+                                CAM_TABLE[camName]['port'] + \
+                                CAM_TABLE[camName]['path']
 
     pushURL = 'rtsp://' + os.getenv('PPM_CLOUD') + ':8554/live/' + \
             streamType + '/' + \
             os.getenv('PPM_ORG') + '/' + \
+            os.getenv('PPM_PCODE') + '/' + \
             camName
     LOGGER.info('pull: %s push: %s', pullURL, pushURL)
     return pullURL, pushURL
 
+async def captureImage(camName, eventID):
+    match CAM_TABLE[camName]['source']:
+        case 'HK_CAM':
+            fileName = '/app/' + eventID + '.jpg'
+
+            rtn = HKclient.snapshot(CAM_TABLE[camName]['ip'], 
+                                CAM_TABLE[camName]['account'],
+                                CAM_TABLE[camName]['passwd'],
+                                fileName)
+            if rtn == 200:
+                resp = await picUpload(fileName)
+        case '_':
+            fileName = '/app/' + eventID + '.jpg'
+            pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
+            await captureFrame(pullURL, fileName)
+
+async def downloadVideo(camName, eventID, eventTime):
+    match CAM_TABLE[camName]['source']:
+        case 'HK_CAM':
+            HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
+                                CAM_TABLE[camName]['account'],
+                                CAM_TABLE[camName]['passwd'],
+                                eventTime,
+                                eventID)
+
+    jpg = '/app/' + eventID + '.jpg'    
+    rtn = await picUpload(jpg)
+    mp4 = '/app/' + eventID + '.mp4'    
+    rtn = await picUpload(mp4)
+
+
+
 async def main():
     global LICENSE
+    LOGGER.info('init Streamer::')
     LICENSE = await getLicenseInfo()
     if (LICENSE is not None) and ('expire' in LICENSE.keys()):
         with open('/data/lic.json', 'w', encoding='utf8') as licFile:
@@ -365,7 +414,7 @@ async def main():
         await downloadGoogleKey()
         await configTables()
         await genTelegrafTag()
-
+        
         client = aiomqtt.Client(
                         hostname=os.getenv('PPM_CLOUD'),
                         port=1888,
@@ -383,57 +432,62 @@ async def main():
         
         pcStream = Stream(0, '')
         phoneStream = Stream(0, '')
-
-        while True:
-            try:
-                async with client:
-                    await client.subscribe(topic)
-                    async for message in client.messages:
-                        msg = json.loads(message.payload)
-                        match msg['cmd']:
-                            case 'open':
-                                pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
-                                if msg['type'] == '0':    # Desktop
-                                    if pcStream.pid != 0:
-                                        await killProcess(pcStream.pid)
-                                    pid = await pushStream(pullURL, pushURL)
-                                    if pid != 0:
-                                        pcStream.pid = pid
-                                        pcStream.name = msg['name']
-                                else:
-                                    if phoneStream.pid != 0:
-                                        await killProcess(phoneStream.pid)
-                                    pid = await pushStream(pullURL, pushURL)
-                                    if pid != 0:
-                                        phoneStream.pid = pid
-                                        phoneStream.name = msg['name']
-                            
-                            case 'stop':
-                                if msg['type'] == '0':  # desktop
-                                    LOGGER.info('close process id:%d', pcStream.pid )
-                                    if pcStream.pid != 0:
-                                        await killProcess(pcStream.pid)
-                                        pcStream.pid = 0
-                                        pcStream.name = ''
-                                else:
-                                    if phoneStream.pid != 0:
-                                        await killProcess(phoneStream.pid)
-                                        phoneStream.pid = 0
-                                        phoneStream.name = ''
-                            case 'capture':
-                                pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
-                                await captureFrame(pullURL, msg['file'])
-                            
-                            case 'snapshot':
-                                #download 30 sec video
-                                LOGGER.info('image ID: %s', msg['imageID'])
-                                LOGGER.info('snapshot event time:%s', msg['eventTime'] )
-                            case 'setup':
-                                await configTables()
-            except aiomqtt.MqttError:
-                LOGGER.info('MQTT connection lost; Reconnecting ...')
-                await asyncio.sleep(interval)
-        
+        async with aiojobs.Scheduler() as scheduler:
+            while True:
+                try:
+                    async with client:
+                        await client.subscribe(topic)
+                        async for message in client.messages:
+                            msg = json.loads(message.payload)
+                            match msg['cmd']:
+                                case 'open':
+                                    pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
+                                    if msg['type'] == '0':    # Desktop
+                                        if pcStream.pid != 0:
+                                            await killProcess(pcStream.pid)
+                                        pid = await pushStream(pullURL, pushURL)
+                                        if pid != 0:
+                                            pcStream.pid = pid
+                                            pcStream.name = msg['name']
+                                    else:
+                                        if phoneStream.pid != 0:
+                                            await killProcess(phoneStream.pid)
+                                        pid = await pushStream(pullURL, pushURL)
+                                        if pid != 0:
+                                            phoneStream.pid = pid
+                                            phoneStream.name = msg['name']
+                                
+                                case 'stop':
+                                    if msg['type'] == '0':  # desktop
+                                        LOGGER.info('close process id:%d', pcStream.pid )
+                                        if pcStream.pid != 0:
+                                            await killProcess(pcStream.pid)
+                                            pcStream.pid = 0
+                                            pcStream.name = ''
+                                    else:
+                                        if phoneStream.pid != 0:
+                                            await killProcess(phoneStream.pid)
+                                            phoneStream.pid = 0
+                                            phoneStream.name = ''
+                                case 'capture': #capture single pic only
+                                    pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
+                                    await captureFrame(pullURL, msg['file'])
+                                
+                                case 'grab':
+                                    #download 30 sec video
+                                    LOGGER.info('image ID: %s', msg['imageID'])
+                                    LOGGER.info('snapshot event time:%s', msg['eventTime'])
+                                    await scheduler.spawn(downloadVideo(msg['name'], 
+                                                                        msg['imageID'],
+                                                                        msg['eventTime']))
+                                    
+                                    
+                                case 'setup':
+                                    await configTables()
+                except aiomqtt.MqttError:
+                    LOGGER.info('MQTT connection lost; Reconnecting ...')
+                    await asyncio.sleep(interval)
+            
 
 if __name__ == '__main__':
     load_dotenv()

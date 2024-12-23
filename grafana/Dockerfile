@@ -1,5 +1,5 @@
-#FROM grafana/grafana-oss:10.4.8
-FROM grafana/grafana-oss:11.2.0
+#FROM grafana/grafana-oss:10.1.6
+FROM grafana/grafana-oss:11.3.0
 
 ##################################################################
 ## CONFIGURATION
@@ -8,7 +8,6 @@ FROM grafana/grafana-oss:11.2.0
 ## Set Grafana options
 ENV GF_ENABLE_GZIP=true
 ENV GF_USERS_DEFAULT_THEME=dark
-ENV GF_USERS_ALLOW_ORG_CREATE=true
 
 ## Enable Anonymous Authentication
 ENV GF_AUTH_ANONYMOUS_ENABLED=false
@@ -19,9 +18,6 @@ ENV GF_PANELS_DISABLE_SANITIZE_HTML=true
 
 ## Check for Updates
 ENV GF_ANALYTICS_CHECK_FOR_UPDATES=false
-
-## Scenes-engine Dashboards
-# ENV GF_FEATURE_TOGGLES_ENABLE=dashboardScene
 
 ## Set Home Dashboard
 #ENV GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/business.json
@@ -70,21 +66,19 @@ COPY img/background.svg /usr/share/grafana/public/img/g8_login_light.svg
 ##################################################################
 
 # Update Title
-RUN sed -i 's|<title>\[\[.AppTitle\]\]</title>|<title>Robert Cloud PPM</title>|g' /usr/share/grafana/public/views/index.html
+RUN sed -i 's|<title>\[\[.AppTitle\]\]</title>|<title>Professional Perperty Management</title>|g' /usr/share/grafana/public/views/index.html
 RUN sed -i 's|Loading Grafana|Loading PPM|g' /usr/share/grafana/public/views/index.html
 
 ## Update Mega and Help menu
 RUN sed -i "s|\[\[.NavTree\]\],|nav,|g; \
     s|window.grafanaBootData = {| \
     let nav = [[.NavTree]]; \
-    const alerting = nav.find((element) => element.id === 'alerting'); \
-    if (alerting) { alerting['url'] = '/alerting/list'; } \
     const dashboards = nav.find((element) => element.id === 'dashboards/browse'); \
     if (dashboards) { dashboards['children'] = [];} \
     const connections = nav.find((element) => element.id === 'connections'); \
     if (connections) { connections['url'] = '/datasources'; connections['children'].shift(); } \
     const help = nav.find((element) => element.id === 'help'); \
-    if (help) { help['subTitle'] = 'Business App 4.3.0'; help['children'] = [];} \
+    if (help) { help['subTitle'] = 'Business App 4.4.0'; help['children'] = [];} \
     window.grafanaBootData = {|g" \
     /usr/share/grafana/public/views/index.html
 
@@ -98,15 +92,15 @@ RUN sed -i 's|\[navigation.app_sections\]|\[navigation.app_sections\]\nbusiness-
 
 RUN find /usr/share/grafana/public/build/ -name *.js \
 ## Update Title
-    -exec sed -i 's|AppTitle="Grafana"|AppTitle="PPM"|g' {} \; \
+    -exec sed -i 's|AppTitle="Grafana"|AppTitle="Business App"|g' {} \; \
 ## Update Login Title
-    -exec sed -i 's|LoginTitle="Welcome to Grafana"|LoginTitle="Welcome to PPM Gateway"|g' {} \; \
+    -exec sed -i 's|LoginTitle="Welcome to Grafana"|LoginTitle="Professional Peroperty Management"|g' {} \; \
 ## Remove Documentation, Support, Community in the Footer
     -exec sed -i 's|\[{target:"_blank",id:"documentation".*grafana_footer"}\]|\[\]|g' {} \; \
 ## Remove Edition in the Footer
     -exec sed -i 's|({target:"_blank",id:"license",.*licenseUrl})|()|g' {} \; \
 ## Remove Version in the Footer
-    -exec sed -i 's|({target:"_blank",id:"version",.*CHANGELOG.md":void 0})|()|g' {} \; \
+    -exec sed -i 's|({target:"_blank",id:"version",text:f.versionString,url:D?"https://github.com/grafana/grafana/blob/main/CHANGELOG.md":void 0})|()|g' {} \; \
 ## Remove News icon
     -exec sed -i 's|(.,.....)(....,{className:.,onClick:.,iconOnly:!0,icon:"rss","aria-label":"News"})|null|g' {} \; \
 ## Remove Open Source icon
@@ -122,7 +116,7 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/datasource/elasticsearch /usr/s
     /usr/share/grafana/public/app/plugins/datasource/opentsdb /usr/share/grafana/public/build/opentsdb* \
     /usr/share/grafana/public/app/plugins/datasource/influxdb /usr/share/grafana/public/build/influxdb* \
     /usr/share/grafana/public/app/plugins/datasource/mssql /usr/share/grafana/public/build/mssql* \
-    /usr/share/grafana/public/app/plugins/datasource/mysql /usr/share/grafana/public/build/mysql* \
+    #/usr/share/grafana/public/app/plugins/datasource/mysql /usr/share/grafana/public/build/mysql* \
     /usr/share/grafana/public/app/plugins/datasource/tempo /usr/share/grafana/public/build/tempo* \
     /usr/share/grafana/public/app/plugins/datasource/jaeger /usr/share/grafana/public/build/jaeger* \
     /usr/share/grafana/public/app/plugins/datasource/zipkin /usr/share/grafana/public/build/zipkin* \
@@ -147,22 +141,22 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/panel/alertlist \
     /usr/share/grafana/public/app/plugins/panel/annolist \
     /usr/share/grafana/public/app/plugins/panel/dashlist \
     /usr/share/grafana/public/app/plugins/panel/news \
-    /usr/share/grafana/public/app/plugins/panel/geomap \
+    #/usr/share/grafana/public/app/plugins/panel/geomap \
     /usr/share/grafana/public/app/plugins/panel/table-old \
     /usr/share/grafana/public/app/plugins/panel/traces \
     /usr/share/grafana/public/app/plugins/panel/flamegraph
 
 ##################################################################
 
-RUN grafana cli plugins install marcusolsson-dynamictext-panel \
-    grafana cli plugins install volkovlabs-variable-panel \
-    grafana cli plugins install volkovlabs-form-panel \
-    grafana cli plugins install marcusolsson-json-datasource
-    
+USER grafana
+
+RUN grafana cli plugins install marcusolsson-dynamictext-panel && \
+    grafana cli plugins install volkovlabs-variable-panel && \
+    grafana cli plugins install volkovlabs-form-panel && \
     #grafana cli plugins install volkovlabs-image-panel &&\
     #grafana cli plugins install redis-datasource && \
-    #grafana cli plugins install grafana-googlesheets-datasource
-    
+    grafana cli plugins install grafana-googlesheets-datasource
+
 USER grafana
 
 ## Entrypoint

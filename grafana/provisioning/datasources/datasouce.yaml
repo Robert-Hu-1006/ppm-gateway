@@ -22,16 +22,16 @@ datasources:
   #  version: 1
   #  editable: true
 
-  - name: GoogleSheetsDatasource
-    type: grafana-googlesheets-datasource
-    enabled: true
-    jsonData:
-      authenticationType: 'key'
-    secureJsonData:
-      #apiKey: 'AIzaSyD0uDLJXSuimerIlpfrTLbsJN1-ylPlzes'
-      apiKey: $GOOGLE_KEY
-    version: 1
-    editable: true
+  #- name: GoogleSheetsDatasource
+  #  type: grafana-googlesheets-datasource
+  #  enabled: true
+  #  jsonData:
+  #    authenticationType: 'key'
+  #  secureJsonData:
+  #    #apiKey: 'AIzaSyD0uDLJXSuimerIlpfrTLbsJN1-ylPlzes'
+  #    apiKey: $GOOGLE_KEY
+  #  version: 1
+  #  editable: true
 
   #- name: MySQL
   #  type: mysql
@@ -68,5 +68,5 @@ datasources:
     type: marcusolsson-json-datasource
     url: http://nginx/json/lic.json
     editable: true
-  # org 2 -------
+
   
