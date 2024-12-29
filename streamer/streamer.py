@@ -63,7 +63,7 @@ async def genTelegrafTag():
         else:
             camLink = gTable[i + 1][15]
             sensorTable[key]['camLink'] =  camLink
-        sensorTable[key]['brief'] = 'System Notify: ' + gTable[i + 1][8]
+        sensorTable[key]['brief'] = 'IP: ' + gTable[i + 1][5]
 
     with open(ppm_tag, 'w') as SensorFile:
         json.dump(sensorTable, SensorFile, indent=2)
