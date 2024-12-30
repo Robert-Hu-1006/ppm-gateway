@@ -205,7 +205,7 @@ async def loadPingTable(sheet):
                 else:
                     config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
                 config['inputs.ping.tags']['tag'] = '"1"'
-                config['inputs.ping.tags']['brief'] = '"System Notify: Packet Loss"'
+                config['inputs.ping.tags']['brief'] =  '"IP:' + gTable[i + 1][5] + '"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
@@ -239,7 +239,7 @@ async def loadPingTable(sheet):
                 config['inputs.ping.tags']['source'] = '""'
                 config['inputs.ping.tags']['camLink'] = '"' + gSheet[j + 1][4] + '"'
                 config['inputs.ping.tags']['tag'] = '"1"'
-                config['inputs.ping.tags']['brief'] = '"System Notify: 100% Packet Loss"'
+                config['inputs.ping.tags']['brief'] = '"IP:' + gTable[i + 1][5] + '"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             # with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
