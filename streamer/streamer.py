@@ -205,7 +205,7 @@ async def loadPingTable(sheet):
                 else:
                     config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
                 config['inputs.ping.tags']['tag'] = '"1"'
-                config['inputs.ping.tags']['brief'] =  '"IP:' + gTable[i + 1][5] + '"'
+                config['inputs.ping.tags']['brief'] =  '"IP:' + gSheet[i + 1][5] + '"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
             #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
@@ -387,16 +387,16 @@ async def captureImage(camName, eventID):
 async def downloadVideo(camName, eventID, eventTime):
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
-            HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
+            count = HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
                                 CAM_TABLE[camName]['account'],
                                 CAM_TABLE[camName]['passwd'],
                                 eventTime,
                                 eventID)
-
-    jpg = '/app/' + eventID + '.jpg'    
-    rtn = await picUpload(jpg)
-    mp4 = '/app/' + eventID + '.mp4'    
-    rtn = await picUpload(mp4)
+    if count > 0:
+        jpg = '/app/' + eventID + '.jpg'    
+        rtn = await picUpload(jpg)
+        mp4 = '/app/' + eventID + '.mp4'    
+        rtn = await picUpload(mp4)
 
 
 
