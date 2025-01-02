@@ -42,27 +42,28 @@ async def genTelegrafTag():
     wrkSheet = sheet.worksheet_by_title('Sensor')
     gTable = wrkSheet.get_values('A2', 'P')
     for i in range(len(gTable) - 1):
-        deviceID = gTable[i + 1][3].lower()
-        dataChannel = gTable[i + 1][9].lower()
-        key = deviceID + '_' + dataChannel
-        sensorTable[key] = {}
-        sensorTable[key]['org'] =  gTable[i + 1][0]
-        sensorTable[key]['code'] =  gTable[i + 1][1]
-        sensorTable[key]['deviceName'] =  gTable[i + 1][4]
-        sensorTable[key]['sensorType'] =  gTable[i + 1][6]
-        sensorTable[key]['alarmGroup'] =  gTable[i + 1][7]
-        sensorTable[key]['alarmType'] =  gTable[i + 1][8]
-        sensorTable[key]['floor'] =  gTable[i + 1][10]
-        sensorTable[key]['area'] =  gTable[i + 1][11]
-        sensorTable[key]['alarmPriority'] =  gTable[i + 1][12]
-        sensorTable[key]['sop'] =  gTable[i + 1][13]
-        sensorTable[key]['source'] =  gTable[i + 1][14]
-        if gTable[i + 1][15] == '':
-            camLink = 'na'
-        else:
-            camLink = gTable[i + 1][15]
-            sensorTable[key]['camLink'] =  camLink
-        sensorTable[key]['brief'] = 'IP: ' + gTable[i + 1][5]
+        if gTable[i + 1][8] != 'Device_Disconnect':
+            deviceID = gTable[i + 1][3].lower()
+            dataChannel = gTable[i + 1][9].lower()
+            key = deviceID + '_' + dataChannel
+            sensorTable[key] = {}
+            sensorTable[key]['org'] =  gTable[i + 1][0]
+            sensorTable[key]['code'] =  gTable[i + 1][1]
+            sensorTable[key]['deviceName'] =  gTable[i + 1][4]
+            sensorTable[key]['sensorType'] =  gTable[i + 1][6]
+            sensorTable[key]['alarmGroup'] =  gTable[i + 1][7]
+            sensorTable[key]['alarmType'] =  gTable[i + 1][8]
+            sensorTable[key]['floor'] =  gTable[i + 1][10]
+            sensorTable[key]['area'] =  gTable[i + 1][11]
+            sensorTable[key]['alarmPriority'] =  gTable[i + 1][12]
+            sensorTable[key]['sop'] =  gTable[i + 1][13]
+            sensorTable[key]['source'] =  gTable[i + 1][14]
+            if gTable[i + 1][15] == '':
+                camLink = 'na'
+            else:
+                camLink = gTable[i + 1][15]
+                sensorTable[key]['camLink'] =  camLink
+            sensorTable[key]['brief'] = 'IP: ' + gTable[i + 1][5]
 
     with open(ppm_tag, 'w') as SensorFile:
         json.dump(sensorTable, SensorFile, indent=2)
@@ -179,34 +180,33 @@ async def loadPingTable(sheet):
     for i in range(len(gSheet)-1):
         if gSheet[i + 1][1] == pCode: 
             ip = gSheet[i + 1][5]
-            if ip not in ipList and gSheet[i + 1][8] == 'Device_Disconnect':
-                config['[inputs.ping]'] = {}
-                ipList.append(ip)
-                config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][5] + '"]'
-                config['[inputs.ping]']['method'] = '"exec"'
-                config['[inputs.ping]']['count'] = '3'
-                config['[inputs.ping]']['interval'] = '"60s"'
-                config['[inputs.ping]']['timeout'] = '3.0'
+            if ip not in ipList: 
+                if gSheet[i + 1][8] == 'Device_Disconnect':
+                    config['[inputs.ping]'] = {}
+                    ipList.append(ip)
+                    config['[inputs.ping]']['urls'] = '["' + gSheet[i + 1][5] + '"]'
+                    config['[inputs.ping]']['method'] = '"exec"'
+                    config['[inputs.ping]']['count'] = '3'
+                    config['[inputs.ping]']['interval'] = '"60s"'
+                    config['[inputs.ping]']['timeout'] = '3.0'
 
-                config['inputs.ping.tags'] = {}
-                config['inputs.ping.tags']['deviceID'] = '"' + gSheet[i + 1][3].lower() + '"'
-                config['inputs.ping.tags']['deviceName'] = '"' + gSheet[i + 1][4] + '"'
-                config['inputs.ping.tags']['sensorType'] = '"' + gSheet[i + 1][6] + '"'
-                config['inputs.ping.tags']['alarmGroup'] = '"IP_Device"'
-                config['inputs.ping.tags']['alarmType'] = '"Device_Disconnect"'
-                config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][10] + '"'
-                config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][11] + '"'
-                config['inputs.ping.tags']['alarmPriority'] = '"' + gSheet[i + 1][12] + '"'
-                config['inputs.ping.tags']['sop'] = '"10"'
-                config['inputs.ping.tags']['source'] = '"' + gSheet[i + 1][14] + '"'
-                if gSheet[i + 1][15] == '':
-                    config['inputs.ping.tags']['camLink'] = '"na"'
-                else:
-                    config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
-                config['inputs.ping.tags']['tag'] = '"1"'
-                config['inputs.ping.tags']['brief'] =  '"IP:' + gSheet[i + 1][5] + '"'
+                    config['inputs.ping.tags'] = {}
+                    config['inputs.ping.tags']['deviceID'] = '"' + gSheet[i + 1][3].lower() + '"'
+                    config['inputs.ping.tags']['deviceName'] = '"' + gSheet[i + 1][4] + '"'
+                    config['inputs.ping.tags']['sensorType'] = '"' + gSheet[i + 1][6] + '"'
+                    config['inputs.ping.tags']['alarmGroup'] = '"IP_Device"'
+                    config['inputs.ping.tags']['alarmType'] = '"Device_Disconnect"'
+                    config['inputs.ping.tags']['floor'] = '"' + gSheet[i + 1][10] + '"'
+                    config['inputs.ping.tags']['area'] = '"' + gSheet[i + 1][11] + '"'
+                    config['inputs.ping.tags']['alarmPriority'] = '"' + gSheet[i + 1][12] + '"'
+                    config['inputs.ping.tags']['sop'] = '"10"'
+                    config['inputs.ping.tags']['source'] = '"' + gSheet[i + 1][14] + '"'
+                    if gSheet[i + 1][15] == '':
+                        config['inputs.ping.tags']['camLink'] = '"na"'
+                    else:
+                        config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
+                    config['inputs.ping.tags']['brief'] =  '"IP:' + gSheet[i + 1][5] + '"'
             with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
-            #with open('./streamer/ping.conf', 'a') as configfile:
                 config.write(configfile)
                 #config = configparser.ConfigParser(strict=False)
             configfile.close
