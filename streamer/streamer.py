@@ -12,7 +12,7 @@ import aiojobs
 import configparser
 #import ssl
 from dotenv import load_dotenv
-import HKclient
+import HKclient, NXclient
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
@@ -99,9 +99,13 @@ async def picUpload(fileName):
             except aiohttp.ClientConnectorError as e:
                 LOGGER.info('Connection Error::%s', str(e))
             
-
-
-    
+async def cleanFile(snapID):
+    files = os.listdir('/app')
+    for file in files:
+        if os.path.basename(file).split('.')[0] == snapID:
+            if os.path.getsize(file):
+                resp = await picUpload(file)
+            os.remove(fileName)
 
 async def captureFrame(pullURL, fileName):
     #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -frames:v 1 -q:v 1 -f image2 /app/test_image.jpg
@@ -175,7 +179,6 @@ async def loadPingTable(sheet):
         os.remove('/etc/telegraf/conf/ping.conf')
     #if os.path.isfile('./streamer/ping.conf'):
     #    os.remove('./streamer/ping.conf')
-    LOGGER.info('sensor len:%s', str(len(gSheet)))
     
     for i in range(len(gSheet)-1):
         if gSheet[i + 1][1] == pCode: 
@@ -206,10 +209,10 @@ async def loadPingTable(sheet):
                     else:
                         config['inputs.ping.tags']['camLink'] = '"' + gSheet[i + 1][15] + '"'
                     config['inputs.ping.tags']['brief'] =  '"IP:' + gSheet[i + 1][5] + '"'
-            with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
-                config.write(configfile)
-                #config = configparser.ConfigParser(strict=False)
-            configfile.close
+                with open('/etc/telegraf/conf/ping.conf', 'a') as configfile:
+                    config.write(configfile)
+                    #config = configparser.ConfigParser(strict=False)
+                configfile.close
 
 async def loadCamTable(wrkSheet):
     camTable = {}
@@ -342,14 +345,31 @@ async def captureImage(camName, eventID):
                                 CAM_TABLE[camName]['account'],
                                 CAM_TABLE[camName]['passwd'],
                                 fileName)
-            if rtn == 200:
-                resp = await picUpload(fileName)
+        case 'NX_NVR':
+            fileName = '/app/' + eventID + '.jpg'
+            rtn = await NXclient.getNXsnapshot(CAM_TABLE[camName]['ip'],
+                                CAM_TABLE[camName]['camID'],
+                                CAM_TABLE[camName]['port'],
+                                CAM_TABLE[camName]['account'],
+                                CAM_TABLE[camName]['passwd'],
+                                fileName)
+            if rtn == 204:
+                pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
+                await captureFrame(pullURL, fileName)
+
+            
         case '_':
             fileName = '/app/' + eventID + '.jpg'
             pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
             await captureFrame(pullURL, fileName)
 
-async def downloadVideo(camName, eventID, eventTime):
+    if os.path.isfile(fileName):
+        resp = await picUpload(fileName)
+        os.remove(fileName)
+
+    return resp
+
+async def downloadContent(camName, eventID, eventTime):
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
             count = HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
@@ -357,13 +377,27 @@ async def downloadVideo(camName, eventID, eventTime):
                                 CAM_TABLE[camName]['passwd'],
                                 eventTime,
                                 eventID)
-    if count > 0:
-        jpg = '/app/' + eventID + '.jpg'    
-        rtn = await picUpload(jpg)
-        mp4 = '/app/' + eventID + '.mp4'    
-        rtn = await picUpload(mp4)
+        case 'NX_NVR':
+            if NXclient.getNXstatus(nvr=CAM_TABLE[camName]['ip'],
+                                camID=CAM_TABLE[camName]['camID'],
+                                port=CAM_TABLE[camName]['port'],
+                                user=CAM_TABLE[camName]['account'],
+                                passwd=CAM_TABLE[camName]['passwd']):
 
-
+                timeObj = datetime.strptime(eventTime, '%Y-%m-%d %H:%M:%S')
+                timeStr = datetime.strftime(timeObj, '%Y-%m-%dT%H:%M:%SZ')
+                NXclient.getNXcontent(nvr=CAM_TABLE[camName]['ip'],
+                                    camID=CAM_TABLE[camName]['camID'],
+                                    port=CAM_TABLE[camName]['port'],
+                                    user=CAM_TABLE[camName]['account'],
+                                    passwd=CAM_TABLE[camName]['passwd'],
+                                    snapID=eventID,
+                                    timestamp=timeStr)
+            else:
+                pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
+                await captureFrame(pullURL, eventID + '.jpg')
+    
+    await cleanFile(eventID)
 
 async def main():
     global LICENSE
@@ -439,14 +473,14 @@ async def main():
                                     await captureFrame(pullURL, msg['file'])
                                 
                                 case 'grab':
-                                    #download 30 sec video
-                                    LOGGER.info('image ID: %s', msg['imageID'])
                                     LOGGER.info('snapshot event time:%s', msg['eventTime'])
-                                    await scheduler.spawn(downloadVideo(msg['name'], 
+                                    #capture image
+                                    #await captureImage(msg['name'], msg['imageID'])
+                                    #download 30 sec video
+                                    await scheduler.spawn(downloadContent(msg['name'], 
                                                                         msg['imageID'],
                                                                         msg['eventTime']))
-                                    
-                                    
+
                                 case 'setup':
                                     await configTables()
                 except aiomqtt.MqttError:

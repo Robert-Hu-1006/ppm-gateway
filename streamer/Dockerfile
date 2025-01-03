@@ -10,6 +10,7 @@ RUN pip install --upgrade pip \
     asyncio \
     aiomqtt \
     pygsheets \
+    aiofiles \
     #--no-binary :all: psutil \
     psutil \
     python-dotenv \
