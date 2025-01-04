@@ -1,0 +1,32 @@
+{
+    "0013430c981c_di1": {
+      "org": "Gamania",
+      "code": "0122_00",
+      "deviceName": "5F_Advantech_01",
+      "sensorType": "IRS",
+      "alarmGroup": "Security",
+      "alarmType": "Infrared_Alarm",
+      "floor": "1F",
+      "area": "Lobby",
+      "alarmPriority": "Critical",
+      "sop": "",
+      "source": "",
+      "camLink": "C1_HSBC",
+      "brief": "IP: 192.168.18.14"
+    },
+    "0013430c981c_di2": {
+      "org": "Gamania",
+      "code": "0122_00",
+      "deviceName": "5F_Advantech_01",
+      "sensorType": "DCS",
+      "alarmGroup": "Security",
+      "alarmType": "Door_Contact_Alarm",
+      "floor": "1F",
+      "area": "ZoneB",
+      "alarmPriority": "Critical",
+      "sop": "",
+      "source": "",
+      "camLink": "16F_Reception",
+      "brief": "IP: 192.168.18.14"
+    }
+}
