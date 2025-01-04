@@ -79,6 +79,7 @@ async def killProcess(pid):
 
 async def picUpload(fileName):
     if os.path.isfile(fileName):
+        LOGGER.info('file exist: %s', fileName)
         uploadURL = 'https://' + os.getenv('PPM_CLOUD') + '/api/ppm/stream/snapshot' 
         headers = { "Authorization": "Bearer " + os.getenv('API_TOKEN')}
         formData = aiohttp.FormData()
@@ -98,11 +99,13 @@ async def picUpload(fileName):
                     return response.status
             except aiohttp.ClientConnectorError as e:
                 LOGGER.info('Connection Error::%s', str(e))
+
             
-async def cleanFile(snapID):
+async def uploadFiles(snapID):
     files = os.listdir('/app')
     for file in files:
         if os.path.basename(file).split('.')[0] == snapID:
+            LOGGER.info('upload :%s', file)
             if os.path.getsize(file):
                 resp = await picUpload(file)
             os.remove(fileName)
@@ -357,7 +360,6 @@ async def captureImage(camName, eventID):
                 pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
                 await captureFrame(pullURL, fileName)
 
-            
         case '_':
             fileName = '/app/' + eventID + '.jpg'
             pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
@@ -397,7 +399,7 @@ async def downloadContent(camName, eventID, eventTime):
                 pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
                 await captureFrame(pullURL, eventID + '.jpg')
     
-    await cleanFile(eventID)
+    await uploadFiles(eventID)
 
 async def main():
     global LICENSE

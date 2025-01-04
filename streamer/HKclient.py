@@ -246,9 +246,12 @@ def extractFrame(camera, user, passwd, pullStart, snapID):
         os.rename('out0.mp4', snapID + '.mp4')
 
     for i in range(count):
-        os.remove(str(i) + '.mp4')
-        os.remove('out' + str(i) + '.mp4')
-    os.remove('videolist.txt')
+        if os.path.isfile(str(i) + '.mp4'):
+            os.remove(str(i) + '.mp4')
+        if os.path.isfile('out' + str(i) + '.mp4'):
+            os.remove('out' + str(i) + '.mp4')
+    if os.path.isfile('videolist.txt'):
+        os.remove('videolist.txt')
 
     return count
 
