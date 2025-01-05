@@ -10,6 +10,7 @@ import aiomqtt
 import aiohttp
 import aiojobs
 import configparser
+from datetime import datetime
 #import ssl
 from dotenv import load_dotenv
 import HKclient, NXclient
@@ -108,7 +109,7 @@ async def uploadFiles(snapID):
             LOGGER.info('upload :%s', file)
             if os.path.getsize(file):
                 resp = await picUpload(file)
-            os.remove(fileName)
+            os.remove(file)
 
 async def captureFrame(pullURL, fileName):
     #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -frames:v 1 -q:v 1 -f image2 /app/test_image.jpg
@@ -380,7 +381,7 @@ async def downloadContent(camName, eventID, eventTime):
                                 eventTime,
                                 eventID)
         case 'NX_NVR':
-            if NXclient.getNXstatus(nvr=CAM_TABLE[camName]['ip'],
+            if await NXclient.getNXstatus(nvr=CAM_TABLE[camName]['ip'],
                                 camID=CAM_TABLE[camName]['camID'],
                                 port=CAM_TABLE[camName]['port'],
                                 user=CAM_TABLE[camName]['account'],
@@ -388,7 +389,8 @@ async def downloadContent(camName, eventID, eventTime):
 
                 timeObj = datetime.strptime(eventTime, '%Y-%m-%d %H:%M:%S')
                 timeStr = datetime.strftime(timeObj, '%Y-%m-%dT%H:%M:%SZ')
-                NXclient.getNXcontent(nvr=CAM_TABLE[camName]['ip'],
+                LOGGER.info('Conver to NX Time: %s', timeStr)
+                await NXclient.getNXcontent(nvr=CAM_TABLE[camName]['ip'],
                                     camID=CAM_TABLE[camName]['camID'],
                                     port=CAM_TABLE[camName]['port'],
                                     user=CAM_TABLE[camName]['account'],

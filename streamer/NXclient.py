@@ -14,15 +14,16 @@ async def getNXstatus(nvr, camID, port, user, passwd):
     auth = aiohttp.BasicAuth(login=user, password=passwd)
     conn = aiohttp.TCPConnector(verify_ssl=False)
 
-    statusURL = 'https://' + nvr + ':' + port + '/ec2/getStatusList?id=' + camID
-    async with await session.get(statusURL) as statusResp:
-            if statusResp.status == 200:
-                data = await statusResp.json()
-                LOGGER.info('camera status:: %s', data[0]['status'] )
-                if data[0]['status'] == 'Recording':
-                    return True
-                else:
-                    return False
+    async with aiohttp.ClientSession(connector=conn,auth=auth) as session:
+        statusURL = 'https://' + nvr + ':' + port + '/ec2/getStatusList?id=' + camID
+        async with await session.get(statusURL) as statusResp:
+                if statusResp.status == 200:
+                    data = await statusResp.json()
+                    LOGGER.info('camera status:: %s', data[0]['status'] )
+                    if data[0]['status'] == 'Recording':
+                        return True
+                    else:
+                        return False
 
 
 async def getNXcontent(nvr, camID, port, user, passwd, snapID, timestamp):
