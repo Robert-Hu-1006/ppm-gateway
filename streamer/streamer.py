@@ -106,8 +106,8 @@ async def uploadFiles(snapID):
     files = os.listdir('/app')
     for file in files:
         if os.path.basename(file).split('.')[0] == snapID:
-            LOGGER.info('upload :%s', file)
             if os.path.getsize(file):
+                LOGGER.info('upload :%s', file)
                 resp = await picUpload(file)
             os.remove(file)
 
@@ -373,6 +373,8 @@ async def captureImage(camName, eventID):
     return resp
 
 async def downloadContent(camName, eventID, eventTime):
+    # 15秒之後才開始抓圖
+    asyncio.sleep(15)
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
             count = HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
