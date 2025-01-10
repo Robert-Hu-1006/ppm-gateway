@@ -243,7 +243,7 @@ def extractFrame(camera, user, passwd, pullStart, snapID):
     if count > 1 :
         mergeVideo(count, snapID)
     else:
-        os.rename('out0.mp4', snapID + '.mp4')
+        os.rename('0.mp4', snapID + '.mp4')
 
     for i in range(count):
         if os.path.isfile(str(i) + '.mp4'):

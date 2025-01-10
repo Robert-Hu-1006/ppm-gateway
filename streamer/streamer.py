@@ -374,7 +374,7 @@ async def captureImage(camName, eventID):
 
 async def downloadContent(camName, eventID, eventTime):
     # 15秒之後才開始抓圖
-    asyncio.sleep(15)
+    await asyncio.sleep(15)
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
             count = HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
