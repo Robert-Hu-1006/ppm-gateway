@@ -474,11 +474,12 @@ async def main():
                                             await killProcess(phoneStream.pid)
                                             phoneStream.pid = 0
                                             phoneStream.name = ''
-                                case 'capture': #capture single pic only
-                                    pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
-                                    await captureFrame(pullURL, msg['file'])
+                                case 'capture': #capture single pic on current time
+                                    captureImage(msg['name'], msg['imageID'])
+                                    #pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
+                                    #await captureFrame(pullURL, msg['file'])
                                 
-                                case 'grab':
+                                case 'grab': # capture video & image at event time
                                     LOGGER.info('snapshot event time:%s', msg['eventTime'])
                                     #capture image
                                     #await captureImage(msg['name'], msg['imageID'])
