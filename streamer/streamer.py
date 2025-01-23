@@ -101,13 +101,35 @@ async def picUpload(fileName):
             except aiohttp.ClientConnectorError as e:
                 LOGGER.info('Connection Error::%s', str(e))
 
-            
+async def h265toMP4(fileName):
+    #ffmpeg -i input.mp4 -c:v libx265 -vtag hvc1 -c:a copy output.mp4
+    command = ['ffmpeg',
+                '-loglevel', 'error',
+                '-i', fileName,
+                '-c:v', 'libx265',
+                '-vtag', 'hvc1',
+                'c:a', 'copy',
+                '/app/convert.mp4' ]
+    
+    process = subprocess.Popen(command, 
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                start_new_session=True)
+    
+    stdOut, stdErr = process.communicate()
+    LOGGER.info('stdErr: %s', type(stdErr))
+    if len(stdErr) == 0:
+        os.remove(fileName)
+        os.rename('/app/convert.mp4', fileName)
+
 async def uploadFiles(snapID):
     files = os.listdir('/app')
     for file in files:
         if os.path.basename(file).split('.')[0] == snapID:
             if os.path.getsize(file):
                 LOGGER.info('upload :%s', file)
+                if file[len(file)-3:] == 'mp4':
+                    await h265toMP4(file)
                 resp = await picUpload(file)
             os.remove(file)
 
@@ -402,7 +424,6 @@ async def downloadContent(camName, eventID, eventTime):
             else:
                 pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
                 await captureFrame(pullURL, eventID + '.jpg')
-    
     await uploadFiles(eventID)
 
 async def main():
