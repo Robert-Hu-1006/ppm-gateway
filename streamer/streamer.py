@@ -10,6 +10,7 @@ import aiomqtt
 import aiohttp
 import aiojobs
 import configparser
+from ffprobe import FFProbe
 from datetime import datetime
 #import ssl
 from dotenv import load_dotenv
@@ -27,6 +28,16 @@ class Stream:
     def __init__(self, pid, name):
         self.pid = pid
         self.name = name
+
+async def getVideoCodec(fileName):
+    try:
+        probe = FFProbe(fileName)
+        video = probe.streams.video[0]
+        codec = video.codec_name
+        return codec
+    except Exception as e:
+        LOGGER.error('probe error :%s', e)
+        return None
 
 
 async def genTelegrafTag():
@@ -118,7 +129,7 @@ async def h265toMP4(fileName):
     
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
-    if len(stdErr) == 0:
+    if stdErr is None:
         os.remove(fileName)
         os.rename('/app/convert.mp4', fileName)
 
@@ -129,6 +140,8 @@ async def uploadFiles(snapID):
             if os.path.getsize(file):
                 LOGGER.info('upload :%s', file)
                 if file[len(file)-3:] == 'mp4':
+                    codec = await getVideoCodec(file)
+                    LOGGER.info('codec:%s', codec)
                     await h265toMP4(file)
                 resp = await picUpload(file)
             os.remove(file)
@@ -496,7 +509,7 @@ async def main():
                                             phoneStream.pid = 0
                                             phoneStream.name = ''
                                 case 'capture': #capture single pic on current time
-                                    captureImage(msg['name'], msg['imageID'])
+                                    await captureImage(msg['name'], msg['imageID'])
                                     #pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
                                     #await captureFrame(pullURL, msg['file'])
                                 
