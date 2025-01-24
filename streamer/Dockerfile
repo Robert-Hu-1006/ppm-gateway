@@ -7,7 +7,6 @@ RUN apk update && apk upgrade && \
 RUN pip install --upgrade pip \
     #FFmpeg \
     ffmpeg-python \
-    ffprobe-python \
     asyncio \
     aiomqtt \
     pygsheets \

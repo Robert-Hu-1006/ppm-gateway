@@ -1,16 +1,17 @@
 import pygsheets
 import logging
 import subprocess
+import asyncio
+from asyncio.subprocess import Process, PIPE
+from asyncio.streams import StreamReader
 import psutil
 import signal
 import os 
 import json
-import asyncio
 import aiomqtt
 import aiohttp
 import aiojobs
 import configparser
-from ffprobe import FFProbe
 from datetime import datetime
 #import ssl
 from dotenv import load_dotenv
@@ -29,16 +30,38 @@ class Stream:
         self.pid = pid
         self.name = name
 
-async def getVideoCodec(fileName):
-    try:
-        probe = FFProbe(fileName)
-        video = probe.streams.video[0]
-        codec = video.codec_name
-        return codec
-    except Exception as e:
-        LOGGER.error('probe error :%s', e)
-        return None
+async def asyncRunWait(command):
+    process: Process = await asyncio.create_subprocess_exec(
+        command, stdout=PIPE, stderr=PIPE)
+    await process.wait()
+    stdout: StreamReader = process.stdout
+    content = (await stdout.read()).decode('utf-8')
 
+    return process.returncode, content
+
+
+async def asyncRunNoWait(command):
+    process: Process = await asyncio.create_subprocess_exec(
+        command, stdout=PIPE, stderr=PIPE)
+
+    stdout, stderr = await process.communicate()
+    LOGGER.info('stderr::%s', stderr.decode())
+
+    return process
+
+
+async def getVideoCodec(fileName):
+    #ffprobe file.mp4 -show_streams -select_streams v -print_format json 
+    out = subprocess.check_output(["ffprobe", fileName,
+                                    "-show_streams", "-select_streams", "v",
+                                    "-print_format", "json"])
+
+    probeData = json.loads(out)
+    LOGGER.info('probe data :: %s',probeData)
+    for video in probeData['streams']:
+        codec = video['codec_name']
+    return  codec
+    
 
 async def genTelegrafTag():
     client = pygsheets.authorize(service_account_file='/app/service.json')
@@ -119,16 +142,21 @@ async def h265toMP4(fileName):
                 '-i', fileName,
                 '-c:v', 'libx265',
                 '-vtag', 'hvc1',
-                'c:a', 'copy',
                 '/app/convert.mp4' ]
     
     process = subprocess.Popen(command, 
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 start_new_session=True)
-    
+    while process.poll() is None:
+        asyncio.sleep(0.5)
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
+
+
+
+
+
     if stdErr is None:
         os.remove(fileName)
         os.rename('/app/convert.mp4', fileName)
@@ -141,8 +169,8 @@ async def uploadFiles(snapID):
                 LOGGER.info('upload :%s', file)
                 if file[len(file)-3:] == 'mp4':
                     codec = await getVideoCodec(file)
-                    LOGGER.info('codec:%s', codec)
-                    await h265toMP4(file)
+                    if codec == 'hevc': # h.265
+                        await h265toMP4(file)
                 resp = await picUpload(file)
             os.remove(file)
 
@@ -171,6 +199,24 @@ async def captureFrame(pullURL, fileName):
         LOGGER.info('time out error')
         process.terminate()
         process.kill()
+
+async def asyncPushStream(pull_url, push_url):
+    command = ['ffmpeg',
+                '-fflags', '+genpts',
+                '-rtsp_transport', 'tcp',
+                '-i', pull_url,
+                '-c', 'copy',
+                '-f', 'rtsp',
+                '-preset', 'ultrafast',
+                push_url]
+    process = await asyncRunNoWait(command)
+    if process.returncode == 0:
+        return process.pid
+    else:
+        process.terminate()
+        process.kill()
+        return 0
+
 
 async def pushStream( pull_url, push_url):
     #convert RTSP H265 (hevc) stream to H264
@@ -484,10 +530,14 @@ async def main():
                                     if msg['type'] == '0':    # Desktop
                                         if pcStream.pid != 0:
                                             await killProcess(pcStream.pid)
-                                        pid = await pushStream(pullURL, pushURL)
+                                        # pid = await pushStream(pullURL, pushURL)
+                                        pid = await asyncPushStream(pullURL, pushURL)
                                         if pid != 0:
                                             pcStream.pid = pid
                                             pcStream.name = msg['name']
+
+
+                                            
                                     else:
                                         if phoneStream.pid != 0:
                                             await killProcess(phoneStream.pid)
