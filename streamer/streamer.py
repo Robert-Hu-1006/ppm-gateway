@@ -4,6 +4,8 @@ import subprocess
 import asyncio
 from asyncio.subprocess import Process, PIPE
 from asyncio.streams import StreamReader
+import shlex
+
 import psutil
 import signal
 import os 
@@ -25,42 +27,67 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 MQTT_POOL = None
 LICENSE = None
 CAM_TABLE = {}
+
 class Stream:
     def __init__(self, pid, name):
         self.pid = pid
         self.name = name
 
-async def asyncRunWait(command):
+
+async def subProcess(commmand):
     process: Process = await asyncio.create_subprocess_exec(
-        command, stdout=PIPE, stderr=PIPE)
+        *shlex.split(command), stdout=PIPE, stderr=PIPE)
+    LOGGER.info('start wait')
     await process.wait()
+    LOGGER.info('stop wait')
     stdout: StreamReader = process.stdout
     content = (await stdout.read()).decode('utf-8')
 
-    return process.returncode, content
+    return process.returncode, process.pid, content
+
+async def asyncRunWait(command, timeOut):
+    try:
+        rtnCode, pid, rtnData = await asyncio.wait_for(subProcess(command), timeout=timeOut)
+        if rtnCode is None:
+            return rtnCode, rtnData
+    except asyncio.TimeoutError:
+        await killProcess(pid)
+        return rtnCode, ''  
 
 
 async def asyncRunNoWait(command):
     process: Process = await asyncio.create_subprocess_exec(
-        command, stdout=PIPE, stderr=PIPE)
-
-    stdout, stderr = await process.communicate()
-    LOGGER.info('stderr::%s', stderr.decode())
-
-    return process
+        *shlex.split(command), stdout=PIPE, stderr=PIPE)
+    # 會卡住
+    #stdout, stderr = await process.communicate()
+    if process.returncode is not None:
+        await process.terminate()
+        await process.kill()
+    
+    return process.pid, process.returncode
 
 
 async def getVideoCodec(fileName):
     #ffprobe file.mp4 -show_streams -select_streams v -print_format json 
+    """
     out = subprocess.check_output(["ffprobe", fileName,
                                     "-show_streams", "-select_streams", "v",
                                     "-print_format", "json"])
-
+    
     probeData = json.loads(out)
     LOGGER.info('probe data :: %s',probeData)
     for video in probeData['streams']:
         codec = video['codec_name']
     return  codec
+    """
+    command = 'ffprobe ' + fileName + ' -show_streams -select_streams v -print_format json'
+    rtnCode, content = await asyncRunWait(command, 5)
+    probeData = json.loads(content)
+    LOGGER.info('probe data :: %s',probeData)
+    for video in probeData['streams']:
+        codec = video['codec_name']
+    return  codec
+
     
 
 async def genTelegrafTag():
@@ -137,6 +164,7 @@ async def picUpload(fileName):
 
 async def h265toMP4(fileName):
     #ffmpeg -i input.mp4 -c:v libx265 -vtag hvc1 -c:a copy output.mp4
+    """
     command = ['ffmpeg',
                 '-loglevel', 'error',
                 '-i', fileName,
@@ -152,12 +180,11 @@ async def h265toMP4(fileName):
         asyncio.sleep(0.5)
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
-
-
-
-
-
-    if stdErr is None:
+    """
+    command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
+    rtnCode, content = await asyncRunWait(command, 30)
+    
+    if rtnCode is None:
         os.remove(fileName)
         os.rename('/app/convert.mp4', fileName)
 
@@ -201,20 +228,12 @@ async def captureFrame(pullURL, fileName):
         process.kill()
 
 async def asyncPushStream(pull_url, push_url):
-    command = ['ffmpeg',
-                '-fflags', '+genpts',
-                '-rtsp_transport', 'tcp',
-                '-i', pull_url,
-                '-c', 'copy',
-                '-f', 'rtsp',
-                '-preset', 'ultrafast',
-                push_url]
-    process = await asyncRunNoWait(command)
-    if process.returncode == 0:
-        return process.pid
+    command = 'ffmpeg -fflags +genpts -rtsp_transport tcp -i ' + pull_url + \
+            ' -c copy -f rtsp -preset ultrafast ' + push_url
+    pid, rtnCode = await asyncRunNoWait(command)
+    if rtnCode is None :
+        return pid
     else:
-        process.terminate()
-        process.kill()
         return 0
 
 
@@ -535,13 +554,10 @@ async def main():
                                         if pid != 0:
                                             pcStream.pid = pid
                                             pcStream.name = msg['name']
-
-
-                                            
                                     else:
                                         if phoneStream.pid != 0:
                                             await killProcess(phoneStream.pid)
-                                        pid = await pushStream(pullURL, pushURL)
+                                        pid = await asyncPushStream(pullURL, pushURL)
                                         if pid != 0:
                                             phoneStream.pid = pid
                                             phoneStream.name = msg['name']
