@@ -23,12 +23,12 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
 
 def mergeVideo(count, snapID):
-    LOGGER.info('merge video')
     #ffmpeg -f concat -i 文字檔檔名 -c copy 要輸出的影片檔檔名
     with open('videolist.txt', 'w') as f:
         for i in range(count):
             f.write('file ' + "'" + 'out' + str(i) + '.mp4' + "'" + '\n')
         f.close()
+    """
     command = ['ffmpeg', 
                 '-loglevel', 'error',
                 '-f', 'concat',
@@ -48,6 +48,13 @@ def mergeVideo(count, snapID):
         process.terminate()
         process.kill()
     return stdErr
+    """
+    command = 'ffmpeg -loglevel error -f concat -i videolist.txt -c copy ' + snapID + '.mp4'
+    rtnCode = aioProc.asyncRunWait(command)
+    LOGGER.info('Merge return :%d', rtnCode)
+    if os.path.isfile(snapID + '.mp4'):
+        LOGGER.info('file len::%d', os.path.getsize(snapID + '.mp4'))
+            
 
 
 def snapshot(camera, user, passwd, fileName):
@@ -70,6 +77,7 @@ def snapshot(camera, user, passwd, fileName):
 
 def extractImage(index, timeCode, snapID):
     #ffmpeg -ss 00:01:00 -i input.mp4 -frames:v 1 output.png
+    """
     command = ['ffmpeg',
                 '-loglevel', 'error',
                 '-i', index + '.mp4',
@@ -85,11 +93,19 @@ def extractImage(index, timeCode, snapID):
     
     stdOut, stdErr = process.communicate()
     print('stdErr:', stdErr)
-    return stdErr
+    """
+    command = 'ffmpeg -i ' + index + '.mp4 -ss ' + timeCode + ' -frames:v 1' + snapID + '.jpg'
+    rtnCode = aioProc.asyncRunWait(command)
+    LOGGER.info('extract image return::%d', rtnCode)
+    if os.path.isfile(snapID + '.jpg'):
+        LOGGER.info('file len::%d', os.path.getsize(snapID + '.jpg'))
+        
+    return rtnCode
 
 def extractVideo(index, startTime, endTime):
     print(startTime, endTime)
     #ffmpeg -i input.mp4 -ss 00:00:05.000 -to 00:00:15.000 output.mp4
+    """
     command = ['ffmpeg',
                 '-loglevel', 'error',
                 '-i', index + '.mp4',
@@ -109,7 +125,16 @@ def extractVideo(index, startTime, endTime):
             os.remove('out' + index + '.mp4')
         process.terminate()
         process.kill()
-    return stdErr
+    """
+    command = 'ffmpeg -i ' + index + '.mp4 -ss ' + startTime + ' -to ' + endTime + ' out' + index + '.mp4'
+    rtnCode = aioProc.asyncRunWait(command)
+    LOGGER.info('exact video rtn :%d', rtnCode)
+    if os.path.isfile('out' + index + '.mp4'):
+        LOGGER.info('file len::%d', os.path.getsize('out' + index + '.mp4'))
+
+    
+    return rtnCode
+
 
 def downloadSD(camera, user, passwd, rtspStr, index):
     downloadXml = '''
@@ -137,13 +162,12 @@ def downloadSD(camera, user, passwd, rtspStr, index):
                         data=outXml,
                         timeout=60)
     fileName = index + '.mp4' 
+    
     if resp.status_code == 200:
-        mb = 1024 * 1024
         with open(fileName, 'wb') as fd:
-            for chunk in resp.iter_content(chunk_size=mb):
+            for chunk in resp.iter_content(chunk_size=8192):
                 fd.write(chunk)
-                #time.sleep(0.5)
-            #df.close
+
     return resp.status_code
 
 

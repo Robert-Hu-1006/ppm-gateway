@@ -3,6 +3,7 @@ from asyncio.subprocess import Process, PIPE
 from asyncio.streams import StreamReader
 import shlex
 import logging
+import psutil
 
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
@@ -10,26 +11,29 @@ LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
+async def killSubProcess(pid):
+    process = psutil.Process(pid)
+    for proc in process.children(recursive=True):
+        proc.kill()
+    process.kill()
 
-async def asyncRunDelay(command, delay):
+
+async def asyncRunWait(command):
     process = await asyncio.create_subprocess_exec(
         *shlex.split(command), 
-        stdout=PIPE,
+        stdout=asyncio.subprocess.DEVNULL,
         stderr=PIPE)
-    for i in range(delay):
-        await asyncio.sleep(1)
-        LOGGER.info('delay rtn:: %s',process.returncode)
-
+    
     # 會卡住
     stdout, stderr = await process.communicate()
     #await process.wait()
-    #if process.returncode is not None:
-    #    await process.terminate()
-    #    await process.kill()
+    if stderr is not None:
+        await process.terminate()
+        await process.kill()
     
-    return process.pid, process.returncode
+    return process.returncode
 
-async def asyncReadOutput(command):
+async def asyncOutput(command):
     process = await asyncio.create_subprocess_exec(
         *shlex.split(command), 
         stdout=asyncio.subprocess.PIPE,
@@ -41,7 +45,7 @@ async def asyncReadOutput(command):
     #process.kill()
     return process.returncode, content
 
-
+    
 async def asyncRunNoWait(command):
     process = await asyncio.create_subprocess_exec(
         *shlex.split(command), 

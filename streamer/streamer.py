@@ -45,7 +45,7 @@ async def getVideoCodec(fileName):
     return  codec
     """
     command = 'ffprobe ' + fileName + ' -show_streams -select_streams v -print_format json'
-    rtnCode, content = await aioProc.asyncReadOutput(command)
+    rtnCode, content = await aioProc.asyncOutput(command)
     #asyncRunWait(command)
     probeData = json.loads(content)
     
@@ -148,9 +148,10 @@ async def h265toMP4(fileName):
     #command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
     command = 'ffmpeg -loglevel error -i ' + fileName + ' -vcodec hevc /app/convert.mp4'
     LOGGER.info('start convert')
-    rtnCode, content = await aioProc.asyncRunDelay(command, 20)
+    rtnCode = await aioProc.asyncRunWait(command)
+    if os.path.isfile('convert.mp4'):
+        LOGGER.info('file len::%d', os.path.getsize('convert.mp4'))
 
-    LOGGER.info('265 return:: %s', rtnCode)
     if rtnCode is None:
         LOGGER.info('265 change file %s', fileName)
         os.remove(fileName)
@@ -192,7 +193,7 @@ async def captureFrame(pullURL, fileName):
     """
     command = 'ffmpeg -loglevel error -rtsp_transport tcp -i ' + pullURL + \
             ' -frames:v 1 -q:v 1 -f image2 /app/' + fileName
-    rtnCode, content = await aioProc.asyncRunDelay(command, 1)
+    rtnCode = await aioProc.asyncRunWait(command)
     if rtnCode is None:
         rtn = await picUpload(fileName)
     
@@ -298,7 +299,7 @@ async def loadCamTable(wrkSheet):
             camTable[name] = {}
             camTable[name]['code'] =  gSheet[i + 1][1]
             camTable[name]['source'] =  gSheet[i + 1][2]
-            camTable[name]['cami + 1D'] = gSheet[i + 1][3]
+            camTable[name]['camID'] = gSheet[i + 1][3]
             camTable[name]['path'] =  gSheet[i + 1][6]
             camTable[name]['floor'] =  gSheet[i + 1][7]
             camTable[name]['area'] =  gSheet[i + 1][8]
@@ -444,7 +445,7 @@ async def captureImage(camName, eventID):
 
 async def downloadContent(camName, eventID, eventTime):
     # 15秒之後才開始抓圖
-    await asyncio.sleep(15)
+    await asyncio.sleep(1)
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
             count = HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
