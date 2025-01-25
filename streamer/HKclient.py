@@ -5,6 +5,7 @@ import io, os, time
 from datetime import datetime, timedelta
 import pytz
 import subprocess
+import aioProc
 
 #import xml.etree.ElementTree as ET
 #from xml.etree.ElementTree import tostring
@@ -127,8 +128,9 @@ def downloadSD(camera, user, passwd, rtspStr, index):
                         timeout=60)
     fileName = index + '.mp4' 
     if resp.status_code == 200:
+        mb = 1024 * 1024
         with open(fileName, 'wb') as fd:
-            for chunk in resp.iter_content(chunk_size=10240):
+            for chunk in resp.iter_content(chunk_size=mb):
                 fd.write(chunk)
                 #time.sleep(0.5)
             #df.close

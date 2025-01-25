@@ -2,9 +2,6 @@ import pygsheets
 import logging
 import subprocess
 import asyncio
-from asyncio.subprocess import PIPE
-from asyncio.streams import StreamReader
-import shlex
 
 import psutil
 import signal
@@ -17,7 +14,7 @@ import configparser
 from datetime import datetime
 #import ssl
 from dotenv import load_dotenv
-import HKclient, NXclient
+import HKclient, NXclient, aioProc
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
@@ -34,32 +31,6 @@ class Stream:
         self.name = name
 
 
-async def asyncRunWait(command):
-    process = await asyncio.create_subprocess_exec(
-        *shlex.split(command), stdout=PIPE, stderr=PIPE)
-    
-    LOGGER.info('stream read')
-    stdout: StreamReader = process.stdout
-    # 读取输出内容，如果子进程没有执行完毕，那么 await stdout.read() 会阻塞
-    content = (await stdout.read()).decode('utf-8')
-    LOGGER.info('content read :: %s', content)
-    await process.wait() # wait for the child process to exit
-    #process.kill()
-    return process.returncode, content
-
-
-async def asyncRunNoWait(command):
-    process = await asyncio.create_subprocess_exec(
-        *shlex.split(command), stdout=PIPE, stderr=PIPE)
-    # 會卡住
-    #stdout, stderr = await process.communicate()
-    if process.returncode is not None:
-        await process.terminate()
-        await process.kill()
-    
-    return process.pid, process.returncode
-
-
 async def getVideoCodec(fileName):
     #ffprobe file.mp4 -show_streams -select_streams v -print_format json 
     """
@@ -74,15 +45,15 @@ async def getVideoCodec(fileName):
     return  codec
     """
     command = 'ffprobe ' + fileName + ' -show_streams -select_streams v -print_format json'
-    rtnCode, content = await asyncRunWait(command)
+    rtnCode, content = await aioProc.asyncRunShell(command)
+    #asyncRunWait(command)
     probeData = json.loads(content)
-    LOGGER.info('probe data :: %s',probeData)
+    
     for video in probeData['streams']:
         codec = video['codec_name']
     return  codec
 
     
-
 async def genTelegrafTag():
     client = pygsheets.authorize(service_account_file='/app/service.json')
     #client = pygsheets.authorize(service_account_file='./streamer/client_secret.json')
@@ -174,12 +145,17 @@ async def h265toMP4(fileName):
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
     """
-    command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
-    rtnCode, content = await asyncRunWait(command)
-    
+    #command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
+    command = 'ffmpeg -loglevel error -i ' + fileName + ' -vcodec hevc /app/convert.mp4'
+    LOGGER.info('start convert')
+    rtnCode, content = await aioProc.asyncRunShell(command)
+
+    LOGGER.info('265 return:: %s', rtnCode)
     if rtnCode is None:
+        LOGGER.info('265 change file %s', fileName)
         os.remove(fileName)
         os.rename('/app/convert.mp4', fileName)
+
 
 async def uploadFiles(snapID):
     files = os.listdir('/app')
@@ -189,13 +165,14 @@ async def uploadFiles(snapID):
                 LOGGER.info('upload :%s', file)
                 if file[len(file)-3:] == 'mp4':
                     codec = await getVideoCodec(file)
+                    LOGGER.info('content codec :: %s', codec)
                     if codec == 'hevc': # h.265
                         await h265toMP4(file)
                 resp = await picUpload(file)
             os.remove(file)
 
 async def captureFrame(pullURL, fileName):
-    #ffmpeg -rtsp_transport tcp -i rtsp://admin:Az123567@192.168.18.7:7001/e3e9a385-7fe0-3ba5-5482-a86cde7faf48 -frames:v 1 -q:v 1 -f image2 /app/test_image.jpg
+    """
     command = ['ffmpeg',
                 '-loglevel', 'error',
                 '-rtsp_transport', 'tcp',
@@ -212,18 +189,18 @@ async def captureFrame(pullURL, fileName):
     
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
-    if len(stdErr) == 0:
+    """
+    command = 'ffmpeg -loglevel error -rtsp_transport tcp -i ' + pullURL + \
+            ' -frames:v 1 -q:v 1 -f image2 /app/' + fileName
+    rtnCode, content = await aioProc.asyncRunShell(command)
+    if rtnCode is None:
         rtn = await picUpload(fileName)
-            
-    else:
-        LOGGER.info('time out error')
-        process.terminate()
-        process.kill()
+    
 
 async def asyncPushStream(pull_url, push_url):
     command = 'ffmpeg -fflags +genpts -rtsp_transport tcp -i ' + pull_url + \
             ' -c copy -f rtsp -preset ultrafast ' + push_url
-    pid, rtnCode = await asyncRunNoWait(command)
+    pid, rtnCode = await aioProc.asyncRunNoWait(command)
     if rtnCode is None :
         return pid
     else:

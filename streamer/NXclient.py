@@ -58,7 +58,7 @@ async def getNXcontent(nvr, camID, port, user, passwd, snapID, timestamp):
                         if not chunk:
                             break
                         await f2.write(chunk)
-                        await asyncio.sleep(0)
+                        await asyncio.sleep(0.5)
 
 
 async def getNXsnapshot(nvr, camID, port, user, passwd, snapID):
