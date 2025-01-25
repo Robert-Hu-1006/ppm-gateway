@@ -45,7 +45,7 @@ async def getVideoCodec(fileName):
     return  codec
     """
     command = 'ffprobe ' + fileName + ' -show_streams -select_streams v -print_format json'
-    rtnCode, content = await aioProc.asyncRunShell(command)
+    rtnCode, content = await aioProc.asyncReadOutput(command)
     #asyncRunWait(command)
     probeData = json.loads(content)
     
@@ -148,7 +148,7 @@ async def h265toMP4(fileName):
     #command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
     command = 'ffmpeg -loglevel error -i ' + fileName + ' -vcodec hevc /app/convert.mp4'
     LOGGER.info('start convert')
-    rtnCode, content = await aioProc.asyncRunShell(command)
+    rtnCode, content = await aioProc.asyncRunDelay(command, 20)
 
     LOGGER.info('265 return:: %s', rtnCode)
     if rtnCode is None:
@@ -192,7 +192,7 @@ async def captureFrame(pullURL, fileName):
     """
     command = 'ffmpeg -loglevel error -rtsp_transport tcp -i ' + pullURL + \
             ' -frames:v 1 -q:v 1 -f image2 /app/' + fileName
-    rtnCode, content = await aioProc.asyncRunShell(command)
+    rtnCode, content = await aioProc.asyncRunDelay(command, 1)
     if rtnCode is None:
         rtn = await picUpload(fileName)
     
@@ -294,11 +294,11 @@ async def loadCamTable(wrkSheet):
     gSheet = wrkSheet.get_values('A2', 'N')
     for i in range(len(gSheet) - 1):
         if gSheet[i + 1][1] == pCode:
-            name = gSheet[i + 1][4]
+            name = gSheet[i + 1 ][4]
             camTable[name] = {}
             camTable[name]['code'] =  gSheet[i + 1][1]
             camTable[name]['source'] =  gSheet[i + 1][2]
-            camTable[name]['camID'] =  gSheet[i + 1][3]
+            camTable[name]['cami + 1D'] = gSheet[i + 1][3]
             camTable[name]['path'] =  gSheet[i + 1][6]
             camTable[name]['floor'] =  gSheet[i + 1][7]
             camTable[name]['area'] =  gSheet[i + 1][8]

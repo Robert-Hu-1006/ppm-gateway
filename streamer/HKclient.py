@@ -15,7 +15,15 @@ import logging
 import json
 from datetime import datetime
 
+
+LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
+              '-35s %(lineno) -5d: %(message)s')
+LOGGER = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
+
+
 def mergeVideo(count, snapID):
+    LOGGER.info('merge video')
     #ffmpeg -f concat -i 文字檔檔名 -c copy 要輸出的影片檔檔名
     with open('videolist.txt', 'w') as f:
         for i in range(count):
@@ -121,7 +129,9 @@ def downloadSD(camera, user, passwd, rtspStr, index):
 
     url = 'http://'+ camera + '/ISAPI/ContentMgmt/download'
     headers = {'Content-Type': 'application/xml'} 
-    resp = requests.get(url, headers=headers, 
+    resp = requests.get(url, 
+                        stream=True,
+                        headers=headers, 
                         verify = False,
                         auth=HTTPDigestAuth(user, passwd),
                         data=outXml,
