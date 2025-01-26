@@ -5,6 +5,7 @@ import io, os, time
 from datetime import datetime, timedelta
 import pytz
 import subprocess
+import asyncio
 import aioProc
 
 #import xml.etree.ElementTree as ET
@@ -22,7 +23,7 @@ LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
 
-def mergeVideo(count, snapID):
+async def mergeVideo(count, snapID):
     #ffmpeg -f concat -i 文字檔檔名 -c copy 要輸出的影片檔檔名
     with open('videolist.txt', 'w') as f:
         for i in range(count):
@@ -50,14 +51,14 @@ def mergeVideo(count, snapID):
     return stdErr
     """
     command = 'ffmpeg -loglevel error -f concat -i videolist.txt -c copy ' + snapID + '.mp4'
-    rtnCode = aioProc.asyncRunWait(command)
+    rtnCode = await aioProc.asyncRunWait(command)
     LOGGER.info('Merge return :%d', rtnCode)
     if os.path.isfile(snapID + '.mp4'):
         LOGGER.info('file len::%d', os.path.getsize(snapID + '.mp4'))
             
 
 
-def snapshot(camera, user, passwd, fileName):
+async def snapshot(camera, user, passwd, fileName):
     #host = '192.168.18.20'
     #userName = 'admin'
     #passWord = '1qazxsw2'
@@ -75,7 +76,7 @@ def snapshot(camera, user, passwd, fileName):
                 fd.write(chunk)
     return resp.status_code
 
-def extractImage(index, timeCode, snapID):
+async def extractImage(index, timeCode, snapID):
     #ffmpeg -ss 00:01:00 -i input.mp4 -frames:v 1 output.png
     """
     command = ['ffmpeg',
@@ -95,14 +96,14 @@ def extractImage(index, timeCode, snapID):
     print('stdErr:', stdErr)
     """
     command = 'ffmpeg -i ' + index + '.mp4 -ss ' + timeCode + ' -frames:v 1' + snapID + '.jpg'
-    rtnCode = aioProc.asyncRunWait(command)
+    rtnCode = await aioProc.asyncRunWait(command)
     LOGGER.info('extract image return::%d', rtnCode)
     if os.path.isfile(snapID + '.jpg'):
         LOGGER.info('file len::%d', os.path.getsize(snapID + '.jpg'))
         
     return rtnCode
 
-def extractVideo(index, startTime, endTime):
+async def extractVideo(index, startTime, endTime):
     print(startTime, endTime)
     #ffmpeg -i input.mp4 -ss 00:00:05.000 -to 00:00:15.000 output.mp4
     """
@@ -127,7 +128,7 @@ def extractVideo(index, startTime, endTime):
         process.kill()
     """
     command = 'ffmpeg -i ' + index + '.mp4 -ss ' + startTime + ' -to ' + endTime + ' out' + index + '.mp4'
-    rtnCode = aioProc.asyncRunWait(command)
+    rtnCode = await aioProc.asyncRunWait(command)
     LOGGER.info('exact video rtn :%d', rtnCode)
     if os.path.isfile('out' + index + '.mp4'):
         LOGGER.info('file len::%d', os.path.getsize('out' + index + '.mp4'))
@@ -136,7 +137,7 @@ def extractVideo(index, startTime, endTime):
     return rtnCode
 
 
-def downloadSD(camera, user, passwd, rtspStr, index):
+async def downloadSD(camera, user, passwd, rtspStr, index):
     downloadXml = '''
                 <downloadRequest version="1.0" xmlns="http://www.isapi.org/ver20/XMLSchema">
                 <playbackURI> </playbackURI>
@@ -171,7 +172,7 @@ def downloadSD(camera, user, passwd, rtspStr, index):
     return resp.status_code
 
 
-def querySD(camera, user, passwd, pullStart, pullEnd):
+async def querySD(camera, user, passwd, pullStart, pullEnd):
     print(pullStart)
     xmlData = '''<?xml version='1.0'?><CMSearchDescription>
             <searchID>C92DC285-8F30-0001-40C6-F0EFA8FB18B5</searchID>
@@ -223,13 +224,13 @@ def querySD(camera, user, passwd, pullStart, pullEnd):
         return match, contentList
 
 
-def convertGMT(timeCode):
+async def convertGMT(timeCode):
     localTime = datetime.strptime(timeCode, '%Y-%m-%d %H:%M:%S')
     localTZ = pytz.timezone('Asia/Taipei')
     gmtTime = localTZ.localize(localTime).astimezone(pytz.utc)
     return gmtTime.replace(tzinfo=None)
     
-def mapTimeCode(fileStart, fileEnd, pullStart, pullEnd):
+async def mapTimeCode(fileStart, fileEnd, pullStart, pullEnd):
     if fileStart <= pullStart:
         extractStart = pullStart
     else:
@@ -251,8 +252,8 @@ def mapTimeCode(fileStart, fileEnd, pullStart, pullEnd):
     endSec = endDiff.seconds % 60
     return str(startMin) + ':' + str(startSec), str(endMin) + ':' + str(endSec)
 
-def extractFrame(camera, user, passwd, pullStart, snapID):
-    pullTime = convertGMT(pullStart)
+async def extractFrame(camera, user, passwd, pullStart, snapID):
+    pullTime = await convertGMT(pullStart)
     nativeStart = pullTime - timedelta(seconds=15)
     nativeEnd = pullTime + timedelta(seconds=15)
 
@@ -266,16 +267,16 @@ def extractFrame(camera, user, passwd, pullStart, snapID):
         fileEnd = queryList[str(i)]['endTime']
         rtspUrl = queryList[str(i)]['playbackURI']
         
-        rtn = downloadSD(camera, user, passwd, rtspUrl, str(i))
+        rtn = await downloadSD(camera, user, passwd, rtspUrl, str(i))
         if rtn == 200:
             startTime = datetime.strptime(fileStart, '%Y-%m-%dT%H:%M:%SZ')
             endTime = datetime.strptime(fileEnd, '%Y-%m-%dT%H:%M:%SZ')
-            beginTime, stopTime = mapTimeCode(startTime, endTime, nativeStart, nativeEnd)
-            err = extractVideo(str(i), beginTime, stopTime)
+            beginTime, stopTime = await mapTimeCode(startTime, endTime, nativeStart, nativeEnd)
+            err = await extractVideo(str(i), beginTime, stopTime)
             print(err)            
             if pullTime >= startTime and pullTime <= endTime:
-                beginTime, stopTime = mapTimeCode(startTime, endTime, pullTime, pullTime)
-                err = extractImage(str(i), beginTime, snapID)
+                beginTime, stopTime = await mapTimeCode(startTime, endTime, pullTime, pullTime)
+                err = await extractImage(str(i), beginTime, snapID)
     if count > 1 :
         mergeVideo(count, snapID)
     else:

@@ -416,7 +416,7 @@ async def captureImage(camName, eventID):
         case 'HK_CAM':
             fileName = '/app/' + eventID + '.jpg'
 
-            rtn = HKclient.snapshot(CAM_TABLE[camName]['ip'], 
+            rtn = await HKclient.snapshot(CAM_TABLE[camName]['ip'], 
                                 CAM_TABLE[camName]['account'],
                                 CAM_TABLE[camName]['passwd'],
                                 fileName)
@@ -448,7 +448,7 @@ async def downloadContent(camName, eventID, eventTime):
     await asyncio.sleep(1)
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
-            count = HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
+            count = await HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
                                 CAM_TABLE[camName]['account'],
                                 CAM_TABLE[camName]['passwd'],
                                 eventTime,
@@ -519,7 +519,8 @@ async def main():
                                     pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
                                     if msg['type'] == '0':    # Desktop
                                         if pcStream.pid != 0:
-                                            await killProcess(pcStream.pid)
+                                            #await killProcess(pcStream.pid)
+                                            await aioProc.killSubProcess(pcStream.pid)
                                         # pid = await pushStream(pullURL, pushURL)
                                         pid = await asyncPushStream(pullURL, pushURL)
                                         if pid != 0:
@@ -527,7 +528,8 @@ async def main():
                                             pcStream.name = msg['name']
                                     else:
                                         if phoneStream.pid != 0:
-                                            await killProcess(phoneStream.pid)
+                                            #await killProcess(phoneStream.pid)
+                                            await aioProc.killSubProcess(phoneStream.pid)
                                         pid = await asyncPushStream(pullURL, pushURL)
                                         if pid != 0:
                                             phoneStream.pid = pid
@@ -537,12 +539,14 @@ async def main():
                                     if msg['type'] == '0':  # desktop
                                         LOGGER.info('close process id:%d', pcStream.pid )
                                         if pcStream.pid != 0:
-                                            await killProcess(pcStream.pid)
+                                            #await killProcess(pcStream.pid)
+                                            await aioProc.killSubProcess(pcStream.pid)
                                             pcStream.pid = 0
                                             pcStream.name = ''
                                     else:
                                         if phoneStream.pid != 0:
-                                            await killProcess(phoneStream.pid)
+                                            #await killProcess(phoneStream.pid)
+                                            await aioProc.killSubProcess(phoneStream.pid)
                                             phoneStream.pid = 0
                                             phoneStream.name = ''
                                 case 'capture': #capture single pic on current time

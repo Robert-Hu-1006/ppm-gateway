@@ -12,19 +12,30 @@ LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 
 async def killSubProcess(pid):
-    process = psutil.Process(pid)
-    for proc in process.children(recursive=True):
-        proc.kill()
-    process.kill()
+    try:
+        process = psutil.Process(pid)
+        name = process.name()
+        for proc in process.children(recursive=True):
+            proc.kill()
+        process.kill()
+    except psutil.NoSuchProcess:
+        pass
+    else:
+        LOGGER.info('process: %s running with pid: %d', name, pid)
 
 
 async def asyncRunWait(command):
     process = await asyncio.create_subprocess_exec(
         *shlex.split(command), 
-        stdout=asyncio.subprocess.DEVNULL,
+        stdout=PIPE,
         stderr=PIPE)
-    
-    # 會卡住
+    # asyncio.subprocess.DEVNULL    才不會卡住
+    #stdout: StreamReader = process.stdout
+    while True:
+        line = await process.stdout.readline()
+        lastLine = line
+        if line is None and lastLine is None:
+            break
     stdout, stderr = await process.communicate()
     #await process.wait()
     if stderr is not None:
