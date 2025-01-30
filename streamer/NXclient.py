@@ -49,7 +49,7 @@ async def getNXcontent(nvr, camID, port, user, passwd, snapID, timestamp):
     
         # Delay 15 sec
         #await asyncio.sleep(15) 
-        #mb = 1024 * 1024
+        mb = 1024 * 1024
         async with await session.get(videoURL) as videoResp:
             if videoResp.status == 200:
                 videoFile = '/app/' + snapID + '.mp4'

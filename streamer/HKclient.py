@@ -72,7 +72,7 @@ async def snapshot(camera, user, passwd, fileName):
     #fileName = 'test.jpg'
     if resp.status_code == 200:
         with open(fileName, 'wb') as fd:
-            for chunk in resp.iter_content(chunk_size=2048):
+            for chunk in resp.iter_content(chunk_size=8192):
                 fd.write(chunk)
     return resp.status_code
 
@@ -98,8 +98,8 @@ async def extractImage(index, timeCode, snapID):
     command = 'ffmpeg -loglevel error -i ' + index + '.mp4 -ss ' + timeCode + ' -frames:v 1 ' + snapID + '.jpg'
     rtnErr = await aioProc.asyncRunWait(command)
     
-    if os.path.isfile(snapID + '.jpg'):
-        LOGGER.info('file len::%d', os.path.getsize(snapID + '.jpg'))
+    #if os.path.isfile(snapID + '.jpg'):
+    #    LOGGER.info('file len::%d', os.path.getsize(snapID + '.jpg'))
         
     return rtnErr
 
@@ -130,8 +130,8 @@ async def extractVideo(index, startTime, endTime):
     command = 'ffmpeg -loglevel error -i ' + index + '.mp4 -ss ' + startTime + ' -to ' + endTime + ' out' + index + '.mp4'
     rtnErr = await aioProc.asyncRunWait(command)
     
-    if os.path.isfile('out' + index + '.mp4'):
-        LOGGER.info('file len::%d', os.path.getsize('out' + index + '.mp4'))
+    #if os.path.isfile('out' + index + '.mp4'):
+    #    LOGGER.info('file len::%d', os.path.getsize('out' + index + '.mp4'))
 
     return rtnErr
 
@@ -271,16 +271,14 @@ async def extractFrame(camera, user, passwd, pullStart, snapID):
             startTime = datetime.strptime(fileStart, '%Y-%m-%dT%H:%M:%SZ')
             endTime = datetime.strptime(fileEnd, '%Y-%m-%dT%H:%M:%SZ')
             beginTime, stopTime = await mapTimeCode(startTime, endTime, nativeStart, nativeEnd)
-            LOGGER.info('begin time::%s stop time:: %s', )
             err = await extractVideo(str(i), beginTime, stopTime)
-            print(err)            
             if pullTime >= startTime and pullTime <= endTime:
                 beginTime, stopTime = await mapTimeCode(startTime, endTime, pullTime, pullTime)
                 err = await extractImage(str(i), beginTime, snapID)
     if count > 1 :
         await mergeVideo(count, snapID)
     else:
-        os.rename('0.mp4', snapID + '.mp4')
+        os.rename('out0.mp4', snapID + '.mp4')
 
     for i in range(count):
         if os.path.isfile(str(i) + '.mp4'):
