@@ -271,13 +271,14 @@ async def extractFrame(camera, user, passwd, pullStart, snapID):
             startTime = datetime.strptime(fileStart, '%Y-%m-%dT%H:%M:%SZ')
             endTime = datetime.strptime(fileEnd, '%Y-%m-%dT%H:%M:%SZ')
             beginTime, stopTime = await mapTimeCode(startTime, endTime, nativeStart, nativeEnd)
+            LOGGER.info('begin time::%s stop time:: %s', )
             err = await extractVideo(str(i), beginTime, stopTime)
             print(err)            
             if pullTime >= startTime and pullTime <= endTime:
                 beginTime, stopTime = await mapTimeCode(startTime, endTime, pullTime, pullTime)
                 err = await extractImage(str(i), beginTime, snapID)
     if count > 1 :
-        mergeVideo(count, snapID)
+        await mergeVideo(count, snapID)
     else:
         os.rename('0.mp4', snapID + '.mp4')
 

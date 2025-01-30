@@ -161,14 +161,12 @@ async def uploadFiles(snapID):
     files = os.listdir('/app')
     for file in files:
         if os.path.basename(file).split('.')[0] == snapID:
-            if os.path.getsize(file):
-                LOGGER.info('upload :%s', file)
-                if file[len(file)-3:] == 'mp4':
-                    codec = await getVideoCodec(file)
-                    LOGGER.info('content codec :: %s', codec)
-                    if codec == 'hevc': # h.265
-                        await h265toMP4(file)
-                resp = await picUpload(file)
+            if file[len(file)-3:] == 'mp4':
+                codec = await getVideoCodec(file)
+                LOGGER.info('content codec :: %s', codec)
+                if codec == 'hevc': # h.265
+                    await h265toMP4(file)
+            resp = await picUpload(file)
             os.remove(file)
 
 async def captureFrame(pullURL, fileName):
@@ -193,9 +191,9 @@ async def captureFrame(pullURL, fileName):
     command = 'ffmpeg -loglevel error -rtsp_transport tcp -i ' + pullURL + \
             ' -frames:v 1 -q:v 1 -f image2 /app/' + fileName
     rtnErr = await aioProc.asyncRunWait(command)
-    if os.path.isfile(fileName):
-    #if rtnErr == '':
-        rtn = await picUpload(fileName)
+    #if os.path.isfile(fileName):
+    ##if rtnErr == '':
+    #    rtn = await picUpload(fileName)
     
 
 async def asyncPushStream(pull_url, push_url):
@@ -444,16 +442,16 @@ async def captureImage(camName, eventID):
     return resp
 
 async def downloadContent(camName, eventID, eventTime):
-    # 15秒之後才開始抓圖
-    await asyncio.sleep(1)
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
+            await asyncio.sleep(15)
             count = await HKclient.extractFrame(CAM_TABLE[camName]['ip'], 
                                 CAM_TABLE[camName]['account'],
                                 CAM_TABLE[camName]['passwd'],
                                 eventTime,
                                 eventID)
         case 'NX_NVR':
+            await asyncio.sleep(15)
             if await NXclient.getNXstatus(nvr=CAM_TABLE[camName]['ip'],
                                 camID=CAM_TABLE[camName]['camID'],
                                 port=CAM_TABLE[camName]['port'],
