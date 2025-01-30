@@ -145,14 +145,13 @@ async def h265toMP4(fileName):
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
     """
-    #command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
-    command = 'ffmpeg -loglevel error -i ' + fileName + ' -vcodec hevc /app/convert.mp4'
+    command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
     LOGGER.info('start convert')
-    rtnCode = await aioProc.asyncRunWait(command)
+    rtnErr = await aioProc.asyncRunWait(command)
     if os.path.isfile('convert.mp4'):
         LOGGER.info('file len::%d', os.path.getsize('convert.mp4'))
 
-    if rtnCode is None:
+    #if rtnErr == '':
         LOGGER.info('265 change file %s', fileName)
         os.remove(fileName)
         os.rename('/app/convert.mp4', fileName)
@@ -193,13 +192,14 @@ async def captureFrame(pullURL, fileName):
     """
     command = 'ffmpeg -loglevel error -rtsp_transport tcp -i ' + pullURL + \
             ' -frames:v 1 -q:v 1 -f image2 /app/' + fileName
-    rtnCode = await aioProc.asyncRunWait(command)
-    if rtnCode is None:
+    rtnErr = await aioProc.asyncRunWait(command)
+    if os.path.isfile(fileName):
+    #if rtnErr == '':
         rtn = await picUpload(fileName)
     
 
 async def asyncPushStream(pull_url, push_url):
-    command = 'ffmpeg -fflags +genpts -rtsp_transport tcp -i ' + pull_url + \
+    command = 'ffmpeg  -loglevel error -fflags +genpts -rtsp_transport tcp -i ' + pull_url + \
             ' -c copy -f rtsp -preset ultrafast ' + push_url
     pid, rtnCode = await aioProc.asyncRunNoWait(command)
     if rtnCode is None :

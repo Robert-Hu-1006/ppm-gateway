@@ -31,18 +31,17 @@ async def asyncRunWait(command):
         stderr=PIPE)
     # asyncio.subprocess.DEVNULL    才不會卡住
     #stdout: StreamReader = process.stdout
-    while True:
-        line = await process.stdout.readline()
-        lastLine = line
-        if line is None and lastLine is None:
-            break
-    stdout, stderr = await process.communicate()
-    #await process.wait()
-    if stderr is not None:
-        await process.terminate()
-        await process.kill()
     
-    return process.returncode
+    while process.returncode is None:
+        await asyncio.sleep(0.1)
+    
+    stdout, stderr = await process.communicate()
+    LOGGER.info('async wait return err:%s', stderr.decode())
+    #if len(stderr) > 0:
+    #    await process.terminate()
+    #    await process.kill()
+    
+    return stderr.decode()
 
 async def asyncOutput(command):
     process = await asyncio.create_subprocess_exec(
@@ -65,6 +64,7 @@ async def asyncRunNoWait(command):
     # 會卡住
     #stdout, stderr = await process.communicate()
     if process.returncode is not None:
+        LOGGER.info('async no wait rtn:%s', process.returncode)
         await process.terminate()
         await process.kill()
     

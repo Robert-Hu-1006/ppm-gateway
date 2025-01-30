@@ -51,8 +51,8 @@ async def mergeVideo(count, snapID):
     return stdErr
     """
     command = 'ffmpeg -loglevel error -f concat -i videolist.txt -c copy ' + snapID + '.mp4'
-    rtnCode = await aioProc.asyncRunWait(command)
-    LOGGER.info('Merge return :%d', rtnCode)
+    rtnErr = await aioProc.asyncRunWait(command)
+    
     if os.path.isfile(snapID + '.mp4'):
         LOGGER.info('file len::%d', os.path.getsize(snapID + '.mp4'))
             
@@ -95,13 +95,13 @@ async def extractImage(index, timeCode, snapID):
     stdOut, stdErr = process.communicate()
     print('stdErr:', stdErr)
     """
-    command = 'ffmpeg -i ' + index + '.mp4 -ss ' + timeCode + ' -frames:v 1' + snapID + '.jpg'
-    rtnCode = await aioProc.asyncRunWait(command)
-    LOGGER.info('extract image return::%d', rtnCode)
+    command = 'ffmpeg -loglevel error -i ' + index + '.mp4 -ss ' + timeCode + ' -frames:v 1 ' + snapID + '.jpg'
+    rtnErr = await aioProc.asyncRunWait(command)
+    
     if os.path.isfile(snapID + '.jpg'):
         LOGGER.info('file len::%d', os.path.getsize(snapID + '.jpg'))
         
-    return rtnCode
+    return rtnErr
 
 async def extractVideo(index, startTime, endTime):
     print(startTime, endTime)
@@ -127,14 +127,13 @@ async def extractVideo(index, startTime, endTime):
         process.terminate()
         process.kill()
     """
-    command = 'ffmpeg -i ' + index + '.mp4 -ss ' + startTime + ' -to ' + endTime + ' out' + index + '.mp4'
-    rtnCode = await aioProc.asyncRunWait(command)
-    LOGGER.info('exact video rtn :%d', rtnCode)
+    command = 'ffmpeg -loglevel error -i ' + index + '.mp4 -ss ' + startTime + ' -to ' + endTime + ' out' + index + '.mp4'
+    rtnErr = await aioProc.asyncRunWait(command)
+    
     if os.path.isfile('out' + index + '.mp4'):
         LOGGER.info('file len::%d', os.path.getsize('out' + index + '.mp4'))
 
-    
-    return rtnCode
+    return rtnErr
 
 
 async def downloadSD(camera, user, passwd, rtspStr, index):
@@ -257,7 +256,7 @@ async def extractFrame(camera, user, passwd, pullStart, snapID):
     nativeStart = pullTime - timedelta(seconds=15)
     nativeEnd = pullTime + timedelta(seconds=15)
 
-    count, queryList = querySD(camera, user, passwd,
+    count, queryList = await querySD(camera, user, passwd,
                     datetime.strftime(nativeStart, '%Y-%m-%dT%H:%M:%SZ'),
                     datetime.strftime(nativeEnd, '%Y-%m-%dT%H:%M:%SZ'))
     
