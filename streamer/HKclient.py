@@ -27,7 +27,7 @@ async def mergeVideo(count, snapID):
     #ffmpeg -f concat -i 文字檔檔名 -c copy 要輸出的影片檔檔名
     with open('videolist.txt', 'w') as f:
         for i in range(count):
-            f.write('file ' + "'" + 'out' + str(i) + '.mp4' + "'" + '\n')
+            f.write('file ' + "'" + 'out' + snapID + '_' + str(i) + '.mp4' + "'" + '\n')
         f.close()
     
     command = 'ffmpeg -loglevel error -f concat -i videolist.txt -c copy ' + snapID + '.mp4'
@@ -207,26 +207,26 @@ async def extractFrame(camera, user, passwd, pullStart, snapID):
         fileStart = queryList[str(i)]['startTime']
         fileEnd = queryList[str(i)]['endTime']
         rtspUrl = queryList[str(i)]['playbackURI']
-        
-        rtn = await downloadSD(camera, user, passwd, rtspUrl, str(i))
+        tempID = snapID + '_' + str(i)
+        rtn = await downloadSD(camera, user, passwd, rtspUrl, tempID)
         if rtn == 200:
             startTime = datetime.strptime(fileStart, '%Y-%m-%dT%H:%M:%SZ')
             endTime = datetime.strptime(fileEnd, '%Y-%m-%dT%H:%M:%SZ')
             beginTime, stopTime = await mapTimeCode(startTime, endTime, nativeStart, nativeEnd)
-            err = await extractVideo(str(i), beginTime, stopTime)
+            err = await extractVideo(tempID, beginTime, stopTime)
             if pullTime >= startTime and pullTime <= endTime:
                 beginTime, stopTime = await mapTimeCode(startTime, endTime, pullTime, pullTime)
-                err = await extractImage(str(i), beginTime, snapID)
+                err = await extractImage(tempID, beginTime, snapID)
     if count > 1 :
         await mergeVideo(count, snapID)
     else:
-        os.rename('out0.mp4', snapID + '.mp4')
+        os.rename('out' + tempID + '.mp4', snapID + '.mp4')
 
     for i in range(count):
-        if os.path.isfile(str(i) + '.mp4'):
-            os.remove(str(i) + '.mp4')
-        if os.path.isfile('out' + str(i) + '.mp4'):
-            os.remove('out' + str(i) + '.mp4')
+        if os.path.isfile(snapID + '_' + str(i) + '.mp4'):
+            os.remove(snapID + '_' + str(i) + '.mp4')
+        if os.path.isfile('out' + snapID + '_' + str(i) + '.mp4'):
+            os.remove('out' + snapID + '_' + str(i) + '.mp4')
     if os.path.isfile('videolist.txt'):
         os.remove('videolist.txt')
 
