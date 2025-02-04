@@ -33,7 +33,7 @@ async def asyncRunWait(command):
     #stdout: StreamReader = process.stdout
     
     while process.returncode is None:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.5)
     
     stdout, stderr = await process.communicate()
     LOGGER.info('async wait return err:%s', stderr.decode())

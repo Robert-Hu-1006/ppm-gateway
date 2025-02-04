@@ -29,27 +29,7 @@ async def mergeVideo(count, snapID):
         for i in range(count):
             f.write('file ' + "'" + 'out' + str(i) + '.mp4' + "'" + '\n')
         f.close()
-    """
-    command = ['ffmpeg', 
-                '-loglevel', 'error',
-                '-f', 'concat',
-                '-i', 'videolist.txt',
-                '-c', 'copy',
-                snapID + '.mp4'
-                ]
-    print(command)
-    process = subprocess.Popen(command, 
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                start_new_session=True)
     
-    stdOut, stdErr = process.communicate()
-    if len(stdErr) != 0:
-        print(stdErr)
-        process.terminate()
-        process.kill()
-    return stdErr
-    """
     command = 'ffmpeg -loglevel error -f concat -i videolist.txt -c copy ' + snapID + '.mp4'
     rtnErr = await aioProc.asyncRunWait(command)
     
@@ -78,23 +58,6 @@ async def snapshot(camera, user, passwd, fileName):
 
 async def extractImage(index, timeCode, snapID):
     #ffmpeg -ss 00:01:00 -i input.mp4 -frames:v 1 output.png
-    """
-    command = ['ffmpeg',
-                '-loglevel', 'error',
-                '-i', index + '.mp4',
-                '-ss', timeCode,
-                '-frames:v', '1',
-                snapID + '.jpg']
-    
-    print('capture cmd::', command)
-    process = subprocess.Popen(command, 
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                start_new_session=True)
-    
-    stdOut, stdErr = process.communicate()
-    print('stdErr:', stdErr)
-    """
     command = 'ffmpeg -loglevel error -i ' + index + '.mp4 -ss ' + timeCode + ' -frames:v 1 ' + snapID + '.jpg'
     rtnErr = await aioProc.asyncRunWait(command)
     
@@ -106,27 +69,6 @@ async def extractImage(index, timeCode, snapID):
 async def extractVideo(index, startTime, endTime):
     print(startTime, endTime)
     #ffmpeg -i input.mp4 -ss 00:00:05.000 -to 00:00:15.000 output.mp4
-    """
-    command = ['ffmpeg',
-                '-loglevel', 'error',
-                '-i', index + '.mp4',
-                '-ss', startTime,
-                '-to', endTime,
-                'out' + index + '.mp4']
-    
-    print('capture cmd::', command)
-    process = subprocess.Popen(command, 
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                start_new_session=True)
-    
-    stdOut, stdErr = process.communicate()
-    if len(stdErr) != 0:
-        if os.path.isfile('out' + index + '.mp4'):
-            os.remove('out' + index + '.mp4')
-        process.terminate()
-        process.kill()
-    """
     command = 'ffmpeg -loglevel error -i ' + index + '.mp4 -ss ' + startTime + ' -to ' + endTime + ' out' + index + '.mp4'
     rtnErr = await aioProc.asyncRunWait(command)
     

@@ -49,18 +49,21 @@ async def getNXcontent(nvr, camID, port, user, passwd, snapID, timestamp):
     
         # Delay 15 sec
         #await asyncio.sleep(15) 
-        mb = 1024 * 1024
+        #mb = 1024 * 1024
         async with await session.get(videoURL) as videoResp:
             if videoResp.status == 200:
                 videoFile = '/app/' + snapID + '.mp4'
-                async with aiofiles.open(videoFile, "wb") as f2:
+                async with aiofiles.open(videoFile, mode='wb') as f2:
+                    data = await videoResp.read()
+                    await f2.write(data)
+                    """
                     while True:
                         chunk = await videoResp.content.read(8192)
                         if not chunk:
                             break
                         await f2.write(chunk)
                         await asyncio.sleep(0.5)
-
+                    """
 
 async def getNXsnapshot(nvr, camID, port, user, passwd, snapID):
     auth = aiohttp.BasicAuth(login=user, password=passwd)

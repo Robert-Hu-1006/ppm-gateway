@@ -438,8 +438,7 @@ async def captureImage(camName, eventID):
     if os.path.isfile(fileName):
         resp = await picUpload(fileName)
         os.remove(fileName)
-
-    return resp
+    #return resp
 
 async def downloadContent(camName, eventID, eventTime):
     match CAM_TABLE[camName]['source']:
