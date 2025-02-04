@@ -189,7 +189,7 @@ async def captureFrame(pullURL, fileName):
     LOGGER.info('stdErr: %s', type(stdErr))
     """
     command = 'ffmpeg -loglevel error -rtsp_transport tcp -i ' + pullURL + \
-            ' -frames:v 1 -q:v 1 -f image2 /app/' + fileName
+            ' -frames:v 1 -q:v 1 -f image2 ' + fileName
     rtnErr = await aioProc.asyncRunWait(command)
     #if os.path.isfile(fileName):
     ##if rtnErr == '':
@@ -410,16 +410,14 @@ async def buildCommand(streamType, camName):
     return pullURL, pushURL
 
 async def captureImage(camName, eventID):
+    fileName = eventID + '.jpg'
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
-            fileName = '/app/' + eventID + '.jpg'
-
             rtn = await HKclient.snapshot(CAM_TABLE[camName]['ip'], 
                                 CAM_TABLE[camName]['account'],
                                 CAM_TABLE[camName]['passwd'],
                                 fileName)
         case 'NX_NVR':
-            fileName = '/app/' + eventID + '.jpg'
             rtn = await NXclient.getNXsnapshot(CAM_TABLE[camName]['ip'],
                                 CAM_TABLE[camName]['camID'],
                                 CAM_TABLE[camName]['port'],
@@ -431,7 +429,6 @@ async def captureImage(camName, eventID):
                 await captureFrame(pullURL, fileName)
 
         case '_':
-            fileName = '/app/' + eventID + '.jpg'
             pullURL, pushURL = await buildCommand(CAM_TABLE[camName]['source'], camName)
             await captureFrame(pullURL, fileName)
 
