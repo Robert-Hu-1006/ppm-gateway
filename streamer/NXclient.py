@@ -53,7 +53,7 @@ async def getNXcontent(nvr, camID, port, user, passwd, snapID, timestamp):
         async with await session.get(videoURL) as videoResp:
             if videoResp.status == 200:
                 videoFile = '/app/' + snapID + '.mp4'
-                with aiofiles.open(videoFile, mode='wb') as f2:
+                with open(videoFile, mode='wb') as f2:
                 #async with aiofiles.open(videoFile, mode='wb') as f2:
                     #data = await videoResp.read()
                     #await f2.write(data)

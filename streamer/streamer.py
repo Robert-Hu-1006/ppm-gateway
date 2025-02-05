@@ -145,16 +145,13 @@ async def h265toMP4(fileName):
     stdOut, stdErr = process.communicate()
     LOGGER.info('stdErr: %s', type(stdErr))
     """
-    command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/convert.mp4'
+    command = 'ffmpeg -loglevel error -i ' + fileName + ' -c:v libx265 -vtag hvc1 /app/cnv' + fileName
     LOGGER.info('start convert')
     rtnErr = await aioProc.asyncRunWait(command)
-    if os.path.isfile('convert.mp4'):
-        LOGGER.info('file len::%d', os.path.getsize('convert.mp4'))
-
-    #if rtnErr == '':
-        LOGGER.info('265 change file %s', fileName)
+    if os.path.isfile('/app/cnv' + fileName):
+        LOGGER.info('265 change file %s', '/app/cnv' + fileName)
         os.remove(fileName)
-        os.rename('/app/convert.mp4', fileName)
+        os.rename('/app/cnv' + fileName, fileName)
 
 
 async def uploadFiles(snapID):
