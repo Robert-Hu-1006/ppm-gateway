@@ -2,7 +2,7 @@ import pygsheets
 import logging
 import subprocess
 import asyncio
-
+from PIL import Image
 import psutil
 import signal
 import os 
@@ -406,8 +406,7 @@ async def buildCommand(streamType, camName):
     LOGGER.info('pull: %s push: %s', pullURL, pushURL)
     return pullURL, pushURL
 
-async def captureImage(camName, eventID):
-    fileName = eventID + '.jpg'
+async def captureImage(camName, fileName, resize):
     match CAM_TABLE[camName]['source']:
         case 'HK_CAM':
             rtn = await HKclient.snapshot(CAM_TABLE[camName]['ip'], 
@@ -430,6 +429,11 @@ async def captureImage(camName, eventID):
             await captureFrame(pullURL, fileName)
 
     if os.path.isfile(fileName):
+        if resize == '1':
+            img = Image.open(fileName)
+            (w, h) = img.size
+            snapShot = img.resize((w/10, h/10))
+            snapShot.save(fileName)
         resp = await picUpload(fileName)
         os.remove(fileName)
     #return resp
@@ -541,15 +545,10 @@ async def main():
                                             phoneStream.pid = 0
                                             phoneStream.name = ''
                                 case 'capture': #capture single pic on current time
-                                    await captureImage(msg['name'], msg['imageID'])
-                                    #pullURL, pushURL = await buildCommand(str(msg['type']), msg['name'])
-                                    #await captureFrame(pullURL, msg['file'])
+                                    await captureImage(msg['name'], msg['file'], msg['type'])
                                 
                                 case 'grab': # capture video & image at event time
                                     LOGGER.info('snapshot event time:%s', msg['eventTime'])
-                                    #capture image
-                                    #await captureImage(msg['name'], msg['imageID'])
-                                    #download 30 sec video
                                     await scheduler.spawn(downloadContent(msg['name'], 
                                                                         msg['imageID'],
                                                                         msg['eventTime']))

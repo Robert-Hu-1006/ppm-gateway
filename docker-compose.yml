@@ -44,8 +44,6 @@ services:
       - ./grafana/icon:/usr/share/grafana/public/img/icon
     env_file: 
       - .env
-    environment:
-      - TZ=Asia/Taipei  
     networks:
       - iot_net
       - back_net
@@ -59,8 +57,6 @@ services:
       - 1880:1880
     env_file: 
       - .env
-    environment:
-      - TZ=Asia/Taipei
     volumes:
       - mqtt_log:/mosquitto/log:rw
       - mqtt_data:/mosquitto/data:rw
@@ -81,8 +77,6 @@ services:
       - 443:443
       - 1883:1883
       - 8883:8883
-    environment:
-      - TZ=Asia/Taipei  
     networks:
       - video_net
       - iot_net
