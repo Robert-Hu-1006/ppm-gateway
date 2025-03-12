@@ -17,7 +17,8 @@ RUN pip install --upgrade pip \
     aiohttp \
     aiojobs \
     requests \
-    pytz
+    pytz \
+    pillow
 
 RUN mkdir /app
 WORKDIR /app

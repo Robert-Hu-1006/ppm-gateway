@@ -432,8 +432,11 @@ async def captureImage(camName, fileName, resize):
         if resize == '1':
             img = Image.open(fileName)
             (w, h) = img.size
-            snapShot = img.resize((w/10, h/10))
-            snapShot.save(fileName)
+            if w > 0:   # NX 沒有錄影時不會傳影像
+                w = int(w / 10)
+                h = int(h / 10)
+                new_img = img.resize((w, h))
+                new_img.save(file_name)
         resp = await picUpload(fileName)
         os.remove(fileName)
     #return resp
