@@ -1,26 +1,26 @@
 apiVersion: 1
 datasources:
   # org 1 ---------
-
-  #- name: Prometheus
-  #  type: prometheus
-  #  access: proxy
-  #  orgId: 1
-  #  url: http://prometheus:9090
-  #  #password: <string>
-  #  #user: <string>
-  #  #database: <string>
-  #  #basicAuth: true
-  #  #basicAuthUser: $API_USER
-  #  #basicAuthPassword: $API_PASSWORD
-  #  withCredentials:
-  #  isDefault:
-  #  jsonData:
-  #    graphiteVersion: "1.1"
-  #    tlsAuth: false
-  #    tlsAuthWithCACert: false
-  #  version: 1
-  #  editable: true
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    orgId: 1
+    uid: ppm_prometheus
+    url: http://prometheus:9090
+    #password: <string>
+    #user: <string>
+    #database: <string>
+    #basicAuth: true
+    #basicAuthUser: $API_USER
+    #basicAuthPassword: $API_PASSWORD
+    withCredentials:
+    isDefault:
+    jsonData:
+      graphiteVersion: "1.1"
+      tlsAuth: false
+      tlsAuthWithCACert: false
+    version: 1
+    editable: true
 
   #- name: GoogleSheetsDatasource
   #  type: grafana-googlesheets-datasource
@@ -63,10 +63,10 @@ datasources:
   #  editable: true
   #  secureJsonData:
   #    password: $REDIS_PASSWORD
-  - name: json_lic
-    uid: json_lic
-    type: marcusolsson-json-datasource
-    url: http://nginx/json/lic.json
-    editable: true
+  #- name: json_lic
+  #  uid: json_lic
+  #  type: marcusolsson-json-datasource
+  #  url: http://nginx/json/lic.json
+  #  editable: true
 
   

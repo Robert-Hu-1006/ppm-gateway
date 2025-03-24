@@ -1,5 +1,5 @@
 #FROM grafana/grafana-oss:10.1.6
-FROM grafana/grafana-oss:11.3.0
+FROM grafana/grafana-oss:11.5.1
 
 ##################################################################
 ## CONFIGURATION
@@ -20,7 +20,7 @@ ENV GF_PANELS_DISABLE_SANITIZE_HTML=true
 ENV GF_ANALYTICS_CHECK_FOR_UPDATES=false
 
 ## Set Home Dashboard
-#ENV GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/business.json
+ENV GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/gateway-home.json
 
 ## Paths
 ENV GF_PATHS_PROVISIONING="/etc/grafana/provisioning"
@@ -66,7 +66,7 @@ COPY img/background.svg /usr/share/grafana/public/img/g8_login_light.svg
 ##################################################################
 
 # Update Title
-RUN sed -i 's|<title>\[\[.AppTitle\]\]</title>|<title>Professional Perperty Management</title>|g' /usr/share/grafana/public/views/index.html
+RUN sed -i 's|<title>\[\[.AppTitle\]\]</title>|<title>PPM Gateway</title>|g' /usr/share/grafana/public/views/index.html
 RUN sed -i 's|Loading Grafana|Loading PPM|g' /usr/share/grafana/public/views/index.html
 
 ## Update Mega and Help menu
@@ -92,9 +92,9 @@ RUN sed -i 's|\[navigation.app_sections\]|\[navigation.app_sections\]\nbusiness-
 
 RUN find /usr/share/grafana/public/build/ -name *.js \
 ## Update Title
-    -exec sed -i 's|AppTitle="Grafana"|AppTitle="Business App"|g' {} \; \
+    -exec sed -i 's|AppTitle="Grafana"|AppTitle="PPM Gateway"|g' {} \; \
 ## Update Login Title
-    -exec sed -i 's|LoginTitle="Welcome to Grafana"|LoginTitle="Professional Peroperty Management"|g' {} \; \
+    -exec sed -i 's|LoginTitle="Welcome to Grafana"|LoginTitle="PPM Gateway"|g' {} \; \
 ## Remove Documentation, Support, Community in the Footer
     -exec sed -i 's|\[{target:"_blank",id:"documentation".*grafana_footer"}\]|\[\]|g' {} \; \
 ## Remove Edition in the Footer
@@ -141,7 +141,7 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/panel/alertlist \
     /usr/share/grafana/public/app/plugins/panel/annolist \
     /usr/share/grafana/public/app/plugins/panel/dashlist \
     /usr/share/grafana/public/app/plugins/panel/news \
-    #/usr/share/grafana/public/app/plugins/panel/geomap \
+    /usr/share/grafana/public/app/plugins/panel/geomap \
     /usr/share/grafana/public/app/plugins/panel/table-old \
     /usr/share/grafana/public/app/plugins/panel/traces \
     /usr/share/grafana/public/app/plugins/panel/flamegraph
@@ -152,10 +152,10 @@ USER grafana
 
 RUN grafana cli plugins install marcusolsson-dynamictext-panel && \
     grafana cli plugins install volkovlabs-variable-panel && \
-    grafana cli plugins install volkovlabs-form-panel && \
+    grafana cli plugins install volkovlabs-form-panel
     #grafana cli plugins install volkovlabs-image-panel &&\
     #grafana cli plugins install redis-datasource && \
-    grafana cli plugins install grafana-googlesheets-datasource
+    #grafana cli plugins install grafana-googlesheets-datasource
 
 USER grafana
 

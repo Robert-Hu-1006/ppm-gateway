@@ -1,13 +1,14 @@
 import asyncio
 from aiohttp import web
 from multidict import CIMultiDict
-import os, time
+import os, time, json
 import netifaces
 from os import system
 from datetime import datetime, timedelta, timezone 
 from dotenv import load_dotenv
 import logging
 import aiohttp_cors
+from aiojobs.aiohttp import setup, spawn
 #from aiohttp_tokenauth import token_auth_middleware
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
@@ -23,6 +24,7 @@ async def getIpAddress(request: web.Request):
     LOGGER.info('ethe0:%s', eth0)
     #wlan0 = netifaces.ifaddresses('wlan0')[2][0]['addr']
     inf ={
+        "inf": interface,
         "ip": eth0,
         "mask": mask
     }
@@ -37,6 +39,19 @@ async def setIpAddress(request: web.Request):
     os.system(f'sudo ifconfig {interface} {ipAddress}')
     os.system(f'sudo ifconfig {interface} up')
     return web.Response(status=200)
+
+async def getHostEnv(request: web.Request):
+    with open('/data/lic.json') as licFile:
+        licData = json.load(licFile)
+    LOGGER.info('expire : %s', licData['expire'])
+    
+    payload = {
+        "domain": os.getenv('PPM_CLOUD'),
+        "org": os.getenv('PPM_ORG'),
+        "code": os.getenv('PPM_PCODE'),
+        "expire": licData['expire']
+    }
+    return web.json_response(payload, status=200, content_type='application/json')
 
 #async def startupTasks(app: web.Application) -> None:
 #    app[SQL_CONN] = asyncio.create_task(initMySQL(app))
@@ -58,8 +73,8 @@ def initServer() -> web.Application:
     cors = aiohttp_cors.setup(app)
 
     app.add_routes([web.post('/api/gateway/ip', setIpAddress),
-                    web.get('/api/gateway/ip', getIpAddress)
-                    
+                    web.get('/api/gateway/ip', getIpAddress,),
+                    web.get('/api/gateway/env', getHostEnv)
                     ])
 
     cors = aiohttp_cors.setup(app, defaults={

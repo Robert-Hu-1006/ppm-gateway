@@ -28,7 +28,7 @@ netifaces2 \
 #prometheus-client \
 aiohttp \
 aiohttp_tokenauth \
-#aiojobs \
+aiojobs \
 aiohttp_cors \
 logging 
 

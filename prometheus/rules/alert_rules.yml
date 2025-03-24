@@ -1,0 +1,19 @@
+groups:
+  - name: sensor_alert
+    rules:
+      - alert: Security_Sensor_Alarm
+        # {__name__=~"mqtt_.*", channel=~"di.*"}==  1 
+        expr: mqtt_L2_ZoneA_Office_AC_di1 == 1 or
+              mqtt_L2_ZoneB_244_Carway_di2 == 1 or 
+              mqtt_L2_ZoneA_215_Garage_di3 == 1 or
+              mqtt_L2_ZoneA_Office_IR_di4 == 1 or
+              mqtt_L2_ZoneC_Office_DC_di5 == 1 or
+              mqtt_L2_ZoneA_ESC_Panic_di6 == 1
+
+        for: 1s
+        labels:
+          severity: high   
+          annotations: 
+          description: 
+
+      

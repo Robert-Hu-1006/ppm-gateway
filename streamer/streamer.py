@@ -261,7 +261,7 @@ async def loadPingTable(sheet):
                     config['[inputs.ping]']['method'] = '"exec"'
                     config['[inputs.ping]']['count'] = '3'
                     config['[inputs.ping]']['interval'] = '"60s"'
-                    config['[inputs.ping]']['timeout'] = '3.0'
+                    config['[inputs.ping]']['timeout'] = '3.5'
 
                     config['inputs.ping.tags'] = {}
                     config['inputs.ping.tags']['deviceID'] = '"' + gSheet[i + 1][3].lower() + '"'
