@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 23,
+  "id": 26,
   "links": [],
   "panels": [
     {
@@ -657,7 +657,7 @@
               "url": 6
             },
             "renameByName": {
-              "Time": "Report Time",
+              "Time": "Probe Time",
               "Value": "Status",
               "area": "Area",
               "deviceID": "Device ID",
@@ -702,6 +702,6 @@
   "timezone": "browser",
   "title": "gateway home-en",
   "uid": "cege637pp6fb4a",
-  "version": 33,
+  "version": 2,
   "weekStart": ""
 }

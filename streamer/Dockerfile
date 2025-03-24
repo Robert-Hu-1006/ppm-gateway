@@ -4,28 +4,28 @@ USER root
 RUN apk update && apk upgrade && \
     apk add --no-cache ffmpeg gcc python3-dev musl-dev linux-headers
 
-RUN pip install --upgrade pip \
-    #FFmpeg \
-    ffmpeg-python \
-    asyncio \
-    aiomqtt \
-    pygsheets \
-    aiofiles \
-    #--no-binary :all: psutil \
-    psutil \
-    python-dotenv \
-    aiohttp \
-    aiojobs \
-    requests \
-    pytz \
-    pillow
+#RUN pip install --upgrade pip \
+#    #FFmpeg \
+#    ffmpeg-python \
+#    asyncio \
+#    aiomqtt \
+#    pygsheets \
+#    aiofiles \
+#    #--no-binary :all: psutil \
+#    psutil \
+#    python-dotenv \
+#    aiohttp \
+#    aiojobs \
+#    requests \
+#    pytz \
+#    pillow
 
 RUN mkdir /app
 WORKDIR /app
 COPY ./ /app/
 
-#COPY ./requirements.txt /app/requirements.txt
-#RUN pip install --upgrade pip && \
-#    pip install -r requirements.txt
+COPY ./requirements.txt /app/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 CMD ["python", "streamer.py"] 

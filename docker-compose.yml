@@ -71,7 +71,9 @@ services:
     image: roberthu1006/gateway-nginx:0.0.2
     container_name: nginx
     hostname: nginx
-    build: ./nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     restart: always
     ports:
       - 80:80
@@ -131,7 +133,7 @@ services:
       - back_net
 
   apiserver:
-    image: roberthu1006/gateway-apiserver:0.0.1
+    image: roberthu1006/gateway-apiserver:0.0.2
     build:
       context: ./apiserver
       dockerfile: Dockerfile
