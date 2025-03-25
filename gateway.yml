@@ -42,6 +42,13 @@ services:
       - ./grafana/icon:/usr/share/grafana/public/img/icon
     env_file: 
       - .env
+    environment:
+      - GF_AUTH_LOGIN_MAXIMUM_INACTIVE_LIFETIME_DURATION=30m
+      - GF_AUTH_LOGIN_MAXIMUM_LIFETIME_DURATION=12h
+      - GF_AUTH_DISABLE_LOGIN_REMEMBER_ME=true
+      - GF_AUTH_SESSION_COOKIE_MAX_AGE=0
+      - GF_AUTH_SESSION_COOKIE_SECURE=true
+      - GF_AUTH_SESSION_COOKIE_SAMESITE=lax
     networks:
       - iot_net
       - back_net
@@ -98,7 +105,7 @@ services:
       - 9273:9273
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
-      - ./telegraf/devices.d/:/etc/telegraf/devices.d/
+      - telegraf_conf:/etc/telegraf/conf/
       - ppm_tag:/etc/telegraf/tag
     depends_on:
       - mosquitto

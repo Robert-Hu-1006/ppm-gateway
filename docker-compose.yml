@@ -46,7 +46,6 @@ services:
       - ./grafana/icon:/usr/share/grafana/public/img/icon
     env_file: 
       - .env
-    # Docker Compose 範例
     environment:
       - GF_AUTH_LOGIN_MAXIMUM_INACTIVE_LIFETIME_DURATION=30m
       - GF_AUTH_LOGIN_MAXIMUM_LIFETIME_DURATION=12h
