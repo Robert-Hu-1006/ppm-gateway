@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "ppm_prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -41,8 +41,12 @@
                 "value": null
               },
               {
-                "color": "red",
+                "color": "orange",
                 "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
               }
             ]
           },
@@ -87,7 +91,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "ppm_prometheus"
           },
           "editorMode": "code",
           "expr": "usage_user_value",
@@ -103,7 +107,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "ppm_prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -187,7 +191,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "ppm_prometheus"
           },
           "editorMode": "code",
           "expr": "average_response_ms_value",
@@ -319,7 +323,7 @@
           "highlightColor": "red",
           "method": "GET",
           "payload": {},
-          "url": "http://localhost/api/gateway/env"
+          "url": "/api/gateway/env"
         },
         "layout": {
           "orientation": "horizontal",
@@ -360,12 +364,12 @@
           "contentType": "application/json",
           "getPayload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn payload;",
           "method": "-",
-          "payload": "const payload = {};\n\ncontext.panel.elements.forEach((element) => {\n  if (!element.value) {\n    return;\n  }\n\n  payload[element.id] = element.value;\n})\n\nreturn payload;",
+          "payload": {},
           "payloadMode": "all"
         },
         "updateEnabled": "auto"
       },
-      "pluginVersion": "4.7.0",
+      "pluginVersion": "5.1.0",
       "targets": [
         {
           "refId": "A"
@@ -377,7 +381,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "ppm_prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -461,7 +465,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "ppm_prometheus"
           },
           "editorMode": "code",
           "expr": "standard_deviation_ms_value",
@@ -491,7 +495,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "ppm_prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -657,7 +661,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "ppm_prometheus"
           },
           "editorMode": "code",
           "exemplar": false,
