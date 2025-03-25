@@ -9,19 +9,19 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /Users/robert/data/gateway/json
+      device: /home/robert/data/gateway/json
       o: bind
   telegraf_conf:
     driver: local
     driver_opts:
       type: none
-      device: /Users/robert/data/gateway/conf
+      device: /home/robert/data/gateway/conf
       o: bind
   ppm_tag:
     driver: local
     driver_opts:
       type: none
-      device: /Users/robert/data/gateway/tag
+      device: /home/robert/data/gateway/tag
       o: bind
 networks:
   video_net:
