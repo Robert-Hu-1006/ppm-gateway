@@ -18,9 +18,88 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 26,
+  "id": 28,
   "links": [],
   "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "yellow",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "%"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 5,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "displayMode": "basic",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 20,
+        "minVizHeight": 12,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "manual",
+        "text": {},
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "usage_user_value",
+          "instant": false,
+          "legendFormat": "{{cpu}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Host CPU Usage",
+      "type": "bargauge"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -85,8 +164,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 17,
-        "x": 0,
+        "w": 12,
+        "x": 5,
         "y": 0
       },
       "id": 2,
@@ -359,8 +438,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 17,
-        "x": 0,
+        "w": 12,
+        "x": 5,
         "y": 4
       },
       "id": 3,
@@ -675,7 +754,7 @@
               {
                 "dateFormat": "YYYY-MM-DD HH:mm:ss",
                 "destinationType": "string",
-                "targetField": "Report Time"
+                "targetField": "Probe Time"
               }
             ],
             "fields": {}
@@ -686,7 +765,7 @@
     }
   ],
   "preload": false,
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
@@ -697,11 +776,14 @@
     "to": "now"
   },
   "timepicker": {
-    "hidden": true
+    "hidden": true,
+    "refresh_intervals": [
+      "5s"
+    ]
   },
   "timezone": "browser",
   "title": "gateway home-en",
-  "uid": "cege637pp6fb4a",
-  "version": 2,
+  "uid": "begvb7m8053b4f",
+  "version": 1,
   "weekStart": ""
 }

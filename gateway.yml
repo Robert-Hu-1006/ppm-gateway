@@ -31,9 +31,6 @@ networks:
 services:
   grafana:
     image: roberthu1006/gateway-grafana:0.0.2
-    build:
-      context: ./grafana
-      dockerfile: Dockerfile
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
@@ -95,11 +92,13 @@ services:
     restart: always
     container_name: telegraf
     hostname: telegraf
+    user: '1000'
+    privileged: true
     ports:
       - 9273:9273
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
-      - telegraf_conf:/etc/telegraf/conf/
+      - ./telegraf/devices.d/:/etc/telegraf/devices.d/
       - ppm_tag:/etc/telegraf/tag
     depends_on:
       - mosquitto

@@ -116,7 +116,7 @@ RUN rm -rf /usr/share/grafana/public/app/plugins/datasource/elasticsearch /usr/s
     /usr/share/grafana/public/app/plugins/datasource/opentsdb /usr/share/grafana/public/build/opentsdb* \
     /usr/share/grafana/public/app/plugins/datasource/influxdb /usr/share/grafana/public/build/influxdb* \
     /usr/share/grafana/public/app/plugins/datasource/mssql /usr/share/grafana/public/build/mssql* \
-    #/usr/share/grafana/public/app/plugins/datasource/mysql /usr/share/grafana/public/build/mysql* \
+    /usr/share/grafana/public/app/plugins/datasource/mysql /usr/share/grafana/public/build/mysql* \
     /usr/share/grafana/public/app/plugins/datasource/tempo /usr/share/grafana/public/build/tempo* \
     /usr/share/grafana/public/app/plugins/datasource/jaeger /usr/share/grafana/public/build/jaeger* \
     /usr/share/grafana/public/app/plugins/datasource/zipkin /usr/share/grafana/public/build/zipkin* \

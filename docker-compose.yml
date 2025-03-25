@@ -41,10 +41,19 @@ services:
       - 3000:3000
     volumes:
       - grafana_data:/var/lib/grafana
+      #- ./grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./grafana/provisioning/:/etc/grafana/provisioning/
       - ./grafana/icon:/usr/share/grafana/public/img/icon
     env_file: 
       - .env
+    # Docker Compose 範例
+    environment:
+      - GF_AUTH_LOGIN_MAXIMUM_INACTIVE_LIFETIME_DURATION=30m
+      - GF_AUTH_LOGIN_MAXIMUM_LIFETIME_DURATION=12h
+      - GF_AUTH_DISABLE_LOGIN_REMEMBER_ME=true
+      - GF_AUTH_SESSION_COOKIE_MAX_AGE=0
+      - GF_AUTH_SESSION_COOKIE_SECURE=true
+      - GF_AUTH_SESSION_COOKIE_SAMESITE=lax
     networks:
       - iot_net
       - back_net
