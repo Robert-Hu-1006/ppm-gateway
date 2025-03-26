@@ -119,7 +119,7 @@ services:
       - iot_net
     
   streamer:
-    image: roberthu1006/gateway-streamer:0.0.2
+    image: roberthu1006/gateway-streamer:0.0.3
     build:
       context: ./streamer
       dockerfile: Dockerfile

@@ -117,7 +117,7 @@ services:
       - iot_net
     
   streamer:
-    image: roberthu1006/gateway-streamer:0.0.2
+    image: roberthu1006/gateway-streamer:0.0.3
     container_name: streamer
     hostname: streamer
     restart: always

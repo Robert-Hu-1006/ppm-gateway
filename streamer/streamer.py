@@ -55,6 +55,8 @@ async def getVideoCodec(fileName):
 
     
 async def genTelegrafTag():
+    pCode = os.getenv('PPM_PCODE')
+
     client = pygsheets.authorize(service_account_file='/app/service.json')
     #client = pygsheets.authorize(service_account_file='./streamer/client_secret.json')
     sheet = client.open_by_key(LICENSE['sheet'])
@@ -68,28 +70,29 @@ async def genTelegrafTag():
     wrkSheet = sheet.worksheet_by_title('Sensor')
     gTable = wrkSheet.get_values('A2', 'P')
     for i in range(len(gTable) - 1):
-        if gTable[i + 1][8] != 'Device_Disconnect':
-            deviceID = gTable[i + 1][3].lower()
-            dataChannel = gTable[i + 1][9].lower()
-            key = deviceID + '_' + dataChannel
-            sensorTable[key] = {}
-            sensorTable[key]['org'] =  gTable[i + 1][0]
-            sensorTable[key]['code'] =  gTable[i + 1][1]
-            sensorTable[key]['deviceName'] =  gTable[i + 1][4]
-            sensorTable[key]['sensorType'] =  gTable[i + 1][6]
-            sensorTable[key]['alarmGroup'] =  gTable[i + 1][7]
-            sensorTable[key]['alarmType'] =  gTable[i + 1][8]
-            sensorTable[key]['floor'] =  gTable[i + 1][10]
-            sensorTable[key]['area'] =  gTable[i + 1][11]
-            sensorTable[key]['alarmPriority'] =  gTable[i + 1][12]
-            sensorTable[key]['sop'] =  gTable[i + 1][13]
-            sensorTable[key]['source'] =  gTable[i + 1][14]
-            if gTable[i + 1][15] == '':
-                camLink = 'na'
-            else:
-                camLink = gTable[i + 1][15]
-                sensorTable[key]['camLink'] =  camLink
-            sensorTable[key]['brief'] = 'IP: ' + gTable[i + 1][5]
+        if gTable[i + 1][1] == pCode:
+            if gTable[i + 1][8] != 'Device_Disconnect':
+                deviceID = gTable[i + 1][3].lower()
+                dataChannel = gTable[i + 1][9].lower()
+                key = deviceID + '_' + dataChannel
+                sensorTable[key] = {}
+                sensorTable[key]['org'] =  gTable[i + 1][0]
+                sensorTable[key]['code'] =  gTable[i + 1][1]
+                sensorTable[key]['deviceName'] =  gTable[i + 1][4]
+                sensorTable[key]['sensorType'] =  gTable[i + 1][6]
+                sensorTable[key]['alarmGroup'] =  gTable[i + 1][7]
+                sensorTable[key]['alarmType'] =  gTable[i + 1][8]
+                sensorTable[key]['floor'] =  gTable[i + 1][10]
+                sensorTable[key]['area'] =  gTable[i + 1][11]
+                sensorTable[key]['alarmPriority'] =  gTable[i + 1][12]
+                sensorTable[key]['sop'] =  gTable[i + 1][13]
+                sensorTable[key]['source'] =  gTable[i + 1][14]
+                if gTable[i + 1][15] == '':
+                    camLink = 'na'
+                else:
+                    camLink = gTable[i + 1][15]
+                    sensorTable[key]['camLink'] =  camLink
+                sensorTable[key]['brief'] = 'IP: ' + gTable[i + 1][5]
 
     with open(ppm_tag, 'w') as SensorFile:
         json.dump(sensorTable, SensorFile, indent=2)
