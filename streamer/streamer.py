@@ -436,7 +436,7 @@ async def captureImage(camName, fileName, resize):
                 w = int(w / 10)
                 h = int(h / 10)
                 new_img = img.resize((w, h))
-                new_img.save(file_name)
+                new_img.save(fileName)
         resp = await picUpload(fileName)
         os.remove(fileName)
     #return resp
